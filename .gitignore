@@ -1,0 +1,23 @@
+# Entorno virtual
+.venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Archivos de herramientas
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Configuración de editores/IDE
+.vscode/
+.idea/
+
+# Archivos temporales
+*.log
+.DS_Store
