@@ -30,7 +30,10 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
   python -m smart_ai_sys_admin
   ```
 - La consola se divide en dos zonas: historial de salida (superior) y entrada multi-línea (inferior).
-- Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+Enter`).
+- Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
+- Comandos disponibles:
+  - `/connect [host] [usuario] [password|ruta_clave]` abre una sesión SSH y SFTP persistente hasta que se invoque `/disconnect`.
+  - `/disconnect` cierra la conexión activa (si existe).
 - El sistema mostrará las respuestas en formato Markdown y en un esquema de color retro naranja/verde.
 - Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.
 
@@ -38,6 +41,10 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
 - Todos los parámetros personalizables (colores, atajos, mensajes, límites de historial) se gestionan desde `conf/app_config.json`.
 - Puedes sobreescribir la ruta mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` (ruta directa al fichero) o `SMART_AI_SYS_ADMIN_CONFIG_DIR` (directorio que contiene `app_config.json`).
 - Evita modificar valores en código fuente; ajusta el fichero de configuración y reinicia la app para aplicar los cambios.
+- Nuevos parámetros destacados en `conf/app_config.json`:
+  - `ui.connection_panel`: estilos del panel inferior que muestra el estado de la conexión.
+  - `logging`: nivel, directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
+    - `log_to_console`: cuando es `true`, duplica los registros en stdout (por defecto `false` para no interferir con la TUI).
 
 ## Estructura del proyecto
 - `requirements.txt`: dependencias de ejecución (Textual y Rich).

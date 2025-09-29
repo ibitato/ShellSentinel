@@ -38,3 +38,4 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Mantener estilos retro (verde para entrada, naranja para salida) mediante la configuración.
 - Preferir componentes de Textual para la TUI; si se incorporan nuevos widgets, documentar su uso en la configuración.
 - Evitar dependencias globales; todo deberá instalarse en el entorno virtual.
+- Mantener unidades de código pequeñas y cohesivas: separar responsabilidades en módulos/subpaquetes lógicos (por ejemplo `ui/`, `commands/`, `connection/`) y evitar archivos monolíticos.

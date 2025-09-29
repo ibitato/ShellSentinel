@@ -21,11 +21,17 @@
       "border_style": "#00FF7F",
       "text_style": "#7CFC00"
     },
+    "connection_panel": {
+      "title": "Conexión",
+      "border_style": "#FF8C00",
+      "text_style": "#FFB347",
+      "background": "#000000"
+    },
     "input_widget": {
-      "placeholder": "Escribe tu instrucción y presiona Ctrl+Enter para enviar.",
+      "placeholder": "Escribe tu instrucción y presiona Ctrl+S para enviar.",
       "background": "#001900",
       "text_style": "#7CFC00",
-      "submit_binding": "ctrl+enter",
+      "submit_binding": "ctrl+s",
       "min_lines": 3,
       "max_lines": 10,
       "padding": "1 2"
@@ -36,5 +42,15 @@
       "binding": "ctrl+c",
       "description": "Salir"
     }
+  },
+  "logging": {
+    "level": "INFO",
+    "directory": "logs",
+    "filename": "app.log",
+    "format": "%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    "when": "midnight",
+    "interval": 1,
+    "backup_count": 3,
+    "log_to_console": false
   }
 }

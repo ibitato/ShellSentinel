@@ -2,12 +2,25 @@
 
 from __future__ import annotations
 
-from .tui import run_app
+import warnings
+
+from .config import CONFIG
+from .logging_setup import configure_logging
+from .ui import run_app
+
+try:  # pragma: no cover - depende de cryptography instalada.
+    from cryptography.utils import CryptographyDeprecationWarning
+except ModuleNotFoundError:  # pragma: no cover - fallback si falta cryptography.
+    CryptographyDeprecationWarning = None
 
 
 def main() -> int:
     """Ejecuta la interfaz de terminal del administrador inteligente."""
-    run_app()
+    configure_logging(CONFIG.logging)
+    if CryptographyDeprecationWarning:
+        warnings.filterwarnings("ignore", category=CryptographyDeprecationWarning)
+    warnings.filterwarnings("ignore", module="paramiko")
+    run_app(config=CONFIG)
     return 0
 
 
