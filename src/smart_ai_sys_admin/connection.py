@@ -46,7 +46,9 @@ class SSHConnectionManager:
         key_path: str | None = None,
     ) -> ConnectionDetails:
         if self.is_connected:
-            raise ConnectionAlreadyOpen("Ya existe una conexión activa. Usa /disconnect primero.")
+            raise ConnectionAlreadyOpen(
+                "Ya existe una conexión activa. Usa /desconectar primero."
+            )
         if not password and not key_path:
             raise ConnectionError("Debes proporcionar contraseña o ruta a la clave privada.")
 

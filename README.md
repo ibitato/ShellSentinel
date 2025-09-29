@@ -32,8 +32,10 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
 - La consola se divide en dos zonas: historial de salida (superior) y entrada multi-línea (inferior).
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles:
-  - `/connect [host] [usuario] [password|ruta_clave]` abre una sesión SSH y SFTP persistente hasta que se invoque `/disconnect`.
-  - `/disconnect` cierra la conexión activa (si existe).
+  - `/conectar [host] [usuario] [password|ruta_clave]` abre una sesión SSH y SFTP persistente.
+  - `/desconectar` cierra la conexión activa (si existe).
+  - `/ayuda` muestra un resumen en Markdown de los comandos disponibles.
+  - `/salir` abre un diálogo de confirmación para cerrar la aplicación.
 - El sistema mostrará las respuestas en formato Markdown y en un esquema de color retro naranja/verde.
 - Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.
 

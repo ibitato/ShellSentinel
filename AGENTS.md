@@ -16,6 +16,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - **Linting:** `ruff`
 - **Pruebas:** `pytest` (reservado, aún sin casos)
 - **Tareas automatizadas:** `Makefile` (`install`, `format`, `lint`, `test`, `run`, `clean`)
+- **Herramientas MCP disponibles:** El entorno expone las herramientas de [Firecrawl](https://www.firecrawl.dev/) para buscar en la web, hacer *scraping* y extraer información estructurada. Úsalas para investigar errores de librerías de terceros o fundamentar decisiones con documentación externa.
 
 ## Configuración y constantes
 - Toda variable o valor ajustable debe residir en el directorio `conf/` (por defecto `conf/app_config.json`). Está prohibido hardcodear parámetros en el código cuando puedan residir en la configuración.

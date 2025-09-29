@@ -35,12 +35,27 @@ class OutputPanelConfig(PanelConfig):
 
 
 @dataclass(frozen=True)
+class ExitDialogConfig:
+    title: str
+    message: str
+    confirm_label: str
+    cancel_label: str
+    prompt_markdown: str
+
+
+@dataclass(frozen=True)
+class DialogsConfig:
+    exit: ExitDialogConfig
+
+
+@dataclass(frozen=True)
 class UIConfig:
     history_limit: int
     output_panel: OutputPanelConfig
     user_panel: PanelConfig
     input_widget: InputConfig
     connection_panel: PanelConfig
+    dialogs: DialogsConfig
 
 
 @dataclass(frozen=True)
@@ -122,12 +137,16 @@ def load_config() -> AppConfig:
     user_panel = PanelConfig(**ui_config["user_panel"])
     connection_panel = PanelConfig(**ui_config["connection_panel"])
     input_widget = InputConfig(**ui_config["input_widget"])
+    dialogs_config = ui_config["dialogs"]
+    exit_dialog = ExitDialogConfig(**dialogs_config["exit"])
+    dialogs = DialogsConfig(exit=exit_dialog)
     ui = UIConfig(
         history_limit=ui_config["history_limit"],
         output_panel=output_panel,
         user_panel=user_panel,
         input_widget=input_widget,
         connection_panel=connection_panel,
+        dialogs=dialogs,
     )
     shortcuts_config = payload["shortcuts"]
     shortcuts = ShortcutsConfig(exit=ShortcutConfig(**shortcuts_config["exit"]))

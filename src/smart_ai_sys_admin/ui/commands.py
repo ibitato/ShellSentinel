@@ -19,18 +19,22 @@ from ..connection import (
 class SlashCommandProcessor:
     """Encapsula la lógica de comandos personalizados del agente."""
 
+    CONNECT_COMMAND = "/conectar"
+    DISCONNECT_COMMAND = "/desconectar"
+    HELP_COMMAND = "/ayuda"
+
     CONNECT_HELP = textwrap.dedent(
         """
-        **Uso `/connect`**
+        **Uso `/conectar`**
         - Argumentos: `<host> <usuario> <password|ruta_clave>`
-        - Ejemplo con contraseña: `/connect server.local admin s3cr3t`
-        - Ejemplo con clave: `/connect server.local admin ~/.ssh/id_ed25519`
+        - Ejemplo con contraseña: `/conectar server.local admin s3cr3t`
+        - Ejemplo con clave: `/conectar server.local admin ~/.ssh/id_ed25519`
         """
     ).strip()
 
     DISCONNECT_HELP = textwrap.dedent(
         """
-        **Uso `/disconnect`**
+        **Uso `/desconectar`**
         - Cierra la sesión SSH/SFTP activa.
         - No acepta argumentos adicionales.
         """
@@ -39,8 +43,10 @@ class SlashCommandProcessor:
     COMMAND_OVERVIEW = textwrap.dedent(
         """
         **Comandos disponibles**
-        - `/connect <host> <usuario> <password|ruta_clave>` abre la sesión remota.
-        - `/disconnect` cierra la sesión activa.
+        - `/conectar <host> <usuario> <password|ruta_clave>` abre la sesión remota.
+        - `/desconectar` cierra la sesión activa.
+        - `/ayuda` resume todos los comandos disponibles.
+        - `/salir` solicita confirmación para cerrar la aplicación.
         """
     ).strip()
 
@@ -75,6 +81,9 @@ class SlashCommandProcessor:
             return self._output_config.placeholder_response_markdown
         command = parts[0].lower()
         handlers = {
+            self.CONNECT_COMMAND: self._command_connect,
+            self.DISCONNECT_COMMAND: self._command_disconnect,
+            self.HELP_COMMAND: self._command_help,
             "/connect": self._command_connect,
             "/disconnect": self._command_disconnect,
         }
@@ -93,9 +102,9 @@ class SlashCommandProcessor:
 
     def _command_connect(self, args: list[str]) -> str:
         if len(args) < 3:
-            self._logger.info("Parámetros insuficientes para /connect: %s", args)
+            self._logger.info("Parámetros insuficientes para /conectar: %s", args)
             return self._format_help(
-                "⚠️ Faltan argumentos para `/connect`.",
+                "⚠️ Faltan argumentos para `/conectar`.",
                 self.CONNECT_HELP,
             )
         host, username, secret = args[0], args[1], args[2]
@@ -117,7 +126,7 @@ class SlashCommandProcessor:
             self._logger.info("Intento de reconectar mientras existe una sesión activa")
             return self._format_help(str(exc), self.DISCONNECT_HELP)
         except ConnectionError as exc:
-            self._logger.warning("Fallo en /connect: %s", exc)
+            self._logger.warning("Fallo en /conectar: %s", exc)
             return self._format_help(
                 f"❌ No se pudo establecer la conexión: {exc}",
                 self.CONNECT_HELP,
@@ -135,15 +144,15 @@ class SlashCommandProcessor:
         self, args: list[str]
     ) -> str:  # noqa: ARG002 - placeholder para futuros argumentos
         if args:
-            self._logger.info("Se ignorarán argumentos extra en /disconnect: %s", args)
+            self._logger.info("Se ignorarán argumentos extra en /desconectar: %s", args)
             return self._format_help(
-                "⚠️ `/disconnect` no admite argumentos.",
+                "⚠️ `/desconectar` no admite argumentos.",
                 self.DISCONNECT_HELP,
             )
         try:
             self._connection_manager.disconnect()
         except NoActiveConnection:
-            self._logger.info("Solicitud de /disconnect sin sesión activa")
+            self._logger.info("Solicitud de /desconectar sin sesión activa")
             return self._format_help(
                 "⚠️ No hay una conexión activa que cerrar.",
                 self.DISCONNECT_HELP,
@@ -156,6 +165,9 @@ class SlashCommandProcessor:
             )
         self._logger.info("Conexión cerrada correctamente")
         return "✅ Conexión cerrada."
+
+    def _command_help(self, args: list[str]) -> str:  # noqa: ARG002 - no se esperan argumentos
+        return self.COMMAND_OVERVIEW
 
     def _format_help(self, title: str, body: str) -> str:
         return f"{title}\n\n{body}"

@@ -9,8 +9,13 @@ from textual.app import App, ComposeResult
 from textual.containers import Grid, Vertical
 
 from ..config import CONFIG, AppConfig
-from ..connection import SSHConnectionManager
+from ..connection import (
+    ConnectionError,
+    NoActiveConnection,
+    SSHConnectionManager,
+)
 from .commands import SlashCommandProcessor
+from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
 
 
@@ -25,6 +30,7 @@ class SmartAISysAdminApp(App[None]):
         self._conversation: ConversationPanel | None = None
         self._input: CommandInput | None = None
         self._connection_info: ConnectionInfo | None = None
+        self._exit_dialog_config = self._config.ui.dialogs.exit
         # Usamos un nombre distinto para no interferir con `App._logger`,
         # que Textual emplea para su propio sistema de logging.
         self._app_logger = logging.getLogger("smart_ai_sys_admin.ui.app")
@@ -39,7 +45,11 @@ class SmartAISysAdminApp(App[None]):
 
     def compose(self) -> ComposeResult:
         input_section = Vertical(
-            CommandInput(self._config.ui.input_widget),
+            CommandInput(
+                self._config.ui.input_widget,
+                self._config.shortcuts.exit,
+                self._config.ui.history_limit,
+            ),
             ConnectionInfo(self._config.ui.connection_panel),
             id="input-section",
         )
@@ -74,6 +84,17 @@ class SmartAISysAdminApp(App[None]):
         assert self._conversation is not None
         assert self._input is not None
         self._conversation.add_user_message(message.content)
+        trimmed = message.content.strip()
+        tokens = trimmed.split()
+        if tokens and tokens[0].lower() == "/salir":
+            if len(tokens) > 1:
+                self._conversation.add_agent_markdown(
+                    "⚠️ `/salir` no admite argumentos adicionales."
+                )
+                self._input.focus_editor()
+                return
+            self._handle_exit_request()
+            return
         try:
             response = self._command_processor.process(message.content)
         except Exception as exc:  # pragma: no cover - protección ante errores inesperados.
@@ -85,6 +106,11 @@ class SmartAISysAdminApp(App[None]):
             self._update_connection_info()
         self._conversation.add_agent_markdown(response)
         self._input.focus_editor()
+
+    def _handle_exit_request(self) -> None:
+        assert self._conversation is not None
+        self._conversation.add_agent_markdown(self._exit_dialog_config.prompt_markdown)
+        self._show_exit_confirmation()
 
     def _warn_if_term_incompatible(self) -> None:
         assert self._conversation is not None
@@ -101,6 +127,36 @@ class SmartAISysAdminApp(App[None]):
         if not self._connection_info:
             return
         self._connection_info.refresh_status(self._connection_manager.status_summary())
+
+    def _show_exit_confirmation(self) -> None:
+        modal = ExitConfirmationModal(self._exit_dialog_config)
+        self.push_screen(modal, self._on_exit_confirmed)
+
+    def _on_exit_confirmed(self, confirmed: bool | None) -> None:
+        if confirmed:
+            self._close_connection_safely()
+            self.exit()
+        elif self._input:
+            self._input.focus_editor()
+
+    def action_quit(self) -> None:
+        """Intercepta la acción estándar de salida para cerrar la conexión activa."""
+        self._close_connection_safely()
+        super().action_quit()
+
+    def _close_connection_safely(self) -> None:
+        try:
+            self._connection_manager.disconnect()
+        except NoActiveConnection:
+            self._update_connection_info()
+            return
+        except ConnectionError as exc:
+            self._app_logger.warning(
+                "Error cerrando la conexión al salir: %s",
+                exc,
+            )
+        finally:
+            self._update_connection_info()
 
 
 def run_app(config: AppConfig = CONFIG) -> None:

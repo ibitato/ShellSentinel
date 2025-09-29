@@ -28,13 +28,22 @@
       "background": "#000000"
     },
     "input_widget": {
-      "placeholder": "Escribe tu instrucción y presiona Ctrl+S para enviar.",
+      "placeholder": "Escribe tu instrucción y presiona {submit_binding} para enviar. Usa /salir cuando quieras cerrar.",
       "background": "#001900",
       "text_style": "#7CFC00",
       "submit_binding": "ctrl+s",
       "min_lines": 3,
       "max_lines": 10,
       "padding": "1 2"
+    },
+    "dialogs": {
+      "exit": {
+        "title": "Confirmar salida",
+        "message": "¿Seguro que quieres cerrar Smart-AI-Sys-Admin?",
+        "confirm_label": "Salir",
+        "cancel_label": "Cancelar",
+        "prompt_markdown": "🔒 **Confirmación necesaria**. Revisa el cuadro central para continuar."
+      }
     }
   },
   "shortcuts": {
