@@ -16,6 +16,7 @@ from .config import (
     load_agent_config,
 )
 from .factory import AgentBuildResult, AgentFactory
+from .permissions import ToolPermissionManager
 from .runtime import AgentRuntime
 
 __all__ = [
@@ -33,6 +34,7 @@ __all__ = [
     "ProviderBaseConfig",
     "ProviderLiteral",
     "RemoteCommandConfig",
+    "ToolPermissionManager",
     "ToolsConfig",
     "load_agent_config",
 ]

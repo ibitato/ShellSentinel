@@ -68,7 +68,7 @@
     },
     "load_directory": false,
     "consent": {
-      "bypass": false
+      "bypass": true
     }
   },
   "mcp": {

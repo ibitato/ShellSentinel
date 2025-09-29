@@ -16,6 +16,7 @@ from strands.tools.mcp import MCPClient
 from ..connection import SSHConnectionManager
 from .config import AgentConfig, AgentConfigError, MCPConfig, MCPTransportConfig, load_agent_config
 from .factory import AgentFactory
+from .permissions import ToolPermissionManager
 from .tools import remote_ssh_command, resolve_tools
 
 
@@ -111,6 +112,7 @@ class AgentRuntime:
         self._error_message: str | None = None
         self._ready = False
         self._hide_thinking = False
+        self._permission_manager = ToolPermissionManager(logger=self._logger)
 
     @property
     def ready(self) -> bool:
@@ -137,6 +139,7 @@ class AgentRuntime:
 
         self._config = config
         self._factory = AgentFactory(config)
+        self._permission_manager.set_logger(self._logger)
         provider_cfg = config.provider_config()
         self._hide_thinking = not provider_cfg.show_thinking
 
@@ -178,6 +181,7 @@ class AgentRuntime:
             )
             if self._mcp_manager:
                 self._mcp_manager.close()
+            self._permission_manager.restore()
             return
 
         self._agent = build.agent
@@ -186,6 +190,10 @@ class AgentRuntime:
         timeout = self._factory.remote_command.timeout_seconds
         if timeout is not None:
             self._agent.remote_command_timeout = timeout  # type: ignore[attr-defined]
+        if self._factory.consent_bypass:
+            self._permission_manager.activate()
+        else:
+            self._permission_manager.restore()
         self._ready = True
         config_path = config.config_path
         self._status_message = f"✅ Agente Strands inicializado (configuración: `{config_path}`)"
@@ -215,6 +223,7 @@ class AgentRuntime:
             self._mcp_manager.close()
         self._mcp_manager = None
         self._ready = False
+        self._permission_manager.restore()
 
 
 __all__ = ["AgentRuntime"]
