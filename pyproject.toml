@@ -8,6 +8,9 @@ license = {text = "MIT"}
 authors = [
   {name = "Equipo Smart AI"}
 ]
+dependencies = [
+  "textual==0.67.1"
+]
 
 [project.optional-dependencies]
 dev = [
@@ -38,3 +41,13 @@ skip-magic-trailing-comma = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

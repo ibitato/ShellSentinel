@@ -1,0 +1,40 @@
+{
+  "terminal": {
+    "allowed_terms": ["xterm", "xterm-256color"],
+    "warning_message": "Se recomienda ejecutar Smart-AI-Sys-Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
+    "warning_icon": "⚠️",
+    "unknown_label": "desconocido",
+    "detected_label": "Terminal detectado"
+  },
+  "ui": {
+    "history_limit": 200,
+    "output_panel": {
+      "title": "Sesión remota",
+      "border_style": "#FF8C00",
+      "text_style": "#FFB347",
+      "background": "#000000",
+      "initial_markdown": "_Smart-AI-Sys-Admin listo. Esperando instrucciones._",
+      "placeholder_response_markdown": "_(Integración con agente IA en desarrollo)_"
+    },
+    "user_panel": {
+      "title": "Usuario",
+      "border_style": "#00FF7F",
+      "text_style": "#7CFC00"
+    },
+    "input_widget": {
+      "placeholder": "Escribe tu instrucción y presiona Ctrl+Enter para enviar.",
+      "background": "#001900",
+      "text_style": "#7CFC00",
+      "submit_binding": "ctrl+enter",
+      "min_lines": 3,
+      "max_lines": 10,
+      "padding": "1 2"
+    }
+  },
+  "shortcuts": {
+    "exit": {
+      "binding": "ctrl+c",
+      "description": "Salir"
+    }
+  }
+}
