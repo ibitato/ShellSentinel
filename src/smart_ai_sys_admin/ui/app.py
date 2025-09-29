@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 
@@ -85,7 +86,7 @@ class SmartAISysAdminApp(App[None]):
         self._update_connection_info()
         self._initialize_agent_runtime()
 
-    def on_command_input_submitted(self, message: CommandInput.Submitted) -> None:
+    async def on_command_input_submitted(self, message: CommandInput.Submitted) -> None:
         message.stop()
         assert self._conversation is not None
         assert self._input is not None
@@ -117,7 +118,7 @@ class SmartAISysAdminApp(App[None]):
             self._input.focus_editor()
             return
 
-        agent_output = self._invoke_agent(trimmed)
+        agent_output = await asyncio.to_thread(self._invoke_agent, trimmed)
         if not agent_output:
             agent_output = self._config.ui.output_panel.placeholder_response_markdown
         self._conversation.add_agent_markdown(agent_output)

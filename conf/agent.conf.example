@@ -17,6 +17,7 @@
       "system_prompt": "system_prompts/bedrock.md",
       "model_id": "us.anthropic.claude-sonnet-4-20250514-v1:0",
       "region_name": "us-east-1",
+      "show_thinking": false,
       "client": {
         "profile": null,
         "endpoint_url": null
@@ -31,6 +32,7 @@
     "openai": {
       "system_prompt": "system_prompts/openai.md",
       "model_id": "gpt-4o",
+      "show_thinking": false,
       "client_args": {
         "api_key_env": "OPENAI_API_KEY",
         "organization": null,
@@ -45,6 +47,7 @@
       "system_prompt": "system_prompts/local.md",
       "host": "http://localhost:11434",
       "model_id": "llama3.1",
+      "show_thinking": false,
       "params": {
         "temperature": 0.6,
         "keep_alive": "10m",

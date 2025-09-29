@@ -63,6 +63,7 @@ class AgentFactory:
             trace_attributes=dict(self._config.options.trace_attributes),
             load_tools_from_directory=self._config.tools.load_directory,
         )
+        agent.show_thinking = getattr(provider_cfg, "show_thinking", False)  # type: ignore[attr-defined]
         return AgentBuildResult(agent=agent, mcp_config=self._config.mcp)
 
     # ------------------------------------------------------------------

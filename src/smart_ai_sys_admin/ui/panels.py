@@ -42,6 +42,10 @@ class ConversationPanel(Static):
             self._log.styles.background = self._ui.output_panel.background
         self._register_panel(self._build_agent_panel(self._ui.output_panel.initial_markdown))
 
+    def on_resize(self, event: events.Resize) -> None:  # type: ignore[override]
+        if self._log is not None:
+            self._refresh_log()
+
     def add_user_message(self, content: str) -> None:
         panel = self._build_panel(
             label_config=self._ui.user_panel,

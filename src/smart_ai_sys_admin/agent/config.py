@@ -23,6 +23,7 @@ class AgentConfigError(RuntimeError):
 class ProviderBaseConfig:
     system_prompt_path: Path
     system_prompt: str
+    show_thinking: bool
 
 
 @dataclass(frozen=True)
@@ -132,16 +133,36 @@ def _resolve_config_path(explicit_path: str | None = None) -> Path:
 
 
 def _load_system_prompt(base_dir: Path, relative_path: str) -> tuple[str, Path]:
-    prompt_path = (base_dir / relative_path).resolve()
-    if not prompt_path.is_file():
-        raise AgentConfigError(f"No se encontró el system prompt en '{prompt_path}'.")
-    try:
-        content = prompt_path.read_text(encoding="utf-8")
-    except OSError as exc:  # pragma: no cover - depende del sistema
-        raise AgentConfigError(
-            f"No se pudo leer el system prompt en '{prompt_path}': {exc}"
-        ) from exc
-    return content, prompt_path
+    raw_path = Path(relative_path).expanduser()
+    candidates: list[Path] = []
+
+    if raw_path.is_absolute():
+        candidates.append(raw_path.resolve())
+    else:
+        candidates.append((base_dir / raw_path).resolve())
+        project_root = Path(__file__).resolve().parents[3]
+        candidates.append((project_root / raw_path).resolve())
+
+    checked: list[Path] = []
+    for candidate in candidates:
+        if candidate in checked:
+            continue
+        checked.append(candidate)
+        if not candidate.is_file():
+            continue
+        try:
+            content = candidate.read_text(encoding="utf-8")
+        except OSError as exc:  # pragma: no cover - depende del sistema
+            raise AgentConfigError(
+                f"No se pudo leer el system prompt en '{candidate}': {exc}"
+            ) from exc
+        return content, candidate
+
+    searched = ", ".join(str(path) for path in checked) or relative_path
+    raise AgentConfigError(
+        "No se encontró el system prompt en las rutas candidatas: "
+        f"{searched}."
+    )
 
 
 def _mapping_proxy(payload: Mapping[str, Any] | None) -> Mapping[str, Any]:
@@ -163,6 +184,7 @@ def _build_provider_configs(
         providers["bedrock"] = BedrockProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
             model_id=data["model_id"],
             region_name=data.get("region_name"),
             params=_mapping_proxy(data.get("params")),
@@ -175,6 +197,7 @@ def _build_provider_configs(
         providers["openai"] = OpenAIProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
             model_id=data["model_id"],
             client_args=_mapping_proxy(data.get("client_args")),
             params=_mapping_proxy(data.get("params")),
@@ -186,6 +209,7 @@ def _build_provider_configs(
         providers["local"] = LocalProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
             host=data["host"],
             model_id=data["model_id"],
             params=_mapping_proxy(data.get("params")),

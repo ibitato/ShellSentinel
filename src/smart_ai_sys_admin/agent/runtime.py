@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from contextlib import ExitStack
 from typing import Any
 
@@ -109,6 +110,7 @@ class AgentRuntime:
         self._status_message: str | None = None
         self._error_message: str | None = None
         self._ready = False
+        self._hide_thinking = False
 
     @property
     def ready(self) -> bool:
@@ -135,10 +137,27 @@ class AgentRuntime:
 
         self._config = config
         self._factory = AgentFactory(config)
+        provider_cfg = config.provider_config()
+        self._hide_thinking = not provider_cfg.show_thinking
 
         tool_name = self._factory.remote_command.name
-        if tool_name and tool_name != remote_ssh_command.tool.spec.get("name"):
-            remote_ssh_command.tool.spec["name"] = tool_name
+        if tool_name:
+            current_name: str | None = None
+            if hasattr(remote_ssh_command, "tool_name"):
+                try:
+                    current_name = remote_ssh_command.tool_name  # type: ignore[attr-defined]
+                except Exception:  # pragma: no cover - defensivo
+                    current_name = None
+            if current_name != tool_name:
+                if hasattr(remote_ssh_command, "tool_spec"):
+                    try:
+                        spec = remote_ssh_command.tool_spec  # type: ignore[attr-defined]
+                    except Exception:  # pragma: no cover - defensivo
+                        spec = None
+                    if isinstance(spec, dict):
+                        spec["name"] = tool_name
+                if hasattr(remote_ssh_command, "_tool_name"):
+                    remote_ssh_command._tool_name = tool_name  # type: ignore[attr-defined]
 
         base_tools = list(resolve_tools())
         self._mcp_manager = MCPManager(config.mcp, self._logger)
@@ -181,9 +200,15 @@ class AgentRuntime:
             self._logger.exception("Error ejecutando el agente")
             return f"❌ El agente falló al procesar la instrucción: {exc}"
         if isinstance(result, AgentResult):
-            text = str(result).strip()
+            text = self._render_agent_result(result)
             return text or "(sin respuesta)"
         return str(result)
+
+    def _render_agent_result(self, result: AgentResult) -> str:
+        text = str(result)
+        if self._hide_thinking:
+            text = re.sub(r"<think>.*?</think>\s*", "", text, flags=re.DOTALL | re.IGNORECASE)
+        return text.strip()
 
     def shutdown(self) -> None:
         if self._mcp_manager:
