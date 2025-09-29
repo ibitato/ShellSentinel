@@ -46,9 +46,7 @@ class SSHConnectionManager:
         key_path: str | None = None,
     ) -> ConnectionDetails:
         if self.is_connected:
-            raise ConnectionAlreadyOpen(
-                "Ya existe una conexión activa. Usa /desconectar primero."
-            )
+            raise ConnectionAlreadyOpen("Ya existe una conexión activa. Usa /desconectar primero.")
         if not password and not key_path:
             raise ConnectionError("Debes proporcionar contraseña o ruta a la clave privada.")
 
@@ -136,3 +134,29 @@ class SSHConnectionManager:
             f"Conectado a {self._details.username}@{self._details.host}"
             f" ({self._details.auth_method})"
         )
+
+    def run_command(
+        self,
+        command: str,
+        *,
+        timeout: int | None = None,
+    ) -> tuple[int, str, str]:
+        """Ejecuta un comando remoto y devuelve código de salida, stdout y stderr."""
+
+        if not self.is_connected or not self._ssh_client:
+            raise NoActiveConnection("No hay una conexión SSH activa.")
+        self._logger.debug("Ejecutando comando remoto: %s", command)
+        try:
+            stdin, stdout, stderr = self._ssh_client.exec_command(command, timeout=timeout)
+        except Exception as exc:  # pragma: no cover - depende del host remoto
+            raise ConnectionError(f"Fallo ejecutando '{command}': {exc}") from exc
+        try:
+            out_text = stdout.read().decode("utf-8", errors="replace")
+            err_text = stderr.read().decode("utf-8", errors="replace")
+            exit_status = stdout.channel.recv_exit_status()
+        finally:
+            stdin.close()
+            stdout.close()
+            stderr.close()
+        self._logger.debug("Comando '%s' finalizado con código %s", command, exit_status)
+        return exit_status, out_text, err_text

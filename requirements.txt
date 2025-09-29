@@ -1,2 +1,4 @@
 textual==0.67.1
 paramiko==3.4.0
+strands-agents[openai,bedrock,ollama]>=0.4.0
+strands-agents-tools>=0.4.0

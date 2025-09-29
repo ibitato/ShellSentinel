@@ -8,6 +8,7 @@ import os
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Vertical
 
+from ..agent import AgentRuntime
 from ..config import CONFIG, AppConfig
 from ..connection import (
     ConnectionError,
@@ -41,6 +42,10 @@ class SmartAISysAdminApp(App[None]):
             self._connection_manager,
             self._config.ui.output_panel,
             logging.getLogger("smart_ai_sys_admin.ui.commands"),
+        )
+        self._agent_runtime = AgentRuntime(
+            self._connection_manager,
+            logging.getLogger("smart_ai_sys_admin.agent.runtime"),
         )
 
     def compose(self) -> ComposeResult:
@@ -78,6 +83,7 @@ class SmartAISysAdminApp(App[None]):
         self.bind(exit_shortcut.binding, "quit", description=exit_shortcut.description)
         self._warn_if_term_incompatible()
         self._update_connection_info()
+        self._initialize_agent_runtime()
 
     def on_command_input_submitted(self, message: CommandInput.Submitted) -> None:
         message.stop()
@@ -85,6 +91,10 @@ class SmartAISysAdminApp(App[None]):
         assert self._input is not None
         self._conversation.add_user_message(message.content)
         trimmed = message.content.strip()
+        if not trimmed:
+            self._conversation.add_agent_markdown("⚠️ Debes introducir una instrucción o comando.")
+            self._input.focus_editor()
+            return
         tokens = trimmed.split()
         if tokens and tokens[0].lower() == "/salir":
             if len(tokens) > 1:
@@ -100,11 +110,18 @@ class SmartAISysAdminApp(App[None]):
         except Exception as exc:  # pragma: no cover - protección ante errores inesperados.
             self._app_logger.exception("Error procesando la entrada del usuario")
             response = f"❌ Se produjo un error inesperado: {exc}"
-        if not response:
-            response = self._config.ui.output_panel.placeholder_response_markdown
-        if message.content.strip().startswith("/"):
+        if response is not None:
+            if response:
+                self._conversation.add_agent_markdown(response)
             self._update_connection_info()
-        self._conversation.add_agent_markdown(response)
+            self._input.focus_editor()
+            return
+
+        agent_output = self._invoke_agent(trimmed)
+        if not agent_output:
+            agent_output = self._config.ui.output_panel.placeholder_response_markdown
+        self._conversation.add_agent_markdown(agent_output)
+        self._update_connection_info()
         self._input.focus_editor()
 
     def _handle_exit_request(self) -> None:
@@ -135,6 +152,7 @@ class SmartAISysAdminApp(App[None]):
     def _on_exit_confirmed(self, confirmed: bool | None) -> None:
         if confirmed:
             self._close_connection_safely()
+            self._shutdown_agent()
             self.exit()
         elif self._input:
             self._input.focus_editor()
@@ -142,6 +160,7 @@ class SmartAISysAdminApp(App[None]):
     def action_quit(self) -> None:
         """Intercepta la acción estándar de salida para cerrar la conexión activa."""
         self._close_connection_safely()
+        self._shutdown_agent()
         super().action_quit()
 
     def _close_connection_safely(self) -> None:
@@ -157,6 +176,25 @@ class SmartAISysAdminApp(App[None]):
             )
         finally:
             self._update_connection_info()
+
+    def _initialize_agent_runtime(self) -> None:
+        assert self._conversation is not None
+        self._agent_runtime.initialize()
+        if self._agent_runtime.status_message:
+            self._conversation.add_agent_markdown(self._agent_runtime.status_message)
+        if self._agent_runtime.error_message:
+            self._conversation.add_agent_markdown(self._agent_runtime.error_message)
+
+    def _invoke_agent(self, prompt: str) -> str:
+        if not self._agent_runtime.ready:
+            return (
+                self._agent_runtime.error_message
+                or "⚠️ El agente IA no está disponible. Revisa la configuración."
+            )
+        return self._agent_runtime.invoke(prompt)
+
+    def _shutdown_agent(self) -> None:
+        self._agent_runtime.shutdown()
 
 
 def run_app(config: AppConfig = CONFIG) -> None:

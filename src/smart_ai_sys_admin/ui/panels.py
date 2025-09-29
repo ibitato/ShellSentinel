@@ -210,10 +210,7 @@ class CommandInput(Static):
                 return "/conectar <host> <usuario> <password|ruta_clave>"
             if len(tokens) == 2:
                 host = tokens[1]
-                return (
-                    "Completa el usuario: `"
-                    f"/conectar {host} <usuario> <password|ruta_clave>`"
-                )
+                return f"Completa el usuario: `/conectar {host} <usuario> <password|ruta_clave>`"
             if len(tokens) == 3:
                 host, usuario = tokens[1], tokens[2]
                 return (

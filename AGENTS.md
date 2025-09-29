@@ -7,6 +7,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - **Lenguaje:** Python 3.10+
 - **Tipo de aplicación:** CLI interactiva
 - **Framework TUI:** [Textual 0.67.1](https://textual.textualize.io)
+- **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
 - **Ejecución local:** `python -m smart_ai_sys_admin` o `make run`
 - **Gestión de dependencias:** entorno virtual local `.venv`, listado en `requirements*.txt`
 - **Estructura de código:** distribución basada en `src/`
@@ -22,6 +23,9 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Toda variable o valor ajustable debe residir en el directorio `conf/` (por defecto `conf/app_config.json`). Está prohibido hardcodear parámetros en el código cuando puedan residir en la configuración.
 - Los atajos de teclado, estilos de color, mensajes, tamaños y límites del historial se leen exclusivamente desde los ficheros de `conf/`. Si se añaden nuevos parámetros, documentarlos en el README.
 - Es posible sobreescribir la ubicación del fichero principal mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` o `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
+- La configuración del agente Strands vive en `conf/agent.conf`. Parte de `conf/agent.conf.example` y respeta `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` (o `SMART_AI_SYS_ADMIN_CONFIG_DIR`).
+- Los *system prompts* de cada proveedor residen en `system_prompts/`. Mantenerlos en español y actualizar referencias si se renombran.
+- El bloque `mcp` del agente solo debe habilitarse cuando los servidores declarados estén disponibles; la inicialización fallará en caso contrario.
 - Dependencias nuevas deben agregarse al `requirements.txt` (ejecución) y, si aplica, cascada en `requirements-dev.txt`.
 
 ## Flujo de trabajo recomendado
@@ -40,3 +44,5 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Preferir componentes de Textual para la TUI; si se incorporan nuevos widgets, documentar su uso en la configuración.
 - Evitar dependencias globales; todo deberá instalarse en el entorno virtual.
 - Mantener unidades de código pequeñas y cohesivas: separar responsabilidades en módulos/subpaquetes lógicos (por ejemplo `ui/`, `commands/`, `connection/`) y evitar archivos monolíticos.
+- El paquete `smart_ai_sys_admin/agent/` encapsula la integración con Strands (config, factoría, runtime y herramientas). Extiende ahí cualquier lógica relacionada con LLMs o MCP.
+- La tool personalizada `remote_ssh_command` reutiliza `SSHConnectionManager`. No crear accesos SSH paralelos.

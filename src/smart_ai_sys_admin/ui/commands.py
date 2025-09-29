@@ -60,12 +60,12 @@ class SlashCommandProcessor:
         self._output_config = output_config
         self._logger = logger or logging.getLogger("smart_ai_sys_admin.ui.commands")
 
-    def process(self, content: str) -> str:
+    def process(self, content: str) -> str | None:
         content = content.strip()
         if not content:
             return ""
         if not content.startswith("/"):
-            return self._output_config.placeholder_response_markdown
+            return None
         return self._execute_command(content)
 
     def _execute_command(self, raw_command: str) -> str:

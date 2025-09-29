@@ -40,7 +40,7 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
 - Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.
 
 ## Configuración
-- Todos los parámetros personalizables (colores, atajos, mensajes, límites de historial) se gestionan desde `conf/app_config.json`.
+- Todos los parámetros visuales y de interacción (colores, atajos, mensajes, límites de historial) se gestionan desde `conf/app_config.json`.
 - Puedes sobreescribir la ruta mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` (ruta directa al fichero) o `SMART_AI_SYS_ADMIN_CONFIG_DIR` (directorio que contiene `app_config.json`).
 - Evita modificar valores en código fuente; ajusta el fichero de configuración y reinicia la app para aplicar los cambios.
 - Nuevos parámetros destacados en `conf/app_config.json`:
@@ -48,8 +48,15 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
   - `logging`: nivel, directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
     - `log_to_console`: cuando es `true`, duplica los registros en stdout (por defecto `false` para no interferir con la TUI).
 
+### Configuración del agente IA (Strands Agents)
+- Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI u Ollama/local.
+- Cada proveedor cuenta con su propio `system_prompt`, ubicado en `system_prompts/`. Puedes personalizar esos ficheros o apuntar a otros paths.
+- Las credenciales se obtienen de tu entorno (`AWS_*`, `OPENAI_API_KEY`, etc.). También puedes redefinir la ubicación del fichero con `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` o reutilizar `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
+- La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional).
+- Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
+
 ## Estructura del proyecto
-- `requirements.txt`: dependencias de ejecución (Textual y Rich).
+- `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).
 - `requirements-dev.txt`: dependencias de desarrollo (`-r requirements.txt`, linting y tests).
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
 - `tests/`: espacio reservado para pruebas automatizadas.
