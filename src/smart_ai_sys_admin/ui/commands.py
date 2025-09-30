@@ -30,6 +30,7 @@ class SlashCommandProcessor:
         - Ejemplo con contraseña: `/conectar server.local admin s3cr3t`
         - Ejemplo con clave: `/conectar server.local admin ~/.ssh/id_ed25519`
         - Abre una sesión SSH y SFTP persistente hasta ejecutar `/desconectar`.
+        - Compatible con destinos GNU/Linux y Windows que expongan SSH/SFTP.
         """
     ).strip()
 

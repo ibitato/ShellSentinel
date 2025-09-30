@@ -33,6 +33,8 @@ async def remote_ssh_command(
         timeout_seconds: opcional, límite en segundos para la ejecución. Si no se
             indica, se utiliza el valor por defecto configurado (15 minutos salvo
             que `conf/agent.conf` especifique otro).
+        Nota: ajusta la sintaxis del comando a la plataforma remota (GNU/Linux,
+        Unix o Windows con PowerShell/cmd).
     """
 
     manager = getattr(agent, "ssh_manager", None)
@@ -109,7 +111,8 @@ async def remote_sftp_transfer(
     Args:
         action: `"upload"`/`"put"` para subir o `"download"`/`"get"` para bajar archivos.
         local_path: ruta local de origen/destino según la acción.
-        remote_path: ruta remota de destino/origen según la acción.
+        remote_path: ruta remota de destino/origen según la acción (formato POSIX,
+            incluso en servidores Windows con SFTP).
         agent: referencia interna del agente Strands (inyectada automáticamente).
         overwrite: permite sobrescribir archivos existentes cuando es `True`.
     """
