@@ -39,7 +39,7 @@
         "base_url": "https://api.openai.com/v1"
       },
       "params": {
-        "temperature": 0.7,
+        "temperature": 1,
         "max_completion_tokens": 2048
       }
     },
