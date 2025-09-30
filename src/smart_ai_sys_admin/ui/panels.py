@@ -363,12 +363,8 @@ class ConnectionInfo(Static):
             (f"{self._panel_config.title}: ", self._panel_config.border_style),
             (self._message, self._panel_config.text_style),
         )
-        self._status_node.update(status_text)
         if self._thinking:
-            thinker = Text(
-                "⏳ pensando…",
-                style=f"{self._panel_config.text_style} italic",
-            )
-        else:
-            thinker = Text("", style=self._panel_config.text_style)
-        self._indicator_node.update(thinker)
+            status_text.append("  ⏳ pensando…", style=f"{self._panel_config.text_style} italic")
+        self._status_node.update(status_text)
+        # Mantenemos el nodo indicador para futuras extensiones, pero lo dejamos vacío.
+        self._indicator_node.update(Text("", style=self._panel_config.text_style))

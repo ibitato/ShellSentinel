@@ -120,11 +120,13 @@ class SmartAISysAdminApp(App[None]):
 
         if self._connection_info:
             self._connection_info.set_thinking(True)
+        self._app_logger.info("Invocando agente")
         try:
             agent_output = await asyncio.to_thread(self._invoke_agent, trimmed)
         finally:
             if self._connection_info:
                 self._connection_info.set_thinking(False)
+            self._app_logger.info("Agente finalizó la invocación")
         if not agent_output:
             agent_output = self._config.ui.output_panel.placeholder_response_markdown
         self._conversation.add_agent_markdown(agent_output)
@@ -198,7 +200,7 @@ class SmartAISysAdminApp(App[None]):
                 self._agent_runtime.error_message
                 or "⚠️ El agente IA no está disponible. Revisa la configuración."
             )
-        self._app_logger.debug("Invocando agente con prompt: %.80s", prompt)
+        self._app_logger.debug("Prompt enviado al agente: %.120s", prompt)
         return self._agent_runtime.invoke(prompt)
 
     def _shutdown_agent(self) -> None:
