@@ -1,7 +1,5 @@
 # Almost Human Sys Admin
 
-Disponible en: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
-
 Administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
 
 Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
@@ -62,9 +60,6 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
   make run
   ```
 - El fichero `conf/app_config.json` contiene referencias `{{clave.de.traduccion}}` que se resuelven en tiempo de carga usando el locale activo; no elimines las llaves dobles al personalizar valores.
-
-### Manuales de usuario
-- Documentación práctica paso a paso disponible en `docs/user_guide_es.md`, `docs/user_guide_en.md` y `docs/user_guide_de.md`. Mantén las tres versiones sincronizadas al introducir nuevas funcionalidades.
 
 ### Configuración del agente IA (Strands Agents)
 - Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI u Ollama/local.
