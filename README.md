@@ -47,7 +47,8 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - Evita modificar valores en código fuente; ajusta el fichero de configuración y reinicia la app para aplicar los cambios.
 - Nuevos parámetros destacados en `conf/app_config.json`:
   - `ui.connection_panel`: estilos del panel inferior que muestra el estado de la conexión.
-  - `logging`: nivel (por defecto `DEBUG`), directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
+- `logging`: nivel (por defecto `DEBUG`), directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
+  - Los loggers de dependencias verbosas (`markdown_it`, `botocore.parsers`, `paramiko.transport`, etc.) se reducen automáticamente a `INFO` cuando se usa `DEBUG` para evitar ruido excesivo.
     - `log_to_console`: cuando es `true`, duplica los registros en stdout (por defecto `false` para no interferir con la TUI).
 
 ### Configuración del agente IA (Strands Agents)
