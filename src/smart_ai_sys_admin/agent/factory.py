@@ -186,6 +186,10 @@ class AgentFactory:
         return self._config.tools.remote_command
 
     @property
+    def sftp_transfer_name(self) -> str:
+        return self._config.tools.sftp_transfer_name
+
+    @property
     def mcp_config(self) -> MCPConfig:
         return self._config.mcp
 

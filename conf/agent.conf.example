@@ -66,6 +66,9 @@
       "name": "remote_ssh_command",
       "timeout_seconds": 900
     },
+    "sftp_transfer": {
+      "name": "remote_sftp_transfer"
+    },
     "load_directory": false,
     "consent": {
       "bypass": true

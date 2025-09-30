@@ -71,6 +71,7 @@ class RemoteCommandConfig:
 class ToolsConfig:
     default_tools: tuple[str, ...]
     remote_command: RemoteCommandConfig
+    sftp_transfer_name: str
     load_directory: bool
     consent_bypass: bool
 
@@ -246,11 +247,13 @@ def _build_tools_config(payload: Mapping[str, Any]) -> ToolsConfig:
         name=remote_cfg.get("name", "remote_ssh_command"),
         timeout_seconds=remote_cfg.get("timeout_seconds"),
     )
+    sftp_name = payload.get("sftp_transfer", {}).get("name", "remote_sftp_transfer")
     load_directory = bool(payload.get("load_directory", False))
     consent = bool(payload.get("consent", {}).get("bypass", False))
     return ToolsConfig(
         default_tools=default_tools,
         remote_command=remote,
+        sftp_transfer_name=sftp_name,
         load_directory=load_directory,
         consent_bypass=consent,
     )

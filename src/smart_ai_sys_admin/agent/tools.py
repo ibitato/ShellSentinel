@@ -96,12 +96,83 @@ async def remote_ssh_command(
     return "\n\n".join(summary)
 
 
+@tool
+async def remote_sftp_transfer(
+    action: str,
+    local_path: str,
+    remote_path: str,
+    agent: Any,
+    overwrite: bool | str | None = False,
+) -> str:
+    """Transfiere archivos entre la máquina local y el servidor remoto vía SFTP.
+
+    Args:
+        action: `"upload"`/`"put"` para subir o `"download"`/`"get"` para bajar archivos.
+        local_path: ruta local de origen/destino según la acción.
+        remote_path: ruta remota de destino/origen según la acción.
+        agent: referencia interna del agente Strands (inyectada automáticamente).
+        overwrite: permite sobrescribir archivos existentes cuando es `True`.
+    """
+
+    manager = getattr(agent, "ssh_manager", None)
+    if not isinstance(manager, SSHConnectionManager):
+        return "❌ No hay una conexión SSH disponible. Usa `/conectar`."
+    if not manager.is_connected:
+        return "❌ No existe una sesión SSH activa. Usa `/conectar`."
+
+    normalized_action = action.strip().lower()
+    if normalized_action in {"upload", "put"}:
+        direction = "upload"
+    elif normalized_action in {"download", "get"}:
+        direction = "download"
+    else:
+        return (
+            "❌ Acción inválida. Usa `upload`/`put` para subir archivos o"
+            " `download`/`get` para descargarlos."
+        )
+
+    overwrite_flag = bool(overwrite) if isinstance(overwrite, (int, bool)) else str(overwrite).lower() in {"true", "1", "yes", "si", "sí"}
+
+    loop = asyncio.get_running_loop()
+
+    logger.debug(
+        "remote_sftp_transfer ejecutando acción=%s local='%s' remote='%s' overwrite=%s",
+        direction,
+        local_path,
+        remote_path,
+        overwrite_flag,
+    )
+
+    def _run() -> str:
+        if direction == "upload":
+            manager.upload_file(local_path, remote_path, overwrite=overwrite_flag)
+            return (
+                "✅ Archivo subido con éxito. "
+                f"Local: `{local_path}` → Remoto: `{remote_path}`"
+            )
+        local_result = manager.download_file(remote_path, local_path, overwrite=overwrite_flag)
+        return (
+            "✅ Archivo descargado con éxito. "
+            f"Remoto: `{remote_path}` → Local: `{local_result}`"
+        )
+
+    try:
+        return await loop.run_in_executor(None, _run)
+    except NoActiveConnection as exc:
+        logger.warning("remote_sftp_transfer sin conexión activa: %s", exc)
+        return f"❌ {exc}"
+    except ConnectionError as exc:
+        logger.error("remote_sftp_transfer falló: %s", exc)
+        return f"❌ {exc}"
+
+
 DEFAULT_STRANDS_TOOLS: tuple[ToolCallable, ...] = (
     shell_tool,
     file_read,
     file_write,
     sleep,
     remote_ssh_command,
+    remote_sftp_transfer,
 )
 
 
@@ -116,6 +187,7 @@ __all__ = [
     "DEFAULT_STRANDS_TOOLS",
     "DEFAULT_REMOTE_TIMEOUT",
     "remote_ssh_command",
+    "remote_sftp_transfer",
     "resolve_tools",
 ]
 logger = logging.getLogger("smart_ai_sys_admin.agent.tools")

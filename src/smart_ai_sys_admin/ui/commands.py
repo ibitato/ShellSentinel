@@ -29,6 +29,7 @@ class SlashCommandProcessor:
         - Argumentos: `<host> <usuario> <password|ruta_clave>`
         - Ejemplo con contraseña: `/conectar server.local admin s3cr3t`
         - Ejemplo con clave: `/conectar server.local admin ~/.ssh/id_ed25519`
+        - Abre una sesión SSH y SFTP persistente hasta ejecutar `/desconectar`.
         """
     ).strip()
 
@@ -43,8 +44,8 @@ class SlashCommandProcessor:
     COMMAND_OVERVIEW = textwrap.dedent(
         """
         **Comandos disponibles**
-        - `/conectar <host> <usuario> <password|ruta_clave>` abre la sesión remota.
-        - `/desconectar` cierra la sesión activa.
+        - `/conectar <host> <usuario> <password|ruta_clave>` abre la sesión SSH y SFTP remota.
+        - `/desconectar` cierra las sesiones activas.
         - `/ayuda` resume todos los comandos disponibles.
         - `/salir` solicita confirmación para cerrar la aplicación.
         """

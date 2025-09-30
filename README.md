@@ -62,6 +62,7 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
   - Ejemplo: el transporte `firecrawl-stdio` lanza `npx -y firecrawl-mcp`. Configura `env_passthrough` para que el agente herede `FIRECRAWL_API_KEY` (u otras variables sensibles) y, antes de iniciar la TUI, expórtalas en tu entorno (`export FIRECRAWL_API_KEY="..."`).
 - Al iniciar la aplicación verás una pantalla de bienvenida retro en tonos naranja; se cierra sola tras 5 s o cuando presionas cualquier tecla.
+- Las sesiones `/conectar` mantienen vivo el canal SSH y SFTP en paralelo. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
 
 ## Estructura del proyecto
 - `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).

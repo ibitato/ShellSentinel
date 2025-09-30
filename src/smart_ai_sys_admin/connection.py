@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import paramiko
 
@@ -79,6 +79,14 @@ class SSHConnectionManager:
             )
             ssh_client.connect(**connect_kwargs)
             sftp_client = ssh_client.open_sftp()
+            transport = ssh_client.get_transport()
+            if transport:
+                transport.set_keepalive(30)
+            try:
+                channel = sftp_client.get_channel()
+                channel.settimeout(30)
+            except Exception:  # pragma: no cover - depende del backend
+                pass
         except Exception as exc:  # pragma: no cover - depende del entorno remoto.
             ssh_client.close()
             self._logger.exception("Fallo estableciendo conexión con %s@%s", username, host)
@@ -160,3 +168,103 @@ class SSHConnectionManager:
             stderr.close()
         self._logger.debug("Comando '%s' finalizado con código %s", command, exit_status)
         return exit_status, out_text, err_text
+
+    def upload_file(
+        self,
+        local_path: str,
+        remote_path: str,
+        *,
+        overwrite: bool = False,
+    ) -> str:
+        if not self.is_connected:
+            raise NoActiveConnection("No hay una conexión SSH activa.")
+        if not self._sftp_client:
+            raise NoActiveConnection("La sesión SFTP no está disponible.")
+
+        local = Path(local_path).expanduser()
+        if not local.exists():
+            raise ConnectionError(f"El archivo local '{local}' no existe.")
+        if not local.is_file():
+            raise ConnectionError(f"La ruta local '{local}' no es un archivo regular.")
+
+        remote = PurePosixPath(remote_path)
+        sftp = self._sftp_client
+
+        if not overwrite:
+            try:
+                sftp.stat(str(remote))
+            except FileNotFoundError:
+                pass
+            else:
+                raise ConnectionError(
+                    f"El archivo remoto '{remote}' ya existe. Usa `overwrite` para reemplazarlo."
+                )
+
+        self._ensure_remote_directory(remote.parent)
+
+        try:
+            sftp.put(str(local), str(remote))
+        except FileNotFoundError as exc:
+            raise ConnectionError(
+                f"No se pudo subir '{local}' a '{remote}': {exc}"
+            ) from exc
+        except Exception as exc:  # pragma: no cover - errores específicos de SFTP
+            raise ConnectionError(f"Error subiendo archivo a '{remote}': {exc}") from exc
+
+        self._logger.info("Archivo '%s' transferido a '%s'", local, remote)
+        return str(remote)
+
+    def download_file(
+        self,
+        remote_path: str,
+        local_path: str,
+        *,
+        overwrite: bool = False,
+    ) -> Path:
+        if not self.is_connected:
+            raise NoActiveConnection("No hay una conexión SSH activa.")
+        if not self._sftp_client:
+            raise NoActiveConnection("La sesión SFTP no está disponible.")
+
+        remote = PurePosixPath(remote_path)
+        local = Path(local_path).expanduser()
+        if local.exists() and not overwrite:
+            raise ConnectionError(
+                f"El archivo local '{local}' ya existe. Usa `overwrite` para reemplazarlo."
+            )
+        local.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            self._sftp_client.get(str(remote), str(local))
+        except FileNotFoundError as exc:
+            raise ConnectionError(
+                f"No se encontró el archivo remoto '{remote}': {exc}"
+            ) from exc
+        except Exception as exc:  # pragma: no cover - errores específicos de SFTP
+            raise ConnectionError(f"Error descargando '{remote}': {exc}") from exc
+
+        self._logger.info("Archivo '%s' descargado desde '%s'", local, remote)
+        return local
+
+    def _ensure_remote_directory(self, directory: PurePosixPath) -> None:
+        if not directory or str(directory) in {"", ".", "/"}:
+            return
+        if not self._sftp_client:
+            raise NoActiveConnection("La sesión SFTP no está disponible.")
+
+        current = PurePosixPath("/")
+        for part in directory.parts:
+            if part == "/":
+                current = PurePosixPath("/")
+                continue
+            current = current / part
+            try:
+                self._sftp_client.stat(str(current))
+            except FileNotFoundError:
+                try:
+                    self._sftp_client.mkdir(str(current))
+                    self._logger.debug("Directorio remoto creado: %s", current)
+                except Exception as exc:  # pragma: no cover - depende del host remoto
+                    raise ConnectionError(
+                        f"No se pudo crear el directorio remoto '{current}': {exc}"
+                    ) from exc

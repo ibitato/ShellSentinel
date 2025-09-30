@@ -25,6 +25,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Es posible sobreescribir la ubicación del fichero principal mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` o `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - La configuración del agente Strands vive en `conf/agent.conf`. Parte de `conf/agent.conf.example` y respeta `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` (o `SMART_AI_SYS_ADMIN_CONFIG_DIR`). El fichero de ejemplo fija `max_completion_tokens` (OpenAI) en 32 768, `max_tokens` (Bedrock) en 8 192 y `remote_command.timeout_seconds` en 900; ajusta esos límites si tu proveedor aplica topes distintos.
 - El agente debe considerar el tiempo de ejecución esperado: si el operario anticipa que un comando superará los 15 minutos por defecto, instruye al modelo para que incluya `timeout_seconds` en la tool `remote_ssh_command`.
+- La transferencia de archivos usa la tool `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)`. Empléala para subir (`upload`/`put`) o bajar (`download`/`get`) archivos reutilizando la sesión SFTP vigente.
 - El sistema de logging se inicializa desde `conf/app_config.json` con nivel por defecto `DEBUG`. Respeta este canal y usa los loggers `smart_ai_sys_admin.*` para observabilidad consistente.
 - Nunca persistas claves API en el JSON. Usa las variables `OPENAI_API_KEY`, `AWS_*`, etc. y añade instrucciones de export en la documentación cuando se introduzca un nuevo proveedor.
 - Los *system prompts* de cada proveedor residen en `system_prompts/`. Mantenerlos en español y actualizar referencias si se renombran.
@@ -48,4 +49,4 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Evitar dependencias globales; todo deberá instalarse en el entorno virtual.
 - Mantener unidades de código pequeñas y cohesivas: separar responsabilidades en módulos/subpaquetes lógicos (por ejemplo `ui/`, `commands/`, `connection/`) y evitar archivos monolíticos.
 - El paquete `smart_ai_sys_admin/agent/` encapsula la integración con Strands (config, factoría, runtime y herramientas). Extiende ahí cualquier lógica relacionada con LLMs o MCP.
-- La tool personalizada `remote_ssh_command` reutiliza `SSHConnectionManager`. No crear accesos SSH paralelos.
+- Las tools personalizadas `remote_ssh_command` y `remote_sftp_transfer` reutilizan `SSHConnectionManager`. No crear accesos SSH o SFTP paralelos.

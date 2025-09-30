@@ -18,7 +18,7 @@ from ..connection import SSHConnectionManager
 from .config import AgentConfig, AgentConfigError, MCPConfig, MCPTransportConfig, load_agent_config
 from .factory import AgentFactory
 from .permissions import ToolPermissionManager
-from .tools import remote_ssh_command, resolve_tools
+from .tools import remote_sftp_transfer, remote_ssh_command, resolve_tools
 
 
 class MCPManager:
@@ -176,6 +176,25 @@ class AgentRuntime:
                         spec["name"] = tool_name
                 if hasattr(remote_ssh_command, "_tool_name"):
                     remote_ssh_command._tool_name = tool_name  # type: ignore[attr-defined]
+
+        transfer_name = self._factory.sftp_transfer_name
+        if transfer_name:
+            current_transfer: str | None = None
+            if hasattr(remote_sftp_transfer, "tool_name"):
+                try:
+                    current_transfer = remote_sftp_transfer.tool_name  # type: ignore[attr-defined]
+                except Exception:  # pragma: no cover - defensivo
+                    current_transfer = None
+            if current_transfer != transfer_name:
+                if hasattr(remote_sftp_transfer, "tool_spec"):
+                    try:
+                        spec = remote_sftp_transfer.tool_spec  # type: ignore[attr-defined]
+                    except Exception:  # pragma: no cover - defensivo
+                        spec = None
+                    if isinstance(spec, dict):
+                        spec["name"] = transfer_name
+                if hasattr(remote_sftp_transfer, "_tool_name"):
+                    remote_sftp_transfer._tool_name = transfer_name  # type: ignore[attr-defined]
 
         base_tools = list(resolve_tools())
         self._mcp_manager = MCPManager(config.mcp, self._logger)
