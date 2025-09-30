@@ -64,7 +64,7 @@
     ],
     "remote_command": {
       "name": "remote_ssh_command",
-      "timeout_seconds": 120
+      "timeout_seconds": 900
     },
     "load_directory": false,
     "consent": {

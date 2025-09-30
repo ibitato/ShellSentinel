@@ -15,13 +15,24 @@ from ..connection import ConnectionError, NoActiveConnection, SSHConnectionManag
 ToolCallable = Callable[..., Any]
 
 
+DEFAULT_REMOTE_TIMEOUT = 900
+
+
 @tool
 async def remote_ssh_command(
     command: str,
     agent: Any,
-    timeout_seconds: int | None = None,
+    timeout_seconds: int | float | str | None = None,
 ) -> str:
-    """Ejecuta un comando en el servidor remoto usando la sesión SSH activa."""
+    """Ejecuta un comando en el servidor remoto usando la sesión SSH activa.
+
+    Args:
+        command: instrucción a ejecutar a través de SSH.
+        agent: referencia interna del agente Strands (inyectada automáticamente).
+        timeout_seconds: opcional, límite en segundos para la ejecución. Si no se
+            indica, se utiliza el valor por defecto configurado (15 minutos salvo
+            que `conf/agent.conf` especifique otro).
+    """
 
     manager = getattr(agent, "ssh_manager", None)
     if not isinstance(manager, SSHConnectionManager):
@@ -29,8 +40,21 @@ async def remote_ssh_command(
     if not manager.is_connected:
         return "❌ No existe una sesión SSH activa. Usa `/conectar`."
 
-    if timeout_seconds is None:
+    if timeout_seconds is None or timeout_seconds == "":
         timeout_seconds = getattr(agent, "remote_command_timeout", None)
+
+    if timeout_seconds is None:
+        timeout_seconds = DEFAULT_REMOTE_TIMEOUT
+
+    try:
+        timeout_int = int(float(timeout_seconds))
+    except (TypeError, ValueError):
+        return "❌ El parámetro `timeout_seconds` debe ser un número de segundos."
+
+    if timeout_int <= 0:
+        return "❌ `timeout_seconds` debe ser mayor que cero."
+
+    timeout_seconds = timeout_int
 
     loop = asyncio.get_running_loop()
 
