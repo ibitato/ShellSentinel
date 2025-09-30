@@ -365,7 +365,10 @@ class ConnectionInfo(Static):
         )
         self._status_node.update(status_text)
         if self._thinking:
-            thinker = Text("pensando…", style=f"{self._panel_config.text_style} italic")
+            thinker = Text(
+                "⏳ pensando…",
+                style=f"{self._panel_config.text_style} italic",
+            )
         else:
             thinker = Text("", style=self._panel_config.text_style)
         self._indicator_node.update(thinker)

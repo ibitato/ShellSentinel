@@ -198,6 +198,7 @@ class SmartAISysAdminApp(App[None]):
                 self._agent_runtime.error_message
                 or "⚠️ El agente IA no está disponible. Revisa la configuración."
             )
+        self._app_logger.debug("Invocando agente con prompt: %.80s", prompt)
         return self._agent_runtime.invoke(prompt)
 
     def _shutdown_agent(self) -> None:
