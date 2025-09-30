@@ -31,7 +31,7 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
   # o
   python -m smart_ai_sys_admin
   ```
-- La consola se divide en dos zonas: historial de salida (superior) y entrada multi-línea (inferior).
+- La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles:
   - `/conectar [host] [usuario] [password|ruta_clave]` abre una sesión SSH y SFTP persistente.
@@ -53,6 +53,8 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 ### Configuración del agente IA (Strands Agents)
 - Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI u Ollama/local.
 - Cada proveedor cuenta con su propio `system_prompt`, ubicado en `system_prompts/`. Puedes personalizar esos ficheros o apuntar a otros paths.
+- Copia el fichero de ejemplo y ajusta las credenciales vía variables de entorno (por ejemplo `export OPENAI_API_KEY="..."`). El archivo no almacena claves en texto plano.
+- Los modelos OpenAI y Bedrock admiten respuestas largas; por defecto `conf/agent.conf.example` fija `max_completion_tokens` (OpenAI) o `max_tokens` (Bedrock) en **32 768** para evitar interrupciones prematuras. Ajusta estos límites según las cuotas de tu cuenta.
 - Las credenciales se obtienen de tu entorno (`AWS_*`, `OPENAI_API_KEY`, etc.). También puedes redefinir la ubicación del fichero con `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` o reutilizar `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional).
 - Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
