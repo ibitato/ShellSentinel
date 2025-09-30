@@ -46,6 +46,10 @@ def configure_logging(config: LoggingConfig) -> logging.Logger:
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
 
+    # Silenciamos ruidos excesivos de dependencias verbosas cuando estamos en DEBUG.
+    for noisy in ("markdown_it", "asyncio", "paramiko.transport"):  # noqa: WPS519
+        logging.getLogger(noisy).setLevel(max(logging.INFO, log_level))
+
     logger = logging.getLogger("smart_ai_sys_admin")
     logger.debug("Logging configurado en %s", log_path)
     return logger

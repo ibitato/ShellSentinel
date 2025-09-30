@@ -59,11 +59,7 @@ async def remote_ssh_command(
 
     loop = asyncio.get_running_loop()
 
-    logger.debug(
-        "remote_ssh_command -> ejecutando '%s' con timeout %ss",
-        command,
-        timeout_seconds,
-    )
+    logger.debug("remote_ssh_command ejecutando: '%s' (timeout=%ss)", command, timeout_seconds)
 
     def _run() -> tuple[int, str, str]:
         return manager.run_command(command, timeout=timeout_seconds)
@@ -85,12 +81,18 @@ async def remote_ssh_command(
         summary.append("Errores:\n" + error)
     if not output and not error:
         summary.append("(sin salida)")
+    stdout_preview = stdout.strip()
+    stderr_preview = stderr.strip()
     logger.debug(
         "remote_ssh_command finalizado con código %s (stdout=%d bytes, stderr=%d bytes)",
         code,
-        len(stdout),
-        len(stderr),
+        len(stdout_preview),
+        len(stderr_preview),
     )
+    if stdout_preview:
+        logger.debug("stdout: %s", stdout_preview[:400])
+    if stderr_preview:
+        logger.debug("stderr: %s", stderr_preview[:400])
     return "\n\n".join(summary)
 
 
