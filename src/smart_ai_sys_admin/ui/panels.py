@@ -340,7 +340,7 @@ class ConnectionInfo(Static):
         row.styles.width = "100%"
         row.styles.height = "100%"
         row.styles.align_vertical = "middle"
-        row.styles.align_horizontal = "space-between"
+        row.styles.justify_content = "space-between"
 
         self._status_node = self.query_one("#connection-info-status", Static)
         self._indicator_node = self.query_one("#connection-info-indicator", Static)
