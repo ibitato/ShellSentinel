@@ -194,13 +194,16 @@ def _build_provider_configs(
     if "openai" in payload:
         data = payload["openai"]
         system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
+        raw_params = dict(data.get("params", {}))
+        if "max_tokens" in raw_params and "max_completion_tokens" not in raw_params:
+            raw_params["max_completion_tokens"] = raw_params.pop("max_tokens")
         providers["openai"] = OpenAIProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
             model_id=data["model_id"],
             client_args=_mapping_proxy(data.get("client_args")),
-            params=_mapping_proxy(data.get("params")),
+            params=_mapping_proxy(raw_params),
         )
 
     if "local" in payload:

@@ -25,7 +25,7 @@
       "params": {
         "temperature": 0.3,
         "top_p": 0.8,
-        "max_tokens": 2048,
+        "max_completion_tokens": 2048,
         "streaming": true
       }
     },
@@ -40,7 +40,7 @@
       },
       "params": {
         "temperature": 0.7,
-        "max_tokens": 1500
+        "max_completion_tokens": 1500
       }
     },
     "local": {
