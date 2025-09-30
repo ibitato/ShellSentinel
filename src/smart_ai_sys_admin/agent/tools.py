@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import Callable, Sequence
 from typing import Any
 
@@ -58,14 +59,22 @@ async def remote_ssh_command(
 
     loop = asyncio.get_running_loop()
 
+    logger.debug(
+        "remote_ssh_command -> ejecutando '%s' con timeout %ss",
+        command,
+        timeout_seconds,
+    )
+
     def _run() -> tuple[int, str, str]:
         return manager.run_command(command, timeout=timeout_seconds)
 
     try:
         code, stdout, stderr = await loop.run_in_executor(None, _run)
     except NoActiveConnection as exc:
+        logger.warning("remote_ssh_command sin conexión activa: %s", exc)
         return f"❌ {exc}"
     except ConnectionError as exc:
+        logger.error("remote_ssh_command falló: %s", exc)
         return f"❌ {exc}"
     output = stdout.strip()
     error = stderr.strip()
@@ -76,6 +85,12 @@ async def remote_ssh_command(
         summary.append("Errores:\n" + error)
     if not output and not error:
         summary.append("(sin salida)")
+    logger.debug(
+        "remote_ssh_command finalizado con código %s (stdout=%d bytes, stderr=%d bytes)",
+        code,
+        len(stdout),
+        len(stderr),
+    )
     return "\n\n".join(summary)
 
 
@@ -97,6 +112,8 @@ def resolve_tools(custom_tools: Sequence[ToolCallable] | None = None) -> list[To
 
 __all__ = [
     "DEFAULT_STRANDS_TOOLS",
+    "DEFAULT_REMOTE_TIMEOUT",
     "remote_ssh_command",
     "resolve_tools",
 ]
+logger = logging.getLogger("smart_ai_sys_admin.agent.tools")

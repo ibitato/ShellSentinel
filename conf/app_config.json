@@ -53,7 +53,7 @@
     }
   },
   "logging": {
-    "level": "INFO",
+    "level": "DEBUG",
     "directory": "logs",
     "filename": "app.log",
     "format": "%(asctime)s [%(levelname)s] %(name)s - %(message)s",

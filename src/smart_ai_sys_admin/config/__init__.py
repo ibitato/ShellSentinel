@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger("smart_ai_sys_admin.config")
 
 
 @dataclass(frozen=True)
@@ -123,6 +126,7 @@ def load_config() -> AppConfig:
     config_path = _resolve_config_path()
     if not config_path.exists():
         raise FileNotFoundError(f"No se encontró el archivo de configuración en '{config_path}'.")
+    logger.debug("Cargando configuración desde %s", config_path)
     with config_path.open("r", encoding="utf-8") as config_file:
         payload: dict[str, Any] = json.load(config_file)
     terminal = TerminalConfig(
@@ -160,6 +164,12 @@ def load_config() -> AppConfig:
         interval=logging_config_data["interval"],
         backup_count=logging_config_data["backup_count"],
         log_to_console=logging_config_data.get("log_to_console", False),
+    )
+    logger.debug(
+        "Configuración cargada correctamente: terminal=%s ui.history=%s logging.level=%s",
+        terminal.allowed_terms,
+        ui.history_limit,
+        logging_config.level,
     )
     return AppConfig(terminal=terminal, ui=ui, shortcuts=shortcuts, logging=logging_config)
 

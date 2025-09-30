@@ -9,9 +9,9 @@ from rich.panel import Panel
 from rich.text import Text
 from textual import events
 from textual.app import ComposeResult
+from textual.containers import Horizontal
 from textual.message import Message
 from textual.reactive import reactive
-from textual.containers import Horizontal
 from textual.widgets import RichLog, Static, TextArea
 
 if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones estáticas.
