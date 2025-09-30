@@ -81,27 +81,53 @@ class AgentFactory:
 
     def _build_bedrock_model(self, cfg: BedrockProviderConfig) -> BedrockModel:
         params = dict(cfg.params)
-        if cfg.region_name and "region_name" not in params:
-            params["region_name"] = cfg.region_name
+        client_cfg = dict(cfg.client)
+
+        # Usar streaming predeterminado si no se especifica
         if "streaming" not in params:
             params["streaming"] = self._config.options.streaming
+
+        # Determinar región base
+        region = params.get("region_name") or cfg.region_name
+
         session = None
-        profile = cfg.client.get("profile")
-        if profile:
+        profile = client_cfg.get("profile")
+        access_key = client_cfg.get("access_key_id")
+        secret_key = client_cfg.get("secret_access_key")
+        session_token = client_cfg.get("session_token")
+
+        if profile or access_key or secret_key or session_token:
             try:
                 import boto3
 
-                session = boto3.Session(profile_name=profile, region_name=cfg.region_name)
+                session_kwargs: dict[str, object] = {}
+                if profile:
+                    session_kwargs["profile_name"] = profile
+                if region:
+                    session_kwargs["region_name"] = region
+                if access_key and secret_key:
+                    session_kwargs["aws_access_key_id"] = access_key
+                    session_kwargs["aws_secret_access_key"] = secret_key
+                    if session_token:
+                        session_kwargs["aws_session_token"] = session_token
+                session = boto3.Session(**session_kwargs)
             except Exception as exc:  # pragma: no cover - depende del entorno local
                 raise AgentConfigError(
-                    f"No se pudo inicializar la sesión de boto3 con el perfil '{profile}': {exc}"
+                    "No se pudo inicializar la sesión de boto3 con las credenciales proporcionadas"
                 ) from exc
+
+        if session:
+            params.pop("region_name", None)
             params["boto_session"] = session
+        elif region and "region_name" not in params:
+            params["region_name"] = region
+
         # endpoint_url y otros parámetros adicionales se pueden añadir en params
-        if cfg.client.get("endpoint_url"):
+        if client_cfg.get("endpoint_url"):
             logger.debug(
                 "Se indicó endpoint_url para Bedrock; se usará la configuración estándar de boto3"
             )
+
         logger.debug("Instanciando BedrockModel con parámetros: %s", params.keys())
         return BedrockModel(model_id=cfg.model_id, **params)
 
