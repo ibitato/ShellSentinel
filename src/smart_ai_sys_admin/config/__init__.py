@@ -1,4 +1,4 @@
-"""Carga de configuraciones para Smart-AI-Sys-Admin."""
+"""Carga de configuraciones para Almost Human Sys Admin."""
 
 from __future__ import annotations
 

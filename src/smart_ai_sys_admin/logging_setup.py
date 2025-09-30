@@ -1,4 +1,4 @@
-"""Configuración de logging para Smart-AI-Sys-Admin."""
+"""Configuración de logging para Almost Human Sys Admin."""
 
 from __future__ import annotations
 

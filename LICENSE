@@ -1,0 +1,44 @@
+SPDX-License-Identifier: LicenseRef-ALHSA-Community-1.0
+
+Almost Human Sys Admin Community License 1.0
+
+Copyright (c) 2025 The Maintainers
+
+1. Definitions
+   - "Software" means the source code, object code, and associated files in this repository.
+   - "You" means the individual or legal entity exercising permissions granted by this License.
+   - "Seat" means a natural person who uses the Software or benefits from its operation within an organization.
+
+2. Grant of License (Free Use)
+   Subject to the terms below, You are granted a non-exclusive, worldwide, non-transferable, royalty-free license to use, copy, modify, and distribute the Software solely for the following purposes:
+   (a) Educational and Student Use: Use by educational institutions for teaching, learning, or non-commercial research; and use by individual students.
+   (b) Small Team Use: Use by organizations or teams of up to five (5) Seats in total.
+
+3. Commercial or Larger-Team Use
+   If Your intended use involves more than five (5) Seats, or otherwise falls outside Section 2, You must obtain a separate commercial license negotiated with the developer/maintainer of the Software. Open an issue in the repository to initiate a licensing discussion.
+
+4. Redistribution and Modifications
+   - You may modify the Software and distribute original or modified versions under this same License for the permitted uses in Section 2.
+   - Any distribution must include (i) this License, and (ii) a prominent notice of any changes made.
+   - You may not remove or alter copyright, patent, trademark, or attribution notices.
+
+5. Prohibited Uses
+   - Use by or for organizations exceeding the Seat limit in Section 2(b) without a commercial license.
+   - Offering the Software as a managed service to third parties beyond the scope of Section 2.
+   - Any use that violates applicable laws or regulations.
+
+6. No Warranty
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+7. Limitation of Liability
+   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. Termination
+   This License terminates automatically if You breach any of its terms. Upon termination, You must cease use and distribution of the Software, but Sections 6 and 7 survive.
+
+9. Trademarks
+   This License does not grant permission to use the "Almost Human Sys Admin" name, logos, or trademarks, except for factual references to the Software.
+
+10. Contact
+   For commercial licensing, support, or questions, please open an issue in the repository to contact the maintainer.
+

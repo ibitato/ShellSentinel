@@ -1,7 +1,7 @@
 {
   "terminal": {
     "allowed_terms": ["xterm", "xterm-256color"],
-    "warning_message": "Se recomienda ejecutar Smart-AI-Sys-Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
+    "warning_message": "Se recomienda ejecutar Almost Human Sys Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
     "warning_icon": "⚠️",
     "unknown_label": "desconocido",
     "detected_label": "Terminal detectado"
@@ -13,7 +13,7 @@
       "border_style": "#FF8C00",
       "text_style": "#FFB347",
       "background": "#000000",
-      "initial_markdown": "_Smart-AI-Sys-Admin listo. Esperando instrucciones._",
+      "initial_markdown": "_Almost Human Sys Admin listo. Esperando instrucciones._",
       "placeholder_response_markdown": "_(Integración con agente IA en desarrollo)_"
     },
     "user_panel": {
@@ -39,7 +39,7 @@
     "dialogs": {
       "exit": {
         "title": "Confirmar salida",
-        "message": "¿Seguro que quieres cerrar Smart-AI-Sys-Admin?",
+        "message": "¿Seguro que quieres cerrar Almost Human Sys Admin?",
         "confirm_label": "Salir",
         "cancel_label": "Cancelar",
         "prompt_markdown": "🔒 **Confirmación necesaria**. Revisa el cuadro central para continuar."

@@ -1,4 +1,4 @@
-"""Paquete principal de Smart AI Sys Admin."""
+"""Paquete principal de Almost Human Sys Admin."""
 
 from .cli import main
 

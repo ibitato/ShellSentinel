@@ -1,6 +1,8 @@
-# Smart-AI-Sys-Admin
+# Almost Human Sys Admin
 
-Sistema de administración remota mediante agente de IA que mantiene una sesión SSH/SFTP abierta contra un servidor remoto y ejecuta instrucciones en su nombre.
+Administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
+
+Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
 
 ## Requisitos
 - Python 3.10 o superior
@@ -62,3 +64,10 @@ Sistema de administración remota mediante agente de IA que mantiene una sesión
 - `tests/`: espacio reservado para pruebas automatizadas.
 - `Makefile`: tareas para automatizar instalación, formateo, lint y ejecución.
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
+
+## Licencia
+- Uso gratuito para educación, estudiantes y equipos de hasta 5 personas.
+- Para entornos con más de 5 puestos/usuarios, se requiere una licencia comercial acordada con el desarrollador.
+- Consulta el archivo `LICENSE` (Almost Human Sys Admin Community License 1.0) para detalles completos, definiciones y limitaciones.
+
+Para consultas sobre licencias comerciales o soporte extendido, abre un issue en GitHub o contacta al mantenedor.

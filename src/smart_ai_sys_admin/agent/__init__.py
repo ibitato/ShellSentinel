@@ -1,4 +1,4 @@
-"""Utilidades para inicializar el agente Strands en Smart-AI-Sys-Admin."""
+"""Utilidades para inicializar el agente Strands en Almost Human Sys Admin."""
 
 from .config import (
     AgentConfig,
