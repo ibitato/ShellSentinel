@@ -84,6 +84,7 @@ class MCPTransportConfig:
     url: str | None = None
     headers: Mapping[str, str] = field(default_factory=dict)
     env: Mapping[str, str] = field(default_factory=dict)
+    env_passthrough: tuple[str, ...] = ()
     cwd: str | None = None
     timeout_seconds: int | None = None
 
@@ -270,6 +271,7 @@ def _build_transport(payload: Mapping[str, Any]) -> MCPTransportConfig:
         url=payload.get("url"),
         headers=_mapping_proxy(payload.get("headers")),
         env=_mapping_proxy(payload.get("env")),
+        env_passthrough=_tuple_from_sequence(payload.get("env_passthrough")),
         cwd=payload.get("cwd"),
         timeout_seconds=payload.get("timeout_seconds"),
     )

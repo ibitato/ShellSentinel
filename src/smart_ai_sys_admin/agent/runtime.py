@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 from contextlib import ExitStack
 from typing import Any
@@ -70,10 +71,24 @@ class MCPManager:
         if cfg.transport_type == "stdio":
             if not cfg.command:
                 raise ValueError("El transporte MCP 'stdio' requiere el campo 'command'.")
+            env_map = dict(cfg.env)
+            missing_env = []
+            for var in cfg.env_passthrough:
+                value = os.environ.get(var)
+                if value is None:
+                    missing_env.append(var)
+                    continue
+                env_map[var] = value
+            if missing_env:
+                self._logger.warning(
+                    "Variables de entorno %s no están definidas; el MCP '%s' podría fallar",
+                    ", ".join(missing_env),
+                    cfg.identifier,
+                )
             params = StdioServerParameters(
                 command=cfg.command,
                 args=list(cfg.args),
-                env=dict(cfg.env),
+                env=env_map,
                 cwd=cfg.cwd,
             )
             return MCPClient(lambda: stdio_client(params))

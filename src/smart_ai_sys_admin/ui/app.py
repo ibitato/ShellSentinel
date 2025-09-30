@@ -19,6 +19,7 @@ from ..connection import (
 from .commands import SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
+from .welcome import WelcomeScreen
 
 
 class SmartAISysAdminApp(App[None]):
@@ -48,6 +49,13 @@ class SmartAISysAdminApp(App[None]):
             self._connection_manager,
             logging.getLogger("smart_ai_sys_admin.agent.runtime"),
         )
+        output_cfg = self._config.ui.output_panel
+        self._welcome_screen = WelcomeScreen(
+            primary_color=output_cfg.border_style or "#FF8C00",
+            accent_color=output_cfg.text_style or "#FFB347",
+            background=output_cfg.background or "black",
+        )
+        self._welcome_shown = False
 
     def compose(self) -> ComposeResult:
         input_section = Vertical(
@@ -85,6 +93,7 @@ class SmartAISysAdminApp(App[None]):
         self._warn_if_term_incompatible()
         self._update_connection_info()
         self._initialize_agent_runtime()
+        self._show_welcome_screen()
 
     async def on_command_input_submitted(self, message: CommandInput.Submitted) -> None:
         message.stop()
@@ -194,6 +203,12 @@ class SmartAISysAdminApp(App[None]):
         if self._agent_runtime.error_message:
             self._conversation.add_agent_markdown(self._agent_runtime.error_message)
 
+    def _show_welcome_screen(self) -> None:
+        if self._welcome_shown:
+            return
+        self.push_screen(self._welcome_screen)
+        self._welcome_shown = True
+
     def _invoke_agent(self, prompt: str) -> str:
         if not self._agent_runtime.ready:
             return (
@@ -210,6 +225,5 @@ class SmartAISysAdminApp(App[None]):
 def run_app(config: AppConfig = CONFIG) -> None:
     """Ejecuta la aplicación TUI con la configuración suministrada."""
     SmartAISysAdminApp(config=config).run()
-
 
 __all__ = ["SmartAISysAdminApp", "run_app"]
