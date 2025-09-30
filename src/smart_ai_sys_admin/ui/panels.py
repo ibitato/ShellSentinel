@@ -141,7 +141,7 @@ class CommandInput(Static):
         assert self._editor is not None
         self.styles.width = "100%"
         self.styles.height = "auto"
-        self.styles.margin_top = "auto"
+        self.styles.margin_top = 0
         self.styles.padding = self._parse_padding(self._config.padding)
         self._editor.styles.width = "100%"
         self._editor.styles.background = self._config.background
@@ -313,21 +313,24 @@ class ConnectionInfo(Static):
     def __init__(self, panel_config: PanelConfig) -> None:
         super().__init__(id="connection-info")
         self._panel_config = panel_config
+        self._message = "Sin conexión activa"
 
     def on_mount(self) -> None:
         self.styles.width = "100%"
-        self.styles.height = "auto"
+        self.styles.height = 2
+        self.styles.min_height = 2
+        self.styles.max_height = 2
+        self.styles.dock = "bottom"
         self.styles.padding = (0, 1)
-        self.refresh_status("Sin conexión activa")
+        self.styles.background = self._panel_config.background or "black"
+        self.styles.border_top = ("heavy", self._panel_config.border_style)
+        self.refresh_status(self._message)
 
     def refresh_status(self, message: str) -> None:
-        body = Text(message, style=self._panel_config.text_style)
-        panel = Panel(
-            body,
-            title=self._panel_config.title,
-            border_style=self._panel_config.border_style,
-            expand=True,
+        self._message = message
+        self.update(
+            Text.assemble(
+                (f"{self._panel_config.title}: ", self._panel_config.border_style),
+                (self._message, self._panel_config.text_style),
+            )
         )
-        if self._panel_config.background:
-            panel.style = self._panel_config.background
-        self.update(panel)

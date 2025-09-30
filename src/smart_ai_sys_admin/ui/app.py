@@ -68,7 +68,7 @@ class SmartAISysAdminApp(App[None]):
     def on_mount(self) -> None:
         self.styles.background = self._config.ui.output_panel.background or "black"
         layout = self.query_one("#main-layout", Grid)
-        layout.styles.grid_rows = "1fr auto"
+        layout.styles.grid_rows = "3fr 1fr"
         layout.styles.grid_columns = "1fr"
         layout.styles.height = "100%"
         layout.styles.width = "100%"
@@ -77,7 +77,7 @@ class SmartAISysAdminApp(App[None]):
         self._input = self.query_one(CommandInput)
         self._connection_info = self.query_one(ConnectionInfo)
         input_section = self.query_one("#input-section", Vertical)
-        input_section.styles.height = "auto"
+        input_section.styles.height = "1fr"
         input_section.styles.width = "100%"
         input_section.styles.gap = 1
         exit_shortcut = self._config.shortcuts.exit

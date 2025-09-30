@@ -33,7 +33,7 @@
       "text_style": "#7CFC00",
       "submit_binding": "ctrl+s",
       "min_lines": 3,
-      "max_lines": 10,
+      "max_lines": 9,
       "padding": "1 2"
     },
     "dialogs": {
