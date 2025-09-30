@@ -25,7 +25,7 @@
       "params": {
         "temperature": 0.3,
         "top_p": 0.8,
-        "max_completion_tokens": 32768,
+        "max_tokens": 32768,
         "streaming": true
       }
     },
