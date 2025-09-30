@@ -1,3 +1,5 @@
+# ruff: noqa: E501
+
 """Pantalla de bienvenida inicial con arte ASCII."""
 
 from __future__ import annotations
@@ -8,6 +10,7 @@ from textual.containers import Center, Container, Vertical
 from textual.screen import Screen
 from textual.widgets import Static
 
+from ..localization import _
 
 ASCII_ART = r"""
    ███     ██        ███     ███    ██████      ██████    ██████████          ██      ██  ██      ██  ███     ███     ███     ███     ██  
@@ -46,7 +49,10 @@ class WelcomeScreen(Screen[None]):
             style=f"bold {self._accent_color}",
         )
         hint = Text(
-            "Se cierra en 5 segundos o presiona cualquier tecla",
+            _(
+                "ui.welcome.hint",
+                seconds=self.AUTO_CLOSE_SECONDS,
+            ),
             justify="center",
             style=f"italic dim {self._accent_color}",
         )

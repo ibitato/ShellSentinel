@@ -1,0 +1,150 @@
+{
+  "terminal": {
+    "warning_message": "Se recomienda ejecutar Almost Human Sys Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
+    "unknown_label": "desconocido",
+    "detected_label": "Terminal detectado"
+  },
+  "ui": {
+    "output_panel": {
+      "title": "Sesión remota",
+      "initial_markdown": "_Almost Human Sys Admin listo. Esperando instrucciones._",
+      "placeholder_response": "_(Integración con agente IA en desarrollo)_"
+    },
+    "user_panel": {
+      "title": "Usuario"
+    },
+    "connection_panel": {
+      "title": "Conexión"
+    },
+    "input_widget": {
+      "placeholder": "Escribe tu instrucción y presiona {submit_binding} para enviar. Usa /salir o /exit cuando quieras cerrar."
+    },
+    "dialogs": {
+      "exit": {
+        "title": "Confirmar salida",
+        "message": "¿Seguro que quieres cerrar Almost Human Sys Admin?",
+        "confirm": "Salir",
+        "cancel": "Cancelar",
+        "prompt_markdown": "🔒 **Confirmación necesaria**. Revisa el cuadro central para continuar."
+      }
+    },
+    "app": {
+      "input_required": "⚠️ Debes introducir una instrucción o comando.",
+      "exit": {
+        "no_args": "⚠️ `{command}` no admite argumentos adicionales."
+      },
+      "unexpected_error": "❌ Se produjo un error inesperado: {error}",
+      "agent_unavailable": "⚠️ El agente IA no está disponible. Revisa la configuración."
+    },
+    "commands": {
+      "parse_error": "⚠️ No se pudo interpretar el comando: {error}",
+      "unknown": "⚠️ Comando desconocido `{command}`.",
+      "internal_error": "❌ Se produjo un error inesperado al ejecutar `{command}`: {error}",
+      "connect": {
+        "usage": "{command} <host> <usuario> <password|ruta_clave>",
+        "missing_args": "⚠️ Faltan argumentos para `{command}`.",
+        "failure": "❌ No se pudo establecer la conexión: {error}",
+        "success": "✅ Conexión abierta con `{username}@{host}` usando {auth_label}.",
+        "help": "**Uso `{command}`**\n- Argumentos: `<host> <usuario> <password|ruta_clave>`\n- Ejemplo con contraseña: `{password_example}`\n- Ejemplo con clave: `{key_example}`\n- Abre una sesión SSH y SFTP persistente hasta ejecutar `{disconnect}`.\n- Compatible con destinos GNU/Linux y Windows que expongan SSH/SFTP."
+      },
+      "disconnect": {
+        "extra_args": "⚠️ `{command}` no admite argumentos.",
+        "no_active": "⚠️ No hay una conexión activa que cerrar.",
+        "failure": "❌ No se pudo cerrar la conexión: {error}",
+        "success": "✅ Conexión cerrada.",
+        "help": "**Uso `{command}`**\n- Cierra la sesión SSH/SFTP activa.\n- No admite argumentos adicionales."
+      },
+      "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación."
+    },
+    "input": {
+      "suggestion_label": "Sugerencia:",
+      "suggestions": {
+        "connect": {
+          "full_usage": "Uso: `{usage}`",
+          "missing_user": "Completa el usuario: `{command} {host} <usuario> <password|ruta_clave>`",
+          "missing_secret": "Añade la contraseña o ruta de clave: `{command} {host} {user} <password|ruta_clave>`"
+        },
+        "disconnect": {
+          "no_args": "`{command}` no acepta argumentos adicionales.",
+          "description": "`{command}` cierra la sesión remota actual."
+        },
+        "help": {
+          "no_args": "`{command}` no admite argumentos adicionales.",
+          "description": "`{command}` muestra la lista de comandos disponibles."
+        },
+        "exit": {
+          "no_args": "`{command}` no admite argumentos adicionales.",
+          "description": "`{command}` abre un diálogo de confirmación para cerrar. También puedes usar `{primary}`."
+        }
+      }
+    },
+    "welcome": {
+      "hint": "Se cierra en {seconds} segundos o presiona cualquier tecla"
+    }
+  },
+  "shortcuts": {
+    "exit": {
+      "description": "Salir"
+    }
+  },
+  "connection": {
+    "auth": {
+      "method": {
+        "password": "contraseña",
+        "key": "clave"
+      }
+    },
+    "status": {
+      "none": "Sin conexión activa",
+      "connected": "Conectado a {username}@{host} ({method})",
+      "thinking": "⏳ pensando…"
+    },
+    "errors": {
+      "already_open": "Ya existe una conexión activa. Usa /disconnect o /desconectar primero.",
+      "missing_secret": "Debes proporcionar contraseña o ruta a la clave privada.",
+      "missing_key": "No se encontró la clave privada en '{path}'.",
+      "no_active_session": "No hay una conexión activa que cerrar.",
+      "no_active_ssh": "No hay una conexión SSH activa.",
+      "no_active_sftp": "La sesión SFTP no está disponible.",
+      "command_failed": "Fallo ejecutando '{command}': {error}",
+      "local_missing": "El archivo local '{path}' no existe.",
+      "local_not_file": "La ruta local '{path}' no es un archivo regular.",
+      "remote_exists": "El archivo remoto '{path}' ya existe. Usa `overwrite` para reemplazarlo.",
+      "upload_missing": "No se pudo subir '{local}' a '{remote}': {error}",
+      "upload_generic": "Error subiendo archivo a '{remote}': {error}",
+      "local_exists": "El archivo local '{path}' ya existe. Usa `overwrite` para reemplazarlo.",
+      "remote_missing": "No se encontró el archivo remoto '{path}': {error}",
+      "download_generic": "Error descargando '{path}': {error}",
+      "mkdir_remote": "No se pudo crear el directorio remoto '{path}': {error}"
+    }
+  },
+  "agent": {
+    "config": {
+      "load_error": "⚠️ No se pudo cargar `conf/agent.conf`: {error}. El modo agente permanecerá deshabilitado."
+    },
+    "start": {
+      "failure": "⚠️ No fue posible inicializar el agente Strands. Revisa los registros para más detalles.",
+      "success": "✅ Agente Strands inicializado (configuración: `{path}`)"
+    },
+    "invoke": {
+      "failure": "❌ El agente falló al procesar la instrucción: {error}"
+    },
+    "tools": {
+      "ssh_unavailable": "❌ No hay una conexión SSH disponible. Usa `/connect`.",
+      "ssh_inactive": "❌ No existe una sesión SSH activa. Usa `/connect`.",
+      "timeout_invalid": "❌ `timeout_seconds` debe ser un número.",
+      "timeout_positive": "❌ `timeout_seconds` debe ser mayor que cero.",
+      "summary": {
+        "exit_code": "Código de salida: {code}",
+        "stdout": "Salida:",
+        "stderr": "Errores:",
+        "empty": "(sin salida)"
+      },
+      "transfer": {
+        "invalid_action": "❌ Acción inválida. Usa `upload`/`put` para subir archivos o `download`/`get` para descargarlos.",
+        "upload_success": "✅ Archivo subido con éxito. Local: `{local}` → Remoto: `{remote}`",
+        "download_success": "✅ Archivo descargado con éxito. Remoto: `{remote}` → Local: `{local}`"
+      }
+    }
+  }
+}

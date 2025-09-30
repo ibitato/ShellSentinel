@@ -1,34 +1,34 @@
 {
   "terminal": {
     "allowed_terms": ["xterm", "xterm-256color"],
-    "warning_message": "Se recomienda ejecutar Almost Human Sys Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
+    "warning_message": "{{terminal.warning_message}}",
     "warning_icon": "⚠️",
-    "unknown_label": "desconocido",
-    "detected_label": "Terminal detectado"
+    "unknown_label": "{{terminal.unknown_label}}",
+    "detected_label": "{{terminal.detected_label}}"
   },
   "ui": {
     "history_limit": 200,
     "output_panel": {
-      "title": "Sesión remota",
+      "title": "{{ui.output_panel.title}}",
       "border_style": "#FF8C00",
       "text_style": "#FFB347",
       "background": "#000000",
-      "initial_markdown": "_Almost Human Sys Admin listo. Esperando instrucciones._",
-      "placeholder_response_markdown": "_(Integración con agente IA en desarrollo)_"
+      "initial_markdown": "{{ui.output_panel.initial_markdown}}",
+      "placeholder_response_markdown": "{{ui.output_panel.placeholder_response}}"
     },
     "user_panel": {
-      "title": "Usuario",
+      "title": "{{ui.user_panel.title}}",
       "border_style": "#00FF7F",
       "text_style": "#7CFC00"
     },
     "connection_panel": {
-      "title": "Conexión",
+      "title": "{{ui.connection_panel.title}}",
       "border_style": "#FF8C00",
       "text_style": "#FFB347",
       "background": "#000000"
     },
     "input_widget": {
-      "placeholder": "Escribe tu instrucción y presiona {submit_binding} para enviar. Usa /salir cuando quieras cerrar.",
+      "placeholder": "{{ui.input_widget.placeholder}}",
       "background": "#001900",
       "text_style": "#7CFC00",
       "submit_binding": "ctrl+s",
@@ -38,18 +38,18 @@
     },
     "dialogs": {
       "exit": {
-        "title": "Confirmar salida",
-        "message": "¿Seguro que quieres cerrar Almost Human Sys Admin?",
-        "confirm_label": "Salir",
-        "cancel_label": "Cancelar",
-        "prompt_markdown": "🔒 **Confirmación necesaria**. Revisa el cuadro central para continuar."
+        "title": "{{ui.dialogs.exit.title}}",
+        "message": "{{ui.dialogs.exit.message}}",
+        "confirm_label": "{{ui.dialogs.exit.confirm}}",
+        "cancel_label": "{{ui.dialogs.exit.cancel}}",
+        "prompt_markdown": "{{ui.dialogs.exit.prompt_markdown}}"
       }
     }
   },
   "shortcuts": {
     "exit": {
       "binding": "ctrl+c",
-      "description": "Salir"
+      "description": "{{shortcuts.exit.description}}"
     }
   },
   "logging": {

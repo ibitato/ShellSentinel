@@ -1,0 +1,150 @@
+{
+  "terminal": {
+    "warning_message": "Es wird empfohlen, Almost Human Sys Admin in einem xterm- oder xterm-256color-Terminal auszuführen, um die volle Farbdarstellung zu erhalten.",
+    "unknown_label": "unbekannt",
+    "detected_label": "Erkanntes Terminal"
+  },
+  "ui": {
+    "output_panel": {
+      "title": "Remote-Sitzung",
+      "initial_markdown": "_Almost Human Sys Admin bereit. Warte auf Anweisungen._",
+      "placeholder_response": "_(KI-Agent-Integration in Entwicklung)_"
+    },
+    "user_panel": {
+      "title": "Benutzer"
+    },
+    "connection_panel": {
+      "title": "Verbindung"
+    },
+    "input_widget": {
+      "placeholder": "Gib deine Anweisung ein und drücke {submit_binding}, um sie zu senden. Verwende /exit, um das Programm zu beenden."
+    },
+    "dialogs": {
+      "exit": {
+        "title": "Beenden bestätigen",
+        "message": "Möchtest du Almost Human Sys Admin wirklich schließen?",
+        "confirm": "Beenden",
+        "cancel": "Abbrechen",
+        "prompt_markdown": "🔒 **Bestätigung erforderlich**. Prüfe das mittlere Panel, um fortzufahren."
+      }
+    },
+    "app": {
+      "input_required": "⚠️ Du musst eine Anweisung oder einen Befehl eingeben.",
+      "exit": {
+        "no_args": "⚠️ `{command}` akzeptiert keine zusätzlichen Argumente."
+      },
+      "unexpected_error": "❌ Es ist ein unerwarteter Fehler aufgetreten: {error}",
+      "agent_unavailable": "⚠️ Der KI-Agent ist nicht verfügbar. Bitte überprüfe die Konfiguration."
+    },
+    "commands": {
+      "parse_error": "⚠️ Der Befehl konnte nicht verarbeitet werden: {error}",
+      "unknown": "⚠️ Unbekannter Befehl `{command}`.",
+      "internal_error": "❌ Beim Ausführen von `{command}` ist ein unerwarteter Fehler aufgetreten: {error}",
+      "connect": {
+        "usage": "{command} <host> <user> <password|key_path>",
+        "missing_args": "⚠️ `{command}` benötigt `<host> <user> <password|key_path>`.",
+        "failure": "❌ Die Verbindung konnte nicht hergestellt werden: {error}",
+        "success": "✅ Verbunden mit `{username}@{host}` mittels {auth_label}.",
+        "help": "**Verwendung von `{command}`**\n- Argumente: `<host> <user> <password|key_path>`\n- Beispiel mit Passwort: `{password_example}`\n- Beispiel mit Schlüssel: `{key_example}`\n- Öffnet eine dauerhafte SSH- und SFTP-Sitzung bis `{disconnect}` ausgeführt wird.\n- Kompatibel mit GNU/Linux- und Windows-Zielen mit SSH/SFTP."
+      },
+      "disconnect": {
+        "extra_args": "⚠️ `{command}` akzeptiert keine Argumente.",
+        "no_active": "⚠️ Es besteht keine aktive Verbindung zum Trennen.",
+        "failure": "❌ Die Verbindung konnte nicht getrennt werden: {error}",
+        "success": "✅ Verbindung getrennt.",
+        "help": "**Verwendung von `{command}`**\n- Schließt die aktive SSH/SFTP-Sitzung.\n- Akzeptiert keine zusätzlichen Argumente."
+      },
+      "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung."
+    },
+    "input": {
+      "suggestion_label": "Hinweis:",
+      "suggestions": {
+        "connect": {
+          "full_usage": "Verwendung: `{usage}`",
+          "missing_user": "Ergänze den Benutzernamen: `{command} {host} <user> <password|key_path>`",
+          "missing_secret": "Ergänze Passwort oder Schlüsselpfad: `{command} {host} {user} <password|key_path>`"
+        },
+        "disconnect": {
+          "no_args": "`{command}` akzeptiert keine Argumente.",
+          "description": "`{command}` beendet die aktuelle Remote-Sitzung."
+        },
+        "help": {
+          "no_args": "`{command}` akzeptiert keine Argumente.",
+          "description": "`{command}` zeigt die verfügbaren Slash-Befehle an."
+        },
+        "exit": {
+          "no_args": "`{command}` akzeptiert keine Argumente.",
+          "description": "`{command}` öffnet einen Bestätigungsdialog zum Beenden. Du kannst auch `{primary}` verwenden."
+        }
+      }
+    },
+    "welcome": {
+      "hint": "Schließt in {seconds} Sekunden oder drücke eine beliebige Taste"
+    }
+  },
+  "shortcuts": {
+    "exit": {
+      "description": "Beenden"
+    }
+  },
+  "connection": {
+    "auth": {
+      "method": {
+        "password": "Passwort",
+        "key": "Schlüssel"
+      }
+    },
+    "status": {
+      "none": "Keine aktive Verbindung",
+      "connected": "Verbunden mit {username}@{host} ({method})",
+      "thinking": "⏳ wird verarbeitet…"
+    },
+    "errors": {
+      "already_open": "Es besteht bereits eine aktive Verbindung. Bitte zuerst trennen.",
+      "missing_secret": "Du musst ein Passwort oder den Pfad zum privaten Schlüssel angeben.",
+      "missing_key": "Privater Schlüssel wurde unter '{path}' nicht gefunden.",
+      "no_active_session": "Es gibt keine aktive Verbindung, die getrennt werden kann.",
+      "no_active_ssh": "Keine aktive SSH-Verbindung.",
+      "no_active_sftp": "Die SFTP-Sitzung ist nicht verfügbar.",
+      "command_failed": "Ausführung von '{command}' fehlgeschlagen: {error}",
+      "local_missing": "Lokale Datei '{path}' existiert nicht.",
+      "local_not_file": "Lokaler Pfad '{path}' ist keine reguläre Datei.",
+      "remote_exists": "Remote-Datei '{path}' existiert bereits. Verwende `overwrite`, um sie zu ersetzen.",
+      "upload_missing": "Upload von '{local}' nach '{remote}' nicht möglich: {error}",
+      "upload_generic": "Fehler beim Hochladen nach '{remote}': {error}",
+      "local_exists": "Lokale Datei '{path}' existiert bereits. Verwende `overwrite`, um sie zu ersetzen.",
+      "remote_missing": "Remote-Datei '{path}' wurde nicht gefunden: {error}",
+      "download_generic": "Fehler beim Herunterladen von '{path}': {error}",
+      "mkdir_remote": "Remote-Verzeichnis '{path}' konnte nicht erstellt werden: {error}"
+    }
+  },
+  "agent": {
+    "config": {
+      "load_error": "⚠️ `conf/agent.conf` konnte nicht geladen werden: {error}. Der Agent-Modus bleibt deaktiviert."
+    },
+    "start": {
+      "failure": "⚠️ Der Strands-Agent konnte nicht initialisiert werden. Siehe Protokolle für Details.",
+      "success": "✅ Strands-Agent initialisiert (Konfiguration: `{path}`)"
+    },
+    "invoke": {
+      "failure": "❌ Der Agent konnte die Anweisung nicht verarbeiten: {error}"
+    },
+    "tools": {
+      "ssh_unavailable": "❌ Es ist keine SSH-Verbindung verfügbar. Verwende zuerst `/connect`.",
+      "ssh_inactive": "❌ Es besteht keine aktive SSH-Sitzung. Verwende zuerst `/connect`.",
+      "timeout_invalid": "❌ `timeout_seconds` muss ein numerischer Wert sein.",
+      "timeout_positive": "❌ `timeout_seconds` muss größer als null sein.",
+      "summary": {
+        "exit_code": "Rückgabecode: {code}",
+        "stdout": "Ausgabe:",
+        "stderr": "Fehler:",
+        "empty": "(keine Ausgabe)"
+      },
+      "transfer": {
+        "invalid_action": "❌ Ungültige Aktion. Verwende `upload`/`put` für Uploads oder `download`/`get` für Downloads.",
+        "upload_success": "✅ Upload abgeschlossen. Lokal: `{local}` → Remote: `{remote}`",
+        "download_success": "✅ Download abgeschlossen. Remote: `{remote}` → Lokal: `{local}`"
+      }
+    }
+  }
+}

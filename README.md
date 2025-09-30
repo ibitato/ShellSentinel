@@ -33,11 +33,11 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
   ```
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
-- Comandos disponibles:
-  - `/conectar [host] [usuario] [password|ruta_clave]` abre una sesión SSH y SFTP persistente.
-  - `/desconectar` cierra la conexión activa (si existe).
-  - `/ayuda` muestra un resumen en Markdown de los comandos disponibles.
-  - `/salir` abre un diálogo de confirmación para cerrar la aplicación.
+- Comandos disponibles (puedes usar los alias en inglés, español o alemán):
+  - `/connect <host> <user> <password|key_path>` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente.
+  - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
+  - `/help` (`/ayuda`, `/hilfe`) muestra un resumen en Markdown de los comandos disponibles.
+  - `/exit` (`/salir`, `/beenden`, `/quit`) abre un diálogo de confirmación para cerrar la aplicación.
 - El sistema mostrará las respuestas en formato Markdown y en un esquema de color retro naranja/verde.
 - Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.
 
@@ -50,6 +50,16 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - `logging`: nivel (por defecto `DEBUG`), directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
   - Los loggers de dependencias verbosas (`markdown_it`, `botocore.parsers`, `paramiko.transport`, etc.) se reducen automáticamente a `INFO` cuando se usa `DEBUG` para evitar ruido excesivo.
     - `log_to_console`: cuando es `true`, duplica los registros en stdout (por defecto `false` para no interferir con la TUI).
+
+### Internacionalización
+- La interfaz soporta inglés (por defecto), alemán y español. El idioma se detecta a partir de la variable `SMART_AI_SYS_ADMIN_LOCALE` o, en su defecto, del locale del sistema.
+- Los textos traducibles viven en `conf/locales/<idioma>/strings.json`. Para añadir un nuevo idioma, crea el directorio correspondiente, copia uno de los ficheros existentes como plantilla y traduce las claves respetando los marcadores `{placeholder}`.
+- Puedes forzar el idioma ejecutando, por ejemplo:
+  ```bash
+  export SMART_AI_SYS_ADMIN_LOCALE=de
+  make run
+  ```
+- El fichero `conf/app_config.json` contiene referencias `{{clave.de.traduccion}}` que se resuelven en tiempo de carga usando el locale activo; no elimines las llaves dobles al personalizar valores.
 
 ### Configuración del agente IA (Strands Agents)
 - Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI u Ollama/local.

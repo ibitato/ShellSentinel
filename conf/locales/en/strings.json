@@ -1,0 +1,150 @@
+{
+  "terminal": {
+    "warning_message": "It is recommended to run Almost Human Sys Admin in an xterm or xterm-256color terminal for full color support.",
+    "unknown_label": "unknown",
+    "detected_label": "Detected terminal"
+  },
+  "ui": {
+    "output_panel": {
+      "title": "Remote Session",
+      "initial_markdown": "_Almost Human Sys Admin ready. Waiting for instructions._",
+      "placeholder_response": "_(AI agent integration under development)_"
+    },
+    "user_panel": {
+      "title": "User"
+    },
+    "connection_panel": {
+      "title": "Connection"
+    },
+    "input_widget": {
+      "placeholder": "Type your instruction and press {submit_binding} to send it. Use /exit when you want to quit."
+    },
+    "dialogs": {
+      "exit": {
+        "title": "Confirm exit",
+        "message": "Are you sure you want to close Almost Human Sys Admin?",
+        "confirm": "Exit",
+        "cancel": "Cancel",
+        "prompt_markdown": "🔒 **Confirmation required**. Check the center panel to continue."
+      }
+    },
+    "app": {
+      "input_required": "⚠️ You must enter an instruction or command.",
+      "exit": {
+        "no_args": "⚠️ `{command}` does not accept additional arguments."
+      },
+      "unexpected_error": "❌ An unexpected error occurred: {error}",
+      "agent_unavailable": "⚠️ The AI agent is not available. Check the configuration."
+    },
+    "commands": {
+      "parse_error": "⚠️ The command could not be parsed: {error}",
+      "unknown": "⚠️ Unknown command `{command}`.",
+      "internal_error": "❌ An unexpected error occurred while executing `{command}`: {error}",
+      "connect": {
+        "usage": "{command} <host> <user> <password|key_path>",
+        "missing_args": "⚠️ `{command}` requires `<host> <user> <password|key_path>`.",
+        "failure": "❌ The connection could not be established: {error}",
+        "success": "✅ Connected to `{username}@{host}` using {auth_label}.",
+        "help": "**Using `{command}`**\n- Arguments: `<host> <user> <password|key_path>`\n- Password example: `{password_example}`\n- Key example: `{key_example}`\n- Opens a persistent SSH and SFTP session until `{disconnect}`.\n- Compatible with GNU/Linux and Windows targets exposing SSH/SFTP."
+      },
+      "disconnect": {
+        "extra_args": "⚠️ `{command}` does not accept arguments.",
+        "no_active": "⚠️ There is no active connection to close.",
+        "failure": "❌ The connection could not be closed: {error}",
+        "success": "✅ Connection closed.",
+        "help": "**Using `{command}`**\n- Closes the active SSH/SFTP session.\n- Does not accept additional arguments."
+      },
+      "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{exit_command}` opens a confirmation dialog to quit the app."
+    },
+    "input": {
+      "suggestion_label": "Suggestion:",
+      "suggestions": {
+        "connect": {
+          "full_usage": "Usage: `{usage}`",
+          "missing_user": "Add the user name: `{command} {host} <user> <password|key_path>`",
+          "missing_secret": "Add the password or key path: `{command} {host} {user} <password|key_path>`"
+        },
+        "disconnect": {
+          "no_args": "`{command}` does not accept arguments.",
+          "description": "`{command}` closes the current remote session."
+        },
+        "help": {
+          "no_args": "`{command}` does not accept arguments.",
+          "description": "`{command}` lists the available slash commands."
+        },
+        "exit": {
+          "no_args": "`{command}` does not accept arguments.",
+          "description": "`{command}` opens a confirmation dialog to quit. You can also use `{primary}`."
+        }
+      }
+    },
+    "welcome": {
+      "hint": "Closing in {seconds} seconds or press any key"
+    }
+  },
+  "shortcuts": {
+    "exit": {
+      "description": "Exit"
+    }
+  },
+  "connection": {
+    "auth": {
+      "method": {
+        "password": "password",
+        "key": "key"
+      }
+    },
+    "status": {
+      "none": "No active connection",
+      "connected": "Connected to {username}@{host} ({method})",
+      "thinking": "⏳ thinking…"
+    },
+    "errors": {
+      "already_open": "An active connection already exists. Disconnect first.",
+      "missing_secret": "You must provide a password or path to the private key.",
+      "missing_key": "Private key not found at '{path}'.",
+      "no_active_session": "There is no active connection to close.",
+      "no_active_ssh": "No active SSH connection.",
+      "no_active_sftp": "The SFTP session is not available.",
+      "command_failed": "Failed to execute '{command}': {error}",
+      "local_missing": "Local file '{path}' does not exist.",
+      "local_not_file": "Local path '{path}' is not a regular file.",
+      "remote_exists": "Remote file '{path}' already exists. Use `overwrite` to replace it.",
+      "upload_missing": "Cannot upload '{local}' to '{remote}': {error}",
+      "upload_generic": "Error uploading file to '{remote}': {error}",
+      "local_exists": "Local file '{path}' already exists. Use `overwrite` to replace it.",
+      "remote_missing": "Remote file '{path}' not found: {error}",
+      "download_generic": "Error downloading '{path}': {error}",
+      "mkdir_remote": "Unable to create remote directory '{path}': {error}"
+    }
+  },
+  "agent": {
+    "config": {
+      "load_error": "⚠️ Unable to load `conf/agent.conf`: {error}. Agent mode will remain disabled."
+    },
+    "start": {
+      "failure": "⚠️ The Strands agent could not be initialized. Check the logs for details.",
+      "success": "✅ Strands agent initialized (configuration: `{path}`)"
+    },
+    "invoke": {
+      "failure": "❌ The agent failed to process the instruction: {error}"
+    },
+    "tools": {
+      "ssh_unavailable": "❌ No SSH connection is available. Use `/connect` first.",
+      "ssh_inactive": "❌ There is no active SSH session. Use `/connect` first.",
+      "timeout_invalid": "❌ `timeout_seconds` must be a numeric value.",
+      "timeout_positive": "❌ `timeout_seconds` must be greater than zero.",
+      "summary": {
+        "exit_code": "Exit code: {code}",
+        "stdout": "Output:",
+        "stderr": "Errors:",
+        "empty": "(no output)"
+      },
+      "transfer": {
+        "invalid_action": "❌ Invalid action. Use `upload`/`put` to send files or `download`/`get` to retrieve them.",
+        "upload_success": "✅ Upload completed. Local: `{local}` → Remote: `{remote}`",
+        "download_success": "✅ Download completed. Remote: `{remote}` → Local: `{local}`"
+      }
+    }
+  }
+}

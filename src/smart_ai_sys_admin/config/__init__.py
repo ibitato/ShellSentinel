@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ..localization import localize_placeholders
+
 logger = logging.getLogger("smart_ai_sys_admin.config")
 
 
@@ -129,6 +131,7 @@ def load_config() -> AppConfig:
     logger.debug("Cargando configuración desde %s", config_path)
     with config_path.open("r", encoding="utf-8") as config_file:
         payload: dict[str, Any] = json.load(config_file)
+    payload = localize_placeholders(payload)
     terminal = TerminalConfig(
         allowed_terms=tuple(payload["terminal"]["allowed_terms"]),
         warning_message=payload["terminal"]["warning_message"],

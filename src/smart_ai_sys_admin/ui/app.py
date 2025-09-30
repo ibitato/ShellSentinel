@@ -16,7 +16,8 @@ from ..connection import (
     NoActiveConnection,
     SSHConnectionManager,
 )
-from .commands import SlashCommandProcessor
+from ..localization import _
+from .commands import EXIT_ALIASES, SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
 from .welcome import WelcomeScreen
@@ -102,14 +103,14 @@ class SmartAISysAdminApp(App[None]):
         self._conversation.add_user_message(message.content)
         trimmed = message.content.strip()
         if not trimmed:
-            self._conversation.add_agent_markdown("⚠️ Debes introducir una instrucción o comando.")
+            self._conversation.add_agent_markdown(_("ui.app.input_required"))
             self._input.focus_editor()
             return
         tokens = trimmed.split()
-        if tokens and tokens[0].lower() == "/salir":
+        if tokens and tokens[0].lower() in EXIT_ALIASES:
             if len(tokens) > 1:
                 self._conversation.add_agent_markdown(
-                    "⚠️ `/salir` no admite argumentos adicionales."
+                    _("ui.app.exit.no_args", command=tokens[0])
                 )
                 self._input.focus_editor()
                 return
@@ -119,7 +120,7 @@ class SmartAISysAdminApp(App[None]):
             response = self._command_processor.process(message.content)
         except Exception as exc:  # pragma: no cover - protección ante errores inesperados.
             self._app_logger.exception("Error procesando la entrada del usuario")
-            response = f"❌ Se produjo un error inesperado: {exc}"
+            response = _("ui.app.unexpected_error", error=str(exc))
         if response is not None:
             if response:
                 self._conversation.add_agent_markdown(response)
@@ -213,7 +214,7 @@ class SmartAISysAdminApp(App[None]):
         if not self._agent_runtime.ready:
             return (
                 self._agent_runtime.error_message
-                or "⚠️ El agente IA no está disponible. Revisa la configuración."
+                or _("ui.app.agent_unavailable")
             )
         self._app_logger.debug("Prompt enviado al agente: %.120s", prompt)
         return self._agent_runtime.invoke(prompt)

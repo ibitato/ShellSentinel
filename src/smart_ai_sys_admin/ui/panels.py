@@ -14,10 +14,20 @@ from textual.message import Message
 from textual.reactive import reactive
 from textual.widgets import RichLog, Static, TextArea
 
+from ..config import AppConfig, InputConfig, PanelConfig
+from ..localization import _
+from .commands import (
+    CONNECT_ALIASES,
+    DISCONNECT_ALIASES,
+    EXIT_ALIASES,
+    HELP_ALIASES,
+    PRIMARY_CONNECT,
+    PRIMARY_EXIT,
+    PRIMARY_HELP,
+)
+
 if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones estáticas.
     from ..config import ShortcutConfig
-
-from ..config import AppConfig, InputConfig, PanelConfig
 
 
 class ConversationPanel(Static):
@@ -200,7 +210,9 @@ class CommandInput(Static):
         text = Text(self._base_placeholder, style=self._config.text_style)
         if suggestion:
             text.append("\n\n", style=self._config.text_style)
-            text.append("Sugerencia: ", style=f"{self._config.text_style} dim")
+            label = _("ui.input.suggestion_label")
+            text.append(label, style=f"{self._config.text_style} dim")
+            text.append(" ", style=self._config.text_style)
             text.append(suggestion, style=self._config.text_style)
         self._placeholder.update(text)
 
@@ -209,32 +221,66 @@ class CommandInput(Static):
         if not trimmed:
             return None
         tokens = trimmed.split()
-        command = tokens[0]
-        if command in {"/connect", "/conectar"}:
+        command_raw = tokens[0]
+        command = command_raw.lower()
+        if command in CONNECT_ALIASES:
+            usage = self._connect_usage()
             if len(tokens) <= 1:
-                return "/conectar <host> <usuario> <password|ruta_clave>"
+                return _(
+                    "ui.input.suggestions.connect.full_usage",
+                    command=command_raw,
+                    usage=usage,
+                )
             if len(tokens) == 2:
                 host = tokens[1]
-                return f"Completa el usuario: `/conectar {host} <usuario> <password|ruta_clave>`"
+                return _(
+                    "ui.input.suggestions.connect.missing_user",
+                    command=command_raw,
+                    host=host,
+                    usage=usage,
+                )
             if len(tokens) == 3:
-                host, usuario = tokens[1], tokens[2]
-                return (
-                    "Añade la contraseña o ruta de clave: "
-                    f"`/conectar {host} {usuario} <password|ruta_clave>`"
+                host, user = tokens[1], tokens[2]
+                return _(
+                    "ui.input.suggestions.connect.missing_secret",
+                    command=command_raw,
+                    host=host,
+                    user=user,
+                    usage=usage,
                 )
             return None
-        if command in {"/disconnect", "/desconectar"}:
+        if command in DISCONNECT_ALIASES:
             if len(tokens) > 1:
-                return "`/desconectar` no acepta argumentos adicionales"
-            return "Cierra la sesión remota actual"
-        if command == "/ayuda":
+                return _(
+                    "ui.input.suggestions.disconnect.no_args",
+                    command=command_raw,
+                )
+            return _(
+                "ui.input.suggestions.disconnect.description",
+                command=command_raw,
+            )
+        if command in HELP_ALIASES:
             if len(tokens) > 1:
-                return "`/ayuda` no admite argumentos adicionales"
-            return "Muestra la lista de comandos disponibles"
-        if command == "/salir":
+                return _(
+                    "ui.input.suggestions.help.no_args",
+                    command=command_raw,
+                )
+            return _(
+                "ui.input.suggestions.help.description",
+                command=command_raw,
+                primary=PRIMARY_HELP,
+            )
+        if command in EXIT_ALIASES:
             if len(tokens) > 1:
-                return "`/salir` no admite argumentos adicionales"
-            return "Abre un diálogo de confirmación para cerrar la aplicación"
+                return _(
+                    "ui.input.suggestions.exit.no_args",
+                    command=command_raw,
+                )
+            return _(
+                "ui.input.suggestions.exit.description",
+                command=command_raw,
+                primary=PRIMARY_EXIT,
+            )
         return None
 
     def _submit_value(self) -> None:
@@ -307,6 +353,12 @@ class CommandInput(Static):
         self._navigating_history = False
         self._update_placeholder_hint()
 
+    def _connect_usage(self) -> str:
+        return _(
+            "ui.commands.connect.usage",
+            command=PRIMARY_CONNECT,
+        )
+
 
 class ConnectionInfo(Static):
     """Muestra el estado de la conexión activa y el progreso del agente."""
@@ -314,7 +366,7 @@ class ConnectionInfo(Static):
     def __init__(self, panel_config: PanelConfig) -> None:
         super().__init__(id="connection-info")
         self._panel_config = panel_config
-        self._message = "Sin conexión activa"
+        self._message = _("connection.status.none")
         self._thinking = False
         self._status_node: Static | None = None
         self._indicator_node: Static | None = None
@@ -364,7 +416,10 @@ class ConnectionInfo(Static):
             (self._message, self._panel_config.text_style),
         )
         if self._thinking:
-            status_text.append("  ⏳ pensando…", style=f"{self._panel_config.text_style} italic")
+            status_text.append(
+                f"  {_('connection.status.thinking')}",
+                style=f"{self._panel_config.text_style} italic",
+            )
         self._status_node.update(status_text)
         # Mantenemos el nodo indicador para futuras extensiones, pero lo dejamos vacío.
         self._indicator_node.update(Text("", style=self._panel_config.text_style))

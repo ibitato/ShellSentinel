@@ -12,6 +12,7 @@ from strands_tools import file_read, file_write, sleep
 from strands_tools import shell as shell_tool
 
 from ..connection import ConnectionError, NoActiveConnection, SSHConnectionManager
+from ..localization import _
 
 ToolCallable = Callable[..., Any]
 
@@ -39,9 +40,9 @@ async def remote_ssh_command(
 
     manager = getattr(agent, "ssh_manager", None)
     if not isinstance(manager, SSHConnectionManager):
-        return "❌ No hay una conexión SSH disponible. Usa `/conectar`."
+        return _("agent.tools.ssh_unavailable")
     if not manager.is_connected:
-        return "❌ No existe una sesión SSH activa. Usa `/conectar`."
+        return _("agent.tools.ssh_inactive")
 
     if timeout_seconds is None or timeout_seconds == "":
         timeout_seconds = getattr(agent, "remote_command_timeout", None)
@@ -52,10 +53,10 @@ async def remote_ssh_command(
     try:
         timeout_int = int(float(timeout_seconds))
     except (TypeError, ValueError):
-        return "❌ El parámetro `timeout_seconds` debe ser un número de segundos."
+        return _("agent.tools.timeout_invalid")
 
     if timeout_int <= 0:
-        return "❌ `timeout_seconds` debe ser mayor que cero."
+        return _("agent.tools.timeout_positive")
 
     timeout_seconds = timeout_int
 
@@ -76,13 +77,19 @@ async def remote_ssh_command(
         return f"❌ {exc}"
     output = stdout.strip()
     error = stderr.strip()
-    summary: list[str] = [f"Código de salida: {code}"]
+    summary: list[str] = [
+        _("agent.tools.summary.exit_code", code=code)
+    ]
     if output:
-        summary.append("Salida:\n" + output)
+        summary.append(
+            _("agent.tools.summary.stdout") + "\n" + output
+        )
     if error:
-        summary.append("Errores:\n" + error)
+        summary.append(
+            _("agent.tools.summary.stderr") + "\n" + error
+        )
     if not output and not error:
-        summary.append("(sin salida)")
+        summary.append(_("agent.tools.summary.empty"))
     stdout_preview = stdout.strip()
     stderr_preview = stderr.strip()
     logger.debug(
@@ -119,9 +126,9 @@ async def remote_sftp_transfer(
 
     manager = getattr(agent, "ssh_manager", None)
     if not isinstance(manager, SSHConnectionManager):
-        return "❌ No hay una conexión SSH disponible. Usa `/conectar`."
+        return _("agent.tools.ssh_unavailable")
     if not manager.is_connected:
-        return "❌ No existe una sesión SSH activa. Usa `/conectar`."
+        return _("agent.tools.ssh_inactive")
 
     normalized_action = action.strip().lower()
     if normalized_action in {"upload", "put"}:
@@ -129,12 +136,14 @@ async def remote_sftp_transfer(
     elif normalized_action in {"download", "get"}:
         direction = "download"
     else:
-        return (
-            "❌ Acción inválida. Usa `upload`/`put` para subir archivos o"
-            " `download`/`get` para descargarlos."
-        )
+        return _("agent.tools.transfer.invalid_action")
 
-    overwrite_flag = bool(overwrite) if isinstance(overwrite, (int, bool)) else str(overwrite).lower() in {"true", "1", "yes", "si", "sí"}
+    truthy_values = {"true", "1", "yes", "si", "sí", "ja", "wahr"}
+    overwrite_flag = (
+        bool(overwrite)
+        if isinstance(overwrite, int | bool)
+        else str(overwrite).lower() in truthy_values
+    )
 
     loop = asyncio.get_running_loop()
 
@@ -149,14 +158,16 @@ async def remote_sftp_transfer(
     def _run() -> str:
         if direction == "upload":
             manager.upload_file(local_path, remote_path, overwrite=overwrite_flag)
-            return (
-                "✅ Archivo subido con éxito. "
-                f"Local: `{local_path}` → Remoto: `{remote_path}`"
+            return _(
+                "agent.tools.transfer.upload_success",
+                local=local_path,
+                remote=remote_path,
             )
         local_result = manager.download_file(remote_path, local_path, overwrite=overwrite_flag)
-        return (
-            "✅ Archivo descargado con éxito. "
-            f"Remoto: `{remote_path}` → Local: `{local_result}`"
+        return _(
+            "agent.tools.transfer.download_success",
+            remote=remote_path,
+            local=str(local_result),
         )
 
     try:

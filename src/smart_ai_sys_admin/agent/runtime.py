@@ -15,6 +15,7 @@ from strands.agent.agent_result import AgentResult
 from strands.tools.mcp import MCPClient
 
 from ..connection import SSHConnectionManager
+from ..localization import _
 from .config import AgentConfig, AgentConfigError, MCPConfig, MCPTransportConfig, load_agent_config
 from .factory import AgentFactory
 from .permissions import ToolPermissionManager
@@ -146,8 +147,10 @@ class AgentRuntime:
             config = load_agent_config()
         except AgentConfigError as exc:
             self._error_message = (
-                "⚠️ No se pudo cargar `conf/agent.conf`: "
-                f"{exc}. El modo agente permanecerá deshabilitado."
+                _(
+                    "agent.config.load_error",
+                    error=str(exc),
+                )
             )
             self._logger.error("Error cargando la configuración del agente: %s", exc)
             return
@@ -210,8 +213,7 @@ class AgentRuntime:
         except Exception as exc:  # pragma: no cover - depende del entorno
             self._logger.error("Error inicializando el agente Strands: %s", exc)
             self._error_message = (
-                "⚠️ No fue posible inicializar el agente Strands. Revisa los registros "
-                "para más detalles."
+                _("agent.start.failure")
             )
             if self._mcp_manager:
                 self._mcp_manager.close()
@@ -230,7 +232,10 @@ class AgentRuntime:
             self._permission_manager.restore()
         self._ready = True
         config_path = config.config_path
-        self._status_message = f"✅ Agente Strands inicializado (configuración: `{config_path}`)"
+        self._status_message = _(
+            "agent.start.success",
+            path=str(config_path),
+        )
 
     def invoke(self, prompt: str) -> str:
         if not self.ready:
@@ -240,7 +245,10 @@ class AgentRuntime:
             result = self._agent(prompt)
         except Exception as exc:  # pragma: no cover - depende del proveedor
             self._logger.exception("Error ejecutando el agente")
-            return f"❌ El agente falló al procesar la instrucción: {exc}"
+            return _(
+                "agent.invoke.failure",
+                error=str(exc),
+            )
         if isinstance(result, AgentResult):
             text = self._render_agent_result(result)
             return text or "(sin respuesta)"
