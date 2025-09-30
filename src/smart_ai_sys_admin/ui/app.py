@@ -118,7 +118,13 @@ class SmartAISysAdminApp(App[None]):
             self._input.focus_editor()
             return
 
-        agent_output = await asyncio.to_thread(self._invoke_agent, trimmed)
+        if self._connection_info:
+            self._connection_info.set_thinking(True)
+        try:
+            agent_output = await asyncio.to_thread(self._invoke_agent, trimmed)
+        finally:
+            if self._connection_info:
+                self._connection_info.set_thinking(False)
         if not agent_output:
             agent_output = self._config.ui.output_panel.placeholder_response_markdown
         self._conversation.add_agent_markdown(agent_output)

@@ -11,6 +11,7 @@ from textual import events
 from textual.app import ComposeResult
 from textual.message import Message
 from textual.reactive import reactive
+from textual.containers import Horizontal
 from textual.widgets import RichLog, Static, TextArea
 
 if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones estáticas.
@@ -308,29 +309,63 @@ class CommandInput(Static):
 
 
 class ConnectionInfo(Static):
-    """Muestra el estado de la conexión activa."""
+    """Muestra el estado de la conexión activa y el progreso del agente."""
 
     def __init__(self, panel_config: PanelConfig) -> None:
         super().__init__(id="connection-info")
         self._panel_config = panel_config
         self._message = "Sin conexión activa"
+        self._thinking = False
+        self._status_node: Static | None = None
+        self._indicator_node: Static | None = None
+
+    def compose(self) -> ComposeResult:
+        yield Horizontal(
+            Static("", id="connection-info-status"),
+            Static("", id="connection-info-indicator"),
+            id="connection-info-row",
+        )
 
     def on_mount(self) -> None:
         self.styles.width = "100%"
-        self.styles.height = 2
+        self.styles.height = "auto"
         self.styles.min_height = 2
         self.styles.max_height = 2
         self.styles.dock = "bottom"
         self.styles.padding = (0, 1)
         self.styles.background = self._panel_config.background or "black"
         self.styles.border_top = ("heavy", self._panel_config.border_style)
+
+        row = self.query_one("#connection-info-row", Horizontal)
+        row.styles.width = "100%"
+        row.styles.height = "100%"
+        row.styles.align_vertical = "middle"
+        row.styles.align_horizontal = "space-between"
+
+        self._status_node = self.query_one("#connection-info-status", Static)
+        self._indicator_node = self.query_one("#connection-info-indicator", Static)
+        self._indicator_node.styles.color = self._panel_config.text_style
+
         self.refresh_status(self._message)
 
     def refresh_status(self, message: str) -> None:
         self._message = message
-        self.update(
-            Text.assemble(
-                (f"{self._panel_config.title}: ", self._panel_config.border_style),
-                (self._message, self._panel_config.text_style),
-            )
+        self._render()
+
+    def set_thinking(self, active: bool) -> None:
+        self._thinking = active
+        self._render()
+
+    def _render(self) -> None:
+        if not self._status_node or not self._indicator_node:
+            return
+        status_text = Text.assemble(
+            (f"{self._panel_config.title}: ", self._panel_config.border_style),
+            (self._message, self._panel_config.text_style),
         )
+        self._status_node.update(status_text)
+        if self._thinking:
+            thinker = Text("pensando…", style=f"{self._panel_config.text_style} italic")
+        else:
+            thinker = Text("", style=self._panel_config.text_style)
+        self._indicator_node.update(thinker)
