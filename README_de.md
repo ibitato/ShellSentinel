@@ -78,6 +78,52 @@ Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_
 - `/connect` hält SSH und SFTP parallel aktiv. Der Agent stellt `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` bereit, um Dateien hoch- (`upload`/`put`) oder herunterzuladen (`download`/`get`). Der Name lässt sich bei Bedarf über `tools.sftp_transfer.name` anpassen.
 - Admin-Aufgaben sind sowohl auf GNU/Linux- als auch auf Windows-Systemen möglich, sofern SSH/SFTP verfügbar ist. Befehle für das Zielsystem (PowerShell/cmd auf Windows) anpassen und Pfade vor Dateiübertragungen prüfen.
 
+### Plugin-System
+- Plugins werden automatisch aus dem Verzeichnis `plugins/` geladen (konfigurierbar über `SMART_AI_SYS_ADMIN_PLUGINS_DIR`; mehrere Pfade können mit `:` getrennt angegeben werden). Jede `.py`-Datei muss eine Funktion `register(registry)` bereitstellen.
+- Innerhalb von `register(...)` lassen sich mit `PluginSlashCommand` zusätzliche Slash-Befehle definieren. Die Handler-Funktion erhält die Argumentliste der Benutzer:innen und gibt Markdown zurück, das im Chat angezeigt wird. Logging aus dem Plugin integriert sich in das bestehende Log-System der TUI.
+- Über `registry.register_translations(locale, payload)` können Plugins eigene Übersetzungen registrieren. Die in `description_key`, `usage_key` und `help_key` referenzierten Schlüssel sollten dort definiert sein, damit Lokalisierung und Hilfe funktionieren.
+- Optional lässt sich eine `suggestion(command, args)`-Funktion hinterlegen, um den Autovervollständigungs-Hinweis zu steuern. Ohne diese Funktion wird der Text aus `usage_key` angezeigt.
+- Registrierte Befehle erscheinen automatisch in `/help`, nutzen die Eingabe-Historie und folgen denselben Ausgaberegeln wie die eingebauten Commands.
+
+```python
+# plugins/credentials.py
+from smart_ai_sys_admin.plugins import PluginRegistry, PluginSlashCommand
+
+
+def _fetch_credentials(args: list[str]) -> str:
+    if not args:
+        return "⚠️ Bitte den Servernamen angeben."
+    server = args[0]
+    # Hier könnte eine interne API aufgerufen werden
+    return f"Zugangsdaten für `{server}`: user demo / password 1234"
+
+
+def register(registry: PluginRegistry) -> None:
+    registry.register_translations(
+        "de",
+        {
+            "plugins": {
+                "credentials": {
+                    "description": "Ruft Zugangsdaten von der internen API ab",
+                    "usage": "Verwendung: `{command} <server>`",
+                    "help": "`{command}` fragt die Unternehmens-API ab und zeigt die Zugangsdaten im Chat.",
+                }
+            }
+        },
+    )
+
+    registry.register_command(
+        PluginSlashCommand(
+            name="/credentials",
+            aliases=("/zugangsdaten",),
+            handler=_fetch_credentials,
+            description_key="plugins.credentials.description",
+            usage_key="plugins.credentials.usage",
+            help_key="plugins.credentials.help",
+        )
+    )
+```
+
 ### Benutzerhandbücher
 - Ausführliche Schritt-für-Schritt-Anleitungen findest du in `docs/user_guide_de.md`, `docs/user_guide_en.md` und `docs/user_guide_es.md`. Halte alle Versionen synchron, wenn Funktionen geändert werden.
 

@@ -17,6 +17,7 @@ from ..connection import (
     SSHConnectionManager,
 )
 from ..localization import _
+from ..plugins import PluginManager
 from .commands import EXIT_ALIASES, SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
@@ -50,6 +51,9 @@ class SmartAISysAdminApp(App[None]):
             self._connection_manager,
             logging.getLogger("smart_ai_sys_admin.agent.runtime"),
         )
+        self._plugin_manager = PluginManager(logging.getLogger("smart_ai_sys_admin.plugins"))
+        self._plugin_manager.load()
+        self._command_processor.register_plugin_commands(list(self._plugin_manager.commands))
         output_cfg = self._config.ui.output_panel
         self._welcome_screen = WelcomeScreen(
             primary_color=output_cfg.border_style or "#FF8C00",
@@ -64,6 +68,7 @@ class SmartAISysAdminApp(App[None]):
                 self._config.ui.input_widget,
                 self._config.shortcuts.exit,
                 self._config.ui.history_limit,
+                self._command_processor,
             ),
             ConnectionInfo(self._config.ui.connection_panel),
             id="input-section",

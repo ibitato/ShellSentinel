@@ -6,6 +6,7 @@ import json
 import locale
 import logging
 import os
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,9 @@ DEFAULT_LOCALE = "en"
 LOCALE_ENV_VAR = "SMART_AI_SYS_ADMIN_LOCALE"
 _PLACEHOLDER_PREFIX = "{{"
 _PLACEHOLDER_SUFFIX = "}}"
+
+
+_plugin_translations: dict[str, dict[str, Any]] = {}
 
 
 @dataclass(frozen=True)
@@ -119,6 +123,28 @@ def reset_localizer(locale_code: str | None = None) -> Localizer:
     return get_localizer()
 
 
+def register_plugin_translations(locale_code: str, translations: Mapping[str, Any]) -> None:
+    """Registra traducciones adicionales suministradas por un plugin."""
+
+    normalized = _normalize_locale(locale_code)
+    existing = _plugin_translations.get(normalized, {})
+    _plugin_translations[normalized] = _merge_dicts(existing, dict(translations))
+    _refresh_localizer()
+
+
+def _refresh_localizer() -> None:
+    global _cached_localizer
+    if _cached_localizer is None:
+        return
+    active = _cached_localizer.active_locale
+    fallback = _cached_localizer.fallback_locale
+    _cached_localizer = Localizer(
+        translations=_load_translations(active),
+        active_locale=active,
+        fallback_locale=fallback,
+    )
+
+
 def _(key: str, /, **kwargs: Any) -> str:
     """Alias corto estilo gettext para :meth:`Localizer.get`."""
 
@@ -192,6 +218,10 @@ def _load_translations(locale_code: str) -> dict[str, Any]:
                 merged = json.load(handle)
         else:
             merged = {}
+    for code in chain:
+        plugin_payload = _plugin_translations.get(code)
+        if plugin_payload:
+            merged = _merge_dicts(merged, plugin_payload)
     return merged
 
 

@@ -15,6 +15,7 @@ from ..connection import (
     SSHConnectionManager,
 )
 from ..localization import _
+from ..plugins.types import PluginSlashCommand
 
 PRIMARY_CONNECT = "/connect"
 PRIMARY_DISCONNECT = "/disconnect"
@@ -39,6 +40,13 @@ class SlashCommandProcessor:
         self._connection_manager = connection_manager
         self._output_config = output_config
         self._logger = logger or logging.getLogger("smart_ai_sys_admin.ui.commands")
+        self._plugin_commands: list[PluginSlashCommand] = []
+        self._plugin_alias_index: dict[str, PluginSlashCommand] = {}
+        self._reserved_aliases = set(
+            alias.lower()
+            for group in [CONNECT_ALIASES, DISCONNECT_ALIASES, HELP_ALIASES, EXIT_ALIASES]
+            for alias in group
+        )
 
     def process(self, content: str) -> str | None:
         content = content.strip()
@@ -47,6 +55,59 @@ class SlashCommandProcessor:
         if not content.startswith("/"):
             return None
         return self._execute_command(content)
+
+    def register_plugin_commands(self, commands: list[PluginSlashCommand]) -> None:
+        for command in commands:
+            aliases = {alias.lower() for alias in command.iter_aliases()}
+            if any(alias in self._reserved_aliases for alias in aliases):
+                self._logger.warning(
+                    "Se ignoró el comando del plugin '%s' por conflicto de alias",
+                    command.name,
+                )
+                continue
+            if any(alias in self._plugin_alias_index for alias in aliases):
+                self._logger.warning(
+                    "Se ignoró el comando del plugin '%s' por alias duplicado",
+                    command.name,
+                )
+                continue
+            self._plugin_commands.append(command)
+            for alias in aliases:
+                self._plugin_alias_index[alias] = command
+            self._reserved_aliases.update(aliases)
+
+    def suggestion_for(self, raw_value: str) -> str | None:
+        trimmed = raw_value.strip()
+        if not trimmed:
+            return None
+        tokens = trimmed.split()
+        if not tokens:
+            return None
+        command_raw = tokens[0]
+        command = command_raw.lower()
+        if command in CONNECT_ALIASES:
+            return self._suggest_connect(command_raw, tokens)
+        if command in DISCONNECT_ALIASES:
+            return self._suggest_disconnect(command_raw, tokens)
+        if command in HELP_ALIASES:
+            return self._suggest_help(command_raw, tokens)
+        if command in EXIT_ALIASES:
+            return self._suggest_exit(command_raw, tokens)
+        plugin = self._plugin_alias_index.get(command)
+        if plugin is None:
+            return None
+        args = tokens[1:]
+        if plugin.suggestion:
+            try:
+                return plugin.suggestion(command_raw, args)
+            except Exception:  # pragma: no cover - depende del plugin
+                self._logger.exception(
+                    "Error en la sugerencia del comando plugin '%s'", plugin.name
+                )
+                return None
+        if plugin.usage_key:
+            return _(plugin.usage_key, command=command_raw)
+        return None
 
     def _execute_command(self, raw_command: str) -> str:
         try:
@@ -68,6 +129,9 @@ class SlashCommandProcessor:
         elif command in HELP_ALIASES:
             handler = self._command_help
         else:
+            plugin = self._plugin_alias_index.get(command)
+            if plugin:
+                return self._execute_plugin_command(plugin, parts[1:], command)
             self._logger.info("Comando desconocido: %s", command)
             return self._format_help(
                 _("ui.commands.unknown", command=command),
@@ -81,6 +145,24 @@ class SlashCommandProcessor:
             return _(
                 "ui.commands.internal_error",
                 command=command,
+                error=str(exc),
+            )
+
+    def _execute_plugin_command(
+        self, command: PluginSlashCommand, args: list[str], alias: str
+    ) -> str:
+        self._logger.info(
+            "Procesando comando de plugin %s con argumentos %s", command.name, args
+        )
+        try:
+            return command.handler(args)
+        except Exception as exc:  # pragma: no cover - depende del plugin
+            self._logger.exception(
+                "Error interno procesando el comando plugin '%s'", command.name
+            )
+            return _(
+                "ui.commands.internal_error",
+                command=alias,
                 error=str(exc),
             )
 
@@ -156,18 +238,112 @@ class SlashCommandProcessor:
         return _("ui.commands.disconnect.success")
 
     def _command_help(self, args: list[str]) -> str:  # noqa: ARG002 - no se esperan argumentos
-        return self._help_overview()
+        if not args:
+            return self._help_overview()
+        target = args[0].lower()
+        if target in CONNECT_ALIASES:
+            return self._connect_help()
+        if target in DISCONNECT_ALIASES:
+            return self._disconnect_help()
+        if target in HELP_ALIASES:
+            return self._help_usage()
+        if target in EXIT_ALIASES:
+            return self._exit_help()
+        plugin = self._plugin_alias_index.get(target)
+        if plugin:
+            if plugin.help_key:
+                return _(plugin.help_key, command=plugin.name)
+            description = _(
+                plugin.description_key, command=plugin.name
+            ) if plugin.description_key else plugin.name
+            usage = _(plugin.usage_key, command=plugin.name) if plugin.usage_key else plugin.name
+            return f"{description}\n\n{usage}"
+        return self._format_help(
+            _("ui.commands.help.unknown", command=target),
+            self._help_overview(),
+        )
 
     def _format_help(self, title: str, body: str) -> str:
         return f"{title}\n\n{body}"
 
     def _help_overview(self) -> str:
-        return _(
+        base = _(
             "ui.commands.overview",
             connect_usage=self._connect_usage(),
             disconnect_usage=self._disconnect_usage(),
             help_usage=self._help_usage(),
             exit_command=PRIMARY_EXIT,
+        )
+        if not self._plugin_commands:
+            return base
+        lines = [base, "", _("ui.commands.plugins.header")]
+        for command in sorted(self._plugin_commands, key=lambda c: c.name.lower()):
+            description = _(
+                command.description_key, command=command.name
+            ) if command.description_key else command.name
+            lines.append(f"- `{command.name}` {description}")
+        return "\n".join(lines)
+
+    def _suggest_connect(self, command_raw: str, tokens: list[str]) -> str | None:
+        usage = self._connect_usage()
+        if len(tokens) <= 1:
+            return _(
+                "ui.input.suggestions.connect.full_usage",
+                command=command_raw,
+                usage=usage,
+            )
+        if len(tokens) == 2:
+            host = tokens[1]
+            return _(
+                "ui.input.suggestions.connect.missing_user",
+                command=command_raw,
+                host=host,
+                usage=usage,
+            )
+        if len(tokens) == 3:
+            host, user = tokens[1], tokens[2]
+            return _(
+                "ui.input.suggestions.connect.missing_secret",
+                command=command_raw,
+                host=host,
+                user=user,
+                usage=usage,
+            )
+        return None
+
+    def _suggest_disconnect(self, command_raw: str, tokens: list[str]) -> str | None:
+        if len(tokens) > 1:
+            return _(
+                "ui.input.suggestions.disconnect.no_args",
+                command=command_raw,
+            )
+        return _(
+            "ui.input.suggestions.disconnect.description",
+            command=command_raw,
+        )
+
+    def _suggest_help(self, command_raw: str, tokens: list[str]) -> str | None:
+        if len(tokens) > 1:
+            return _(
+                "ui.input.suggestions.help.no_args",
+                command=command_raw,
+            )
+        return _(
+            "ui.input.suggestions.help.description",
+            command=command_raw,
+            primary=PRIMARY_HELP,
+        )
+
+    def _suggest_exit(self, command_raw: str, tokens: list[str]) -> str | None:
+        if len(tokens) > 1:
+            return _(
+                "ui.input.suggestions.exit.no_args",
+                command=command_raw,
+            )
+        return _(
+            "ui.input.suggestions.exit.description",
+            command=command_raw,
+            primary=PRIMARY_EXIT,
         )
 
     def _connect_help(self) -> str:
@@ -196,6 +372,13 @@ class SlashCommandProcessor:
 
     def _help_usage(self) -> str:
         return PRIMARY_HELP
+
+    def _exit_help(self) -> str:
+        return _(
+            "ui.input.suggestions.exit.description",
+            command=PRIMARY_EXIT,
+            primary=PRIMARY_EXIT,
+        )
 
     def _auth_label(self, method: str) -> str:
         key = f"connection.auth.method.{method}"

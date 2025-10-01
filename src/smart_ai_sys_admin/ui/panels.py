@@ -16,15 +16,7 @@ from textual.widgets import RichLog, Static, TextArea
 
 from ..config import AppConfig, InputConfig, PanelConfig
 from ..localization import _
-from .commands import (
-    CONNECT_ALIASES,
-    DISCONNECT_ALIASES,
-    EXIT_ALIASES,
-    HELP_ALIASES,
-    PRIMARY_CONNECT,
-    PRIMARY_EXIT,
-    PRIMARY_HELP,
-)
+from .commands import SlashCommandProcessor
 
 if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones estáticas.
     from ..config import ShortcutConfig
@@ -129,11 +121,13 @@ class CommandInput(Static):
         config: InputConfig,
         exit_shortcut: ShortcutConfig,
         history_limit: int,
+        command_processor: SlashCommandProcessor,
     ) -> None:
         super().__init__(id="command-input")
         self._config = config
         self._exit_shortcut = exit_shortcut
         self._history_limit = max(history_limit, 1)
+        self._command_processor = command_processor
         self._editor: _HistoryAwareTextArea | None = None
         self._placeholder: Static | None = None
         self._base_placeholder = self._format_placeholder()
@@ -206,7 +200,7 @@ class CommandInput(Static):
     def _update_placeholder_hint(self) -> None:
         if not self._placeholder:
             return
-        suggestion = self._suggestion_for(self.value)
+        suggestion = self._command_processor.suggestion_for(self.value)
         text = Text(self._base_placeholder, style=self._config.text_style)
         if suggestion:
             text.append("\n\n", style=self._config.text_style)
@@ -215,73 +209,6 @@ class CommandInput(Static):
             text.append(" ", style=self._config.text_style)
             text.append(suggestion, style=self._config.text_style)
         self._placeholder.update(text)
-
-    def _suggestion_for(self, raw_value: str) -> str | None:
-        trimmed = raw_value.strip()
-        if not trimmed:
-            return None
-        tokens = trimmed.split()
-        command_raw = tokens[0]
-        command = command_raw.lower()
-        if command in CONNECT_ALIASES:
-            usage = self._connect_usage()
-            if len(tokens) <= 1:
-                return _(
-                    "ui.input.suggestions.connect.full_usage",
-                    command=command_raw,
-                    usage=usage,
-                )
-            if len(tokens) == 2:
-                host = tokens[1]
-                return _(
-                    "ui.input.suggestions.connect.missing_user",
-                    command=command_raw,
-                    host=host,
-                    usage=usage,
-                )
-            if len(tokens) == 3:
-                host, user = tokens[1], tokens[2]
-                return _(
-                    "ui.input.suggestions.connect.missing_secret",
-                    command=command_raw,
-                    host=host,
-                    user=user,
-                    usage=usage,
-                )
-            return None
-        if command in DISCONNECT_ALIASES:
-            if len(tokens) > 1:
-                return _(
-                    "ui.input.suggestions.disconnect.no_args",
-                    command=command_raw,
-                )
-            return _(
-                "ui.input.suggestions.disconnect.description",
-                command=command_raw,
-            )
-        if command in HELP_ALIASES:
-            if len(tokens) > 1:
-                return _(
-                    "ui.input.suggestions.help.no_args",
-                    command=command_raw,
-                )
-            return _(
-                "ui.input.suggestions.help.description",
-                command=command_raw,
-                primary=PRIMARY_HELP,
-            )
-        if command in EXIT_ALIASES:
-            if len(tokens) > 1:
-                return _(
-                    "ui.input.suggestions.exit.no_args",
-                    command=command_raw,
-                )
-            return _(
-                "ui.input.suggestions.exit.description",
-                command=command_raw,
-                primary=PRIMARY_EXIT,
-            )
-        return None
 
     def _submit_value(self) -> None:
         if not self._editor:
@@ -352,13 +279,6 @@ class CommandInput(Static):
         self.value = entry
         self._navigating_history = False
         self._update_placeholder_hint()
-
-    def _connect_usage(self) -> str:
-        return _(
-            "ui.commands.connect.usage",
-            command=PRIMARY_CONNECT,
-        )
-
 
 class ConnectionInfo(Static):
     """Muestra el estado de la conexión activa y el progreso del agente."""

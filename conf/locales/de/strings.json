@@ -54,7 +54,13 @@
         "success": "✅ Verbindung getrennt.",
         "help": "**Verwendung von `{command}`**\n- Schließt die aktive SSH/SFTP-Sitzung.\n- Akzeptiert keine zusätzlichen Argumente."
       },
-      "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung."
+      "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
+      "help": {
+        "unknown": "⚠️ Keine zusätzliche Hilfe für `{command}` verfügbar."
+      },
+      "plugins": {
+        "header": "**Befehle aus Plugins**"
+      }
     },
     "input": {
       "suggestion_label": "Hinweis:",

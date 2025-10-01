@@ -78,6 +78,52 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 - `/connect` sessions keep SSH and SFTP alive. The agent exposes `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` to upload (`upload`/`put`) or download (`download`/`get`) files through the same connection. Rename the tool via `tools.sftp_transfer.name` if needed.
 - You can manage GNU/Linux or Windows servers as long as they provide SSH/SFTP. Adjust commands to the target platform (PowerShell/cmd on Windows) and double-check paths when transferring files.
 
+### Plugin system
+- Plugins are loaded automatically from the `plugins/` directory (override with `SMART_AI_SYS_ADMIN_PLUGINS_DIR`, supporting multiple paths separated by `:`). Each `.py` file must expose a `register(registry)` function.
+- Inside `register(...)` you can add slash commands with `PluginSlashCommand`. The handler receives the list of user arguments and must return Markdown to display in the chat. Any logging you perform is integrated with the application logger.
+- Plugins can ship localized strings by calling `registry.register_translations(locale, payload)`. The keys referenced in `description_key`, `usage_key` and `help_key` must exist in those translations so the command stays localized.
+- Optionally, a `suggestion(command, args)` callback can be provided to customize the autocomplete text. When omitted, the string resolved by `usage_key` is shown.
+- Registered commands appear automatically in `/help`, honor the input history and share the same output rules as the built-in commands.
+
+```python
+# plugins/credentials.py
+from smart_ai_sys_admin.plugins import PluginRegistry, PluginSlashCommand
+
+
+def _fetch_credentials(args: list[str]) -> str:
+    if not args:
+        return "⚠️ Please provide the server name."
+    server = args[0]
+    # Call your internal API here
+    return f"Credentials for `{server}`: user demo / password 1234"
+
+
+def register(registry: PluginRegistry) -> None:
+    registry.register_translations(
+        "en",
+        {
+            "plugins": {
+                "credentials": {
+                    "description": "Fetch credentials from the internal API",
+                    "usage": "Usage: `{command} <server>`",
+                    "help": "`{command}` queries the corporate API and prints the credentials in the chat.",
+                }
+            }
+        },
+    )
+
+    registry.register_command(
+        PluginSlashCommand(
+            name="/credentials",
+            aliases=("/creds",),
+            handler=_fetch_credentials,
+            description_key="plugins.credentials.description",
+            usage_key="plugins.credentials.usage",
+            help_key="plugins.credentials.help",
+        )
+    )
+```
+
 ### User manuals
 - Practical guides are available in `docs/user_guide_en.md`, `docs/user_guide_es.md` and `docs/user_guide_de.md`. Keep them aligned with the latest features.
 

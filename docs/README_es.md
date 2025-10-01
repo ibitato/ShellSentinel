@@ -75,6 +75,14 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - Las sesiones `/conectar` mantienen vivo el canal SSH y SFTP en paralelo. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
 - Puedes administrar servidores GNU/Linux o Windows siempre que expongan SSH/SFTP. Ajusta los comandos remotos a la plataforma (por ejemplo, usa PowerShell/cmd para Windows) y valida rutas antes de transferir o modificar contenidos.
 
+### Sistema de plugins
+- Los plugins viven en `plugins/` y se cargan al iniciar la TUI. Puedes redefinir la ruta con `SMART_AI_SYS_ADMIN_PLUGINS_DIR` (acepta varios paths separados por `:`).
+- Cada módulo debe definir `register(registry)`. Desde ahí se llaman a `registry.register_command(PluginSlashCommand(...))` para añadir comandos y, opcionalmente, a `registry.register_translations(locale, payload)` para añadir cadenas localizadas.
+- El `handler` de un `PluginSlashCommand` recibe la lista de argumentos, devuelve Markdown y puede usar logging estándar (`logging.getLogger(__name__)`).
+- Las claves `description_key`, `usage_key` y `help_key` deben estar presentes en las traducciones que aportes. Si no las defines, se usará el nombre del comando como fallback.
+- Si el comando requiere autocompletado personalizado, proporciona un `suggestion(command, args)` que devuelva el texto sugerido. Si no, se usará `usage_key`.
+- Todos los comandos registrados aparecen en `/help`, heredan el historial del input y se registran en los logs igual que los comandos de serie.
+
 ## Estructura del proyecto
 - `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).
 - `requirements-dev.txt`: dependencias de desarrollo (`-r requirements.txt`, linting y tests).

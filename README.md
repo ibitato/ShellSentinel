@@ -80,6 +80,64 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - Las sesiones `/conectar` mantienen vivo el canal SSH y SFTP en paralelo. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
 - Puedes administrar servidores GNU/Linux o Windows siempre que expongan SSH/SFTP. Ajusta los comandos remotos a la plataforma (por ejemplo, usa PowerShell/cmd para Windows) y valida rutas antes de transferir o modificar contenidos.
 
+### Sistema de plugins
+- Los plugins se cargan automáticamente desde el directorio `plugins/` (puedes sobrescribirlo mediante `SMART_AI_SYS_ADMIN_PLUGINS_DIR`, que admite varios paths separados por `:`). Cada archivo `.py` debe definir una función `register(registry)`.
+- Dentro de `register(...)` utiliza `PluginSlashCommand` para declarar comandos slash adicionales. El `handler` recibe los argumentos del usuario y debe devolver un texto (Markdown) que se mostrará en el chat. Cualquier logging que hagas desde el plugin se integra en el sistema habitual de la TUI.
+- Los plugins pueden aportar sus propias traducciones llamando a `registry.register_translations(locale, payload)`. Las claves `description`, `usage` y `help` que referencies en `PluginSlashCommand` deben existir en esas traducciones para respetar la localización.
+- Opcionalmente puedes aportar una función `suggestion(command, args)` para personalizar el autocompletado del input. Si no la defines, se mostrará la cadena asociada a `usage_key`.
+- Los comandos registrados aparecen automáticamente en `/help`, heredan el historial del input y comparten las mismas reglas de output que los comandos nativos (`/connect`, `/disconnect`, etc.).
+
+```python
+# plugins/credenciales.py
+from smart_ai_sys_admin.plugins import PluginRegistry, PluginSlashCommand
+
+
+def _buscar_credenciales(args: list[str]) -> str:
+    if not args:
+        return "⚠️ Debes indicar el nombre del servidor."
+    servidor = args[0]
+    # Aquí podrías invocar a tu API corporativa
+    return f"Credenciales de `{servidor}`: usuario demo / password 1234"
+
+
+def register(registry: PluginRegistry) -> None:
+    registry.register_translations(
+        "es",
+        {
+            "plugins": {
+                "credentials": {
+                    "description": "Obtiene credenciales desde la API interna",
+                    "usage": "Uso: `{command} <servidor>`",
+                    "help": "`{command}` consulta la API corporativa y muestra las credenciales en el chat.",
+                }
+            }
+        },
+    )
+    registry.register_translations(
+        "en",
+        {
+            "plugins": {
+                "credentials": {
+                    "description": "Fetch credentials from the internal API",
+                    "usage": "Usage: `{command} <server>`",
+                    "help": "`{command}` queries the corporate API and prints credentials in the chat.",
+                }
+            }
+        },
+    )
+
+    registry.register_command(
+        PluginSlashCommand(
+            name="/credentials",
+            aliases=("/credenciales",),
+            handler=_buscar_credenciales,
+            description_key="plugins.credentials.description",
+            usage_key="plugins.credentials.usage",
+            help_key="plugins.credentials.help",
+        )
+    )
+```
+
 ## Estructura del proyecto
 - `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).
 - `requirements-dev.txt`: dependencias de desarrollo (`-r requirements.txt`, linting y tests).

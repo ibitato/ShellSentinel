@@ -54,7 +54,13 @@
         "success": "✅ Conexión cerrada.",
         "help": "**Uso `{command}`**\n- Cierra la sesión SSH/SFTP activa.\n- No admite argumentos adicionales."
       },
-      "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación."
+      "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
+      "help": {
+        "unknown": "⚠️ No hay ayuda adicional para `{command}`."
+      },
+      "plugins": {
+        "header": "**Comandos proporcionados por plugins**"
+      }
     },
     "input": {
       "suggestion_label": "Sugerencia:",

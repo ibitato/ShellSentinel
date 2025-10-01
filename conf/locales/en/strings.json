@@ -54,7 +54,13 @@
         "success": "✅ Connection closed.",
         "help": "**Using `{command}`**\n- Closes the active SSH/SFTP session.\n- Does not accept additional arguments."
       },
-      "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{exit_command}` opens a confirmation dialog to quit the app."
+      "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
+      "help": {
+        "unknown": "⚠️ No additional help is available for `{command}`."
+      },
+      "plugins": {
+        "header": "**Commands provided by plugins**"
+      }
     },
     "input": {
       "suggestion_label": "Suggestion:",
