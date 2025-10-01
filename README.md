@@ -36,7 +36,7 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles (puedes usar los alias en inglés, español o alemán):
-  - `/connect <host> <user> <password|key_path>` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente.
+  - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente (el puerto es opcional, por defecto 22).
   - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
   - `/help` (`/ayuda`, `/hilfe`) muestra un resumen en Markdown de los comandos disponibles.
   - `/exit` (`/salir`, `/beenden`, `/quit`) abre un diálogo de confirmación para cerrar la aplicación.

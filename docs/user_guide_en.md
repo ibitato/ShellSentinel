@@ -46,7 +46,7 @@ A welcome screen appears on startup and closes automatically after 5 seconds or 
 ## Core commands
 Commands are available in English, Spanish and German.
 
-- `/connect <host> <user> <password|key_path>` — open the remote session.
+- `/connect <host> <user> <password|key_path> [port]` — open the remote session (optional port, defaults to 22).
 - `/disconnect` — close the active connection.
 - `/help` — display a summary of commands.
 - `/exit` — open the confirmation dialog to quit.

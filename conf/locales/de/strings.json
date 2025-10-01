@@ -41,11 +41,12 @@
       "unknown": "⚠️ Unbekannter Befehl `{command}`.",
       "internal_error": "❌ Beim Ausführen von `{command}` ist ein unerwarteter Fehler aufgetreten: {error}",
       "connect": {
-        "usage": "{command} <host> <user> <password|key_path>",
-        "missing_args": "⚠️ `{command}` benötigt `<host> <user> <password|key_path>`.",
+        "usage": "{command} <host> <Benutzer> <Passwort|Schlüsselpfad> [Port]",
+        "missing_args": "⚠️ `{command}` benötigt `<Host> <Benutzer> <Passwort|Schlüsselpfad> [Port]`.",
         "failure": "❌ Die Verbindung konnte nicht hergestellt werden: {error}",
-        "success": "✅ Verbunden mit `{username}@{host}` mittels {auth_label}.",
-        "help": "**Verwendung von `{command}`**\n- Argumente: `<host> <user> <password|key_path>`\n- Beispiel mit Passwort: `{password_example}`\n- Beispiel mit Schlüssel: `{key_example}`\n- Öffnet eine dauerhafte SSH- und SFTP-Sitzung bis `{disconnect}` ausgeführt wird.\n- Kompatibel mit GNU/Linux- und Windows-Zielen mit SSH/SFTP."
+        "success": "✅ Verbindung zu `{username}@{host}:{port}` mit {auth_label} hergestellt.",
+        "help": "**Verwendung von `{command}`**\n- Argumente: `<Host> <Benutzer> <Passwort|Schlüsselpfad> [Port]`\n- Optionaler Port: Standard ist {default_port}. Beispiel: `{port_example}`\n- Beispiel mit Passwort: `{password_example}`\n- Beispiel mit Schlüssel: `{key_example}`\n- Öffnet eine dauerhafte SSH- und SFTP-Sitzung bis `{disconnect}` ausgeführt wird.\n- Funktioniert mit GNU/Linux- und Windows-Zielen, die SSH/SFTP anbieten.",
+        "too_many_args": "⚠️ `{command}` akzeptiert nur einen optionalen Port am Ende."
       },
       "disconnect": {
         "extra_args": "⚠️ `{command}` akzeptiert keine Argumente.",
@@ -67,8 +68,9 @@
       "suggestions": {
         "connect": {
           "full_usage": "Verwendung: `{usage}`",
-          "missing_user": "Ergänze den Benutzernamen: `{command} {host} <user> <password|key_path>`",
-          "missing_secret": "Ergänze Passwort oder Schlüsselpfad: `{command} {host} {user} <password|key_path>`"
+          "missing_user": "Benutzer ergänzen: `{command} {host} <Benutzer> <Passwort|Schlüsselpfad> [Port]`",
+          "missing_secret": "Passwort oder Schlüsselpfad ergänzen (Port optional am Ende): `{command} {host} {user} <Passwort|Schlüsselpfad> [Port]`",
+          "port_hint": "Optionaler Port (Standard 22): `{usage}`"
         },
         "disconnect": {
           "no_args": "`{command}` akzeptiert keine Argumente.",
@@ -102,7 +104,7 @@
     },
     "status": {
       "none": "Keine aktive Verbindung",
-      "connected": "Verbunden mit {username}@{host} ({method})",
+      "connected": "Verbunden als {username}@{host}:{port} ({method})",
       "thinking": "⏳ wird verarbeitet…"
     },
     "errors": {
@@ -121,7 +123,8 @@
       "local_exists": "Lokale Datei '{path}' existiert bereits. Verwende `overwrite`, um sie zu ersetzen.",
       "remote_missing": "Remote-Datei '{path}' wurde nicht gefunden: {error}",
       "download_generic": "Fehler beim Herunterladen von '{path}': {error}",
-      "mkdir_remote": "Remote-Verzeichnis '{path}' konnte nicht erstellt werden: {error}"
+      "mkdir_remote": "Remote-Verzeichnis '{path}' konnte nicht erstellt werden: {error}",
+      "invalid_port": "Ungültiger Port '{port}'. Verwende einen Wert zwischen 1 und 65535."
     }
   },
   "agent": {

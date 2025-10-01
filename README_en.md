@@ -37,7 +37,7 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 - The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status.
 - Submit instructions with the configured shortcut (default `Ctrl+S`).
 - Supported commands (aliases available in English, Spanish and German):
-  - `/connect <host> <user> <password|key_path>` (`/conectar`, `/verbinden`) opens a persistent SSH/SFTP session.
+- `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH/SFTP session (optional port, defaults to 22).
   - `/disconnect` (`/desconectar`, `/trennen`) closes the active connection if any.
   - `/help` (`/ayuda`, `/hilfe`) shows a Markdown summary of all commands.
   - `/exit` (`/salir`, `/beenden`, `/quit`) opens the confirmation dialog before quitting.

@@ -174,6 +174,42 @@ class SlashCommandProcessor:
                 self._connect_help(),
             )
         host, username, secret = args[0], args[1], args[2]
+        extra_args = args[3:]
+        port = 22
+        if extra_args:
+            if len(extra_args) > 1:
+                self._logger.info(
+                    "Argumentos extra ignorados en %s: %s",
+                    PRIMARY_CONNECT,
+                    extra_args,
+                )
+                return self._format_help(
+                    _("ui.commands.connect.too_many_args", command=PRIMARY_CONNECT),
+                    self._connect_help(),
+                )
+            port_str = extra_args[0]
+            try:
+                port = int(port_str)
+            except ValueError:
+                self._logger.info(
+                    "Puerto inválido para %s: %s",
+                    PRIMARY_CONNECT,
+                    port_str,
+                )
+                return self._format_help(
+                    _("connection.errors.invalid_port", port=port_str),
+                    self._connect_help(),
+                )
+            if port <= 0 or port > 65535:
+                self._logger.info(
+                    "Puerto fuera de rango para %s: %s",
+                    PRIMARY_CONNECT,
+                    port,
+                )
+                return self._format_help(
+                    _("connection.errors.invalid_port", port=port),
+                    self._connect_help(),
+                )
         password: str | None = None
         key_path: str | None = None
         candidate = Path(secret).expanduser()
@@ -187,6 +223,7 @@ class SlashCommandProcessor:
                 username,
                 password=password,
                 key_path=key_path,
+                port=port,
             )
         except ConnectionAlreadyOpen as exc:
             self._logger.info("Intento de reconectar mientras existe una sesión activa")
@@ -198,9 +235,10 @@ class SlashCommandProcessor:
                 self._connect_help(),
             )
         self._logger.info(
-            "Conexión abierta con %s@%s usando %s",
+            "Conexión abierta con %s@%s:%s usando %s",
             details.username,
             details.host,
+            details.port,
             details.auth_method,
         )
         auth_label = self._auth_label(details.auth_method)
@@ -208,6 +246,7 @@ class SlashCommandProcessor:
             "ui.commands.connect.success",
             username=details.username,
             host=details.host,
+            port=details.port,
             auth_label=auth_label,
         )
 
@@ -309,7 +348,11 @@ class SlashCommandProcessor:
                 user=user,
                 usage=usage,
             )
-        return None
+        return _(
+            "ui.input.suggestions.connect.port_hint",
+            command=command_raw,
+            usage=usage,
+        ) if len(tokens) == 4 else None
 
     def _suggest_disconnect(self, command_raw: str, tokens: list[str]) -> str | None:
         if len(tokens) > 1:
@@ -352,6 +395,8 @@ class SlashCommandProcessor:
             command=PRIMARY_CONNECT,
             password_example=f"{PRIMARY_CONNECT} server.local admin s3cr3t",
             key_example=f"{PRIMARY_CONNECT} server.local admin ~/.ssh/id_ed25519",
+            port_example=f"{PRIMARY_CONNECT} server.local admin s3cr3t 2222",
+            default_port=22,
             disconnect=PRIMARY_DISCONNECT,
         )
 

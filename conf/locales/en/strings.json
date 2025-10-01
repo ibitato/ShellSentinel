@@ -41,11 +41,12 @@
       "unknown": "⚠️ Unknown command `{command}`.",
       "internal_error": "❌ An unexpected error occurred while executing `{command}`: {error}",
       "connect": {
-        "usage": "{command} <host> <user> <password|key_path>",
-        "missing_args": "⚠️ `{command}` requires `<host> <user> <password|key_path>`.",
+        "usage": "{command} <host> <user> <password|key_path> [port]",
+        "missing_args": "⚠️ `{command}` requires `<host> <user> <password|key_path> [port]`.",
         "failure": "❌ The connection could not be established: {error}",
-        "success": "✅ Connected to `{username}@{host}` using {auth_label}.",
-        "help": "**Using `{command}`**\n- Arguments: `<host> <user> <password|key_path>`\n- Password example: `{password_example}`\n- Key example: `{key_example}`\n- Opens a persistent SSH and SFTP session until `{disconnect}`.\n- Compatible with GNU/Linux and Windows targets exposing SSH/SFTP."
+        "success": "✅ Connected to `{username}@{host}:{port}` using {auth_label}.",
+        "help": "**Using `{command}`**\n- Arguments: `<host> <user> <password|key_path> [port]`\n- Optional port: defaults to {default_port}. Example: `{port_example}`\n- Password example: `{password_example}`\n- Key example: `{key_example}`\n- Opens a persistent SSH and SFTP session until `{disconnect}`.\n- Works with GNU/Linux and Windows targets exposing SSH/SFTP.",
+        "too_many_args": "⚠️ `{command}` only accepts a single optional port at the end."
       },
       "disconnect": {
         "extra_args": "⚠️ `{command}` does not accept arguments.",
@@ -67,8 +68,9 @@
       "suggestions": {
         "connect": {
           "full_usage": "Usage: `{usage}`",
-          "missing_user": "Add the user name: `{command} {host} <user> <password|key_path>`",
-          "missing_secret": "Add the password or key path: `{command} {host} {user} <password|key_path>`"
+          "missing_user": "Provide the user: `{command} {host} <user> <password|key_path> [port]`",
+          "missing_secret": "Add the password or key path (optional port at the end): `{command} {host} {user} <password|key_path> [port]`",
+          "port_hint": "Optional port (defaults to 22): `{usage}`"
         },
         "disconnect": {
           "no_args": "`{command}` does not accept arguments.",
@@ -102,7 +104,7 @@
     },
     "status": {
       "none": "No active connection",
-      "connected": "Connected to {username}@{host} ({method})",
+      "connected": "Connected to {username}@{host}:{port} ({method})",
       "thinking": "⏳ thinking…"
     },
     "errors": {
@@ -121,7 +123,8 @@
       "local_exists": "Local file '{path}' already exists. Use `overwrite` to replace it.",
       "remote_missing": "Remote file '{path}' not found: {error}",
       "download_generic": "Error downloading '{path}': {error}",
-      "mkdir_remote": "Unable to create remote directory '{path}': {error}"
+      "mkdir_remote": "Unable to create remote directory '{path}': {error}",
+      "invalid_port": "Invalid port '{port}'. Use a value between 1 and 65535."
     }
   },
   "agent": {

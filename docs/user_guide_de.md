@@ -46,7 +46,7 @@ Zu Beginn erscheint ein Willkommensbildschirm, der sich nach 5 Sekunden automati
 ## Wichtige Befehle
 Alle Befehle stehen auf Englisch, Spanisch und Deutsch zur Verfügung.
 
-- `/connect <host> <user> <password|key_path>` — baut die Remote-Sitzung auf.
+- `/connect <host> <user> <password|key_path> [Port]` — baut die Remote-Sitzung auf (Port optional, Standard 22).
 - `/disconnect` — beendet die aktive Verbindung.
 - `/help` — listet die verfügbaren Befehle.
 - `/exit` — öffnet den Bestätigungsdialog zum Beenden.

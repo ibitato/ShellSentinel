@@ -46,7 +46,7 @@ Al arrancar verás una pantalla de bienvenida que se cierra sola en 5 segundos o
 ## Comandos básicos
 Puedes usar los comandos en inglés, español o alemán.
 
-- `/connect <host> <user> <password|key_path>` — conecta al servidor.
+- `/connect <host> <user> <password|key_path> [puerto]` — conecta al servidor (puerto opcional, 22 por defecto).
 - `/disconnect` — cierra la conexión activa.
 - `/help` — muestra el resumen de comandos disponibles.
 - `/exit` — abre el diálogo de confirmación para salir.

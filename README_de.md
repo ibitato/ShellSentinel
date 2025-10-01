@@ -37,7 +37,7 @@ Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_
 - Die Konsole ist in zwei Bereiche aufgeteilt: Ausgabeverlauf (oben) und Eingabefeld (unten). Die Fußzeile zeigt jederzeit den Status der SSH-Verbindung an.
 - Anweisungen werden über das konfigurierte Tastenkürzel gesendet (Standard `Strg+S`).
 - Unterstützte Befehle (Alias auf Englisch, Spanisch und Deutsch):
-  - `/connect <host> <user> <password|key_path>` (`/conectar`, `/verbinden`) öffnet eine persistente SSH/SFTP-Sitzung.
+- `/connect <host> <user> <password|key_path> [Port]` (`/conectar`, `/verbinden`) öffnet eine persistente SSH/SFTP-Sitzung (Port optional, Standard 22).
   - `/disconnect` (`/desconectar`, `/trennen`) beendet eine aktive Verbindung.
   - `/help` (`/ayuda`, `/hilfe`) zeigt eine Markdown-Zusammenfassung der verfügbaren Befehle.
   - `/exit` (`/salir`, `/beenden`, `/quit`) öffnet den Bestätigungsdialog zum Beenden.

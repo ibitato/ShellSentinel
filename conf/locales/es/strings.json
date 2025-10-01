@@ -41,11 +41,12 @@
       "unknown": "⚠️ Comando desconocido `{command}`.",
       "internal_error": "❌ Se produjo un error inesperado al ejecutar `{command}`: {error}",
       "connect": {
-        "usage": "{command} <host> <usuario> <password|ruta_clave>",
-        "missing_args": "⚠️ Faltan argumentos para `{command}`.",
+        "usage": "{command} <host> <usuario> <password|ruta_clave> [puerto]",
+        "missing_args": "⚠️ Faltan argumentos para `{command}`. Usa `<host> <usuario> <password|ruta_clave> [puerto]`.",
+        "too_many_args": "⚠️ `{command}` solo admite un puerto opcional al final.",
         "failure": "❌ No se pudo establecer la conexión: {error}",
-        "success": "✅ Conexión abierta con `{username}@{host}` usando {auth_label}.",
-        "help": "**Uso `{command}`**\n- Argumentos: `<host> <usuario> <password|ruta_clave>`\n- Ejemplo con contraseña: `{password_example}`\n- Ejemplo con clave: `{key_example}`\n- Abre una sesión SSH y SFTP persistente hasta ejecutar `{disconnect}`.\n- Compatible con destinos GNU/Linux y Windows que expongan SSH/SFTP."
+        "success": "✅ Conexión abierta con `{username}@{host}:{port}` usando {auth_label}.",
+        "help": "**Uso `{command}`**\n- Argumentos: `<host> <usuario> <password|ruta_clave> [puerto]`\n- Puerto opcional: si lo omites se usa {default_port}. Ejemplo: `{port_example}`\n- Ejemplo con contraseña: `{password_example}`\n- Ejemplo con clave: `{key_example}`\n- Abre una sesión SSH y SFTP persistente hasta ejecutar `{disconnect}`.\n- Compatible con destinos GNU/Linux y Windows que expongan SSH/SFTP."
       },
       "disconnect": {
         "extra_args": "⚠️ `{command}` no admite argumentos.",
@@ -67,8 +68,9 @@
       "suggestions": {
         "connect": {
           "full_usage": "Uso: `{usage}`",
-          "missing_user": "Completa el usuario: `{command} {host} <usuario> <password|ruta_clave>`",
-          "missing_secret": "Añade la contraseña o ruta de clave: `{command} {host} {user} <password|ruta_clave>`"
+          "missing_user": "Completa el usuario: `{command} {host} <usuario> <password|ruta_clave> [puerto]`",
+          "missing_secret": "Añade la contraseña o ruta de clave (puerto opcional al final): `{command} {host} {user} <password|ruta_clave> [puerto]`",
+          "port_hint": "Puerto opcional (por defecto 22): `{usage}`"
         },
         "disconnect": {
           "no_args": "`{command}` no acepta argumentos adicionales.",
@@ -102,12 +104,13 @@
     },
     "status": {
       "none": "Sin conexión activa",
-      "connected": "Conectado a {username}@{host} ({method})",
+      "connected": "Conectado a {username}@{host}:{port} ({method})",
       "thinking": "⏳ pensando…"
     },
     "errors": {
       "already_open": "Ya existe una conexión activa. Usa /disconnect o /desconectar primero.",
       "missing_secret": "Debes proporcionar contraseña o ruta a la clave privada.",
+      "invalid_port": "El puerto '{port}' no es válido. Usa un valor entre 1 y 65535.",
       "missing_key": "No se encontró la clave privada en '{path}'.",
       "no_active_session": "No hay una conexión activa que cerrar.",
       "no_active_ssh": "No hay una conexión SSH activa.",

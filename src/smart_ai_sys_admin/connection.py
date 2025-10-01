@@ -26,6 +26,7 @@ class NoActiveConnection(ConnectionError):
 @dataclass(frozen=True)
 class ConnectionDetails:
     host: str
+    port: int
     username: str
     auth_method: str
 
@@ -46,11 +47,16 @@ class SSHConnectionManager:
         *,
         password: str | None = None,
         key_path: str | None = None,
+        port: int = 22,
     ) -> ConnectionDetails:
         if self.is_connected:
             raise ConnectionAlreadyOpen(_("connection.errors.already_open"))
         if not password and not key_path:
             raise ConnectionError(_("connection.errors.missing_secret"))
+        if port <= 0 or port > 65535:
+            raise ConnectionError(
+                _("connection.errors.invalid_port", port=port)
+            )
 
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -61,6 +67,7 @@ class SSHConnectionManager:
             "timeout": 10,
             "look_for_keys": False,
             "allow_agent": False,
+            "port": port,
         }
         auth_method = "password"
         if key_path:
@@ -79,9 +86,10 @@ class SSHConnectionManager:
 
         try:
             self._logger.debug(
-                "Intentando conexión SSH con %s@%s usando %s",
+                "Intentando conexión SSH con %s@%s:%s usando %s",
                 username,
                 host,
+                port,
                 auth_method,
             )
             ssh_client.connect(**connect_kwargs)
@@ -96,13 +104,22 @@ class SSHConnectionManager:
                 pass
         except Exception as exc:  # pragma: no cover - depende del entorno remoto.
             ssh_client.close()
-            self._logger.exception("Fallo estableciendo conexión con %s@%s", username, host)
+            self._logger.exception(
+                "Fallo estableciendo conexión con %s@%s:%s", username, host, port
+            )
             raise ConnectionError(str(exc)) from exc
 
         self._ssh_client = ssh_client
         self._sftp_client = sftp_client
-        self._details = ConnectionDetails(host=host, username=username, auth_method=auth_method)
-        self._logger.info("Conexión abierta con %s@%s (%s)", username, host, auth_method)
+        self._details = ConnectionDetails(
+            host=host,
+            port=port,
+            username=username,
+            auth_method=auth_method,
+        )
+        self._logger.info(
+            "Conexión abierta con %s@%s:%s (%s)", username, host, port, auth_method
+        )
         return self._details
 
     def disconnect(self) -> None:
@@ -110,9 +127,10 @@ class SSHConnectionManager:
             raise NoActiveConnection(_("connection.errors.no_active_session"))
         assert self._ssh_client
         self._logger.debug(
-            "Cerrando conexión SSH con %s@%s",
+            "Cerrando conexión SSH con %s@%s:%s",
             self._details.username if self._details else "?",
             self._details.host if self._details else "?",
+            self._details.port if self._details else "?",
         )
         try:
             if self._sftp_client:
@@ -121,9 +139,10 @@ class SSHConnectionManager:
             self._ssh_client.close()
         if self._details:
             self._logger.info(
-                "Conexión cerrada con %s@%s",
+                "Conexión cerrada con %s@%s:%s",
                 self._details.username,
                 self._details.host,
+                self._details.port,
             )
         self._ssh_client = None
         self._sftp_client = None
@@ -154,6 +173,7 @@ class SSHConnectionManager:
             "connection.status.connected",
             username=self._details.username,
             host=self._details.host,
+            port=self._details.port,
             method=method_label,
         )
 
