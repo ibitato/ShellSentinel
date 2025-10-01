@@ -25,3 +25,6 @@ htmlcov/
 
 # Configuración sensible del agente
 conf/agent.conf
+
+# Plugins corporativos (no versionar)
+plugins/
