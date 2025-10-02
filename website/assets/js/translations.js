@@ -124,7 +124,7 @@ window.TRANSLATIONS = {
       eyebrow: "Manuals",
       title: "Product manuals & handbooks",
       lead:
-        "Dive into the living documentation: user guides, provider cookbooks and checklists curated for each language.",
+        "Dive into the living documentation: user guides, provider cookbooks, contributor handbooks and operational playbooks curated for each language.",
       cards: [
         {
           title: "User Guide",
@@ -157,6 +157,22 @@ window.TRANSLATIONS = {
             "Spanish-language checklist to implement custom LLM providers for Strands within Almost Human Sys Admin.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
+        },
+        {
+          title: "Contributor handbook",
+          language: "ES",
+          summary:
+            "AGENTS.md recoge las normas de contribución, mantenimiento de manuales y la obligación de sincronizar la web con cada cambio.",
+          href: "manuals/contributor-handbook-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Project overview",
+          language: "EN",
+          summary:
+            "Multilingual README with product context, requirements, development workflow and tooling.",
+          href: "manuals/project-overview-en.html",
+          cta: "Read online",
         },
       ],
     },
@@ -378,7 +394,7 @@ window.TRANSLATIONS = {
       eyebrow: "Manuales",
       title: "Manuales y cuadernos de referencia",
       lead:
-        "Consulta la documentación viva: guías de usuario, recetas de proveedores y checklists en cada idioma.",
+        "Consulta la documentación viva: guías de usuario, recetas de proveedores, manuales de contribución y playbooks operativos.",
       cards: [
         {
           title: "User Guide",
@@ -411,6 +427,22 @@ window.TRANSLATIONS = {
             "Checklist para implementar proveedores LLM personalizados sobre el SDK de Strands dentro de Almost Human Sys Admin.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
+        },
+        {
+          title: "Guía de contribución",
+          language: "ES",
+          summary:
+            "AGENTS.md detalla las políticas del proyecto y recuerda mantener web y manuales sincronizados tras cada cambio funcional.",
+          href: "manuals/contributor-handbook-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Visión del proyecto",
+          language: "EN",
+          summary:
+            "README disponible en EN/ES/DE con requisitos, flujo de trabajo y herramientas del proyecto.",
+          href: "manuals/project-overview-en.html",
+          cta: "Read online",
         },
       ],
     },
@@ -632,7 +664,7 @@ window.TRANSLATIONS = {
       eyebrow: "Handbücher",
       title: "Produkt-Handbücher & Leitfäden",
       lead:
-        "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Playbooks und Checklisten je nach Sprache.",
+        "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Playbooks, Beitragsrichtlinien und operative Leitfäden.",
       cards: [
         {
           title: "User Guide",
@@ -665,6 +697,22 @@ window.TRANSLATIONS = {
             "Spanischer Leitfaden mit einer Checkliste zur Implementierung eigener LLM-Provider für das Strands SDK.",
           href: "manuals/custom-providers-es.html",
           cta: "Online lesen",
+        },
+        {
+          title: "Contributor handbook",
+          language: "ES",
+          summary:
+            "AGENTS.md (EN/ES/DE) fasst Projektregeln zusammen und erinnert daran, Website und Handbücher aktuell zu halten.",
+          href: "manuals/contributor-handbook-es.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Project overview",
+          language: "EN",
+          summary:
+            "README mit Überblick, Anforderungen und Entwicklungsworkflow in Englisch, Spanisch und Deutsch.",
+          href: "manuals/project-overview-en.html",
+          cta: "Read online",
         },
       ],
     },

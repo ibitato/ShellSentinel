@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project overview · Almost Human Sys Admin</title>
+    <meta
+      name="description"
+      content="High-level overview of Almost Human Sys Admin: goals, technical stack, workflow and responsibilities."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../index.html#docs">&larr; Back to documentation</a>
+          <span>/ Project overview</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Project overview — Almost Human Sys Admin</h1>
+
+        <h2>Mission</h2>
+        <p>
+          Deliver a terminal-native AI copilot that keeps persistent SSH/SFTP sessions, speaks natural
+          language and brings human-friendly operations to critical infrastructure.
+        </p>
+
+        <h2>Technical stack</h2>
+        <ul>
+          <li>Python 3.10+, Textual for the TUI, Strands Agents SDK for conversational reasoning.</li>
+          <li>Custom tools: <code>remote_ssh_command</code>, <code>remote_sftp_transfer</code>, <code>local_datetime</code>.</li>
+          <li>Firecrawl MCP tools available for research, scraping and structured extraction.</li>
+        </ul>
+
+        <h2>Key responsibilities</h2>
+        <ul>
+          <li>Keep configuration centralized in <code>conf/</code>; no hardcoded values in code.</li>
+          <li>Update translations, manuals and the static website whenever behaviour changes.</li>
+          <li>Document custom providers and plugin rules; each plugin should live with its own README.</li>
+          <li>Respect security policies (no plain-text secrets, environment variables only).</li>
+        </ul>
+
+        <h2>Workflow</h2>
+        <ol>
+          <li>Create/activate virtualenv.</li>
+          <li>Install dependencies via <code>make install</code>.</li>
+          <li>Before PRs, run <code>make format</code>, <code>make lint</code>, <code>make test</code>.</li>
+          <li>Validate the TUI with <code>make run</code> and the website with <code>make website-serve</code>.</li>
+        </ol>
+
+        <p>
+          For complete policies read <code>AGENTS.md</code>, the contributor handbook and README in all
+          supported languages. Treat the static site as part of the documentation contract.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2024 Almost Human Sys Admin. Update this overview whenever the vision or stack evolves.
+      </footer>
+    </div>
+  </body>
+</html>

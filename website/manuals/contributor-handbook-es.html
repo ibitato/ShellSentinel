@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guía de contribución · Almost Human Sys Admin</title>
+    <meta
+      name="description"
+      content="Resumen práctico de AGENTS.md: políticas de contribución, documentación multilingüe y mantenimiento de la web para Almost Human Sys Admin."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../index.html#docs">&larr; Volver a la documentación</a>
+          <span>/ Guía de contribución (ES)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Guía de contribución — Almost Human Sys Admin</h1>
+
+        <p>
+          Este resumen sintetiza los puntos clave de <code>AGENTS.md</code>, el documento maestro que
+          describe reglas internas, estructura del proyecto y políticas de documentación. Cualquier
+          contribución debe respetar estas directrices y mantener sincronizada la experiencia web.
+        </p>
+
+        <h2>Principios generales</h2>
+        <ul>
+          <li>Aplicación orientada a terminal con sesiones SSH/SFTP persistentes y un asistente IA conversacional.</li>
+          <li>Ecosistema en Python 3.10+, TUI con Textual, agentes Strands y herramientas MCP como Firecrawl.</li>
+          <li>El trabajo diario se apoya en `make install`, `make format`, `make lint`, `make test` y `make run`.</li>
+        </ul>
+
+        <h2>Configuración y contenido</h2>
+        <ul>
+          <li>Toda configuración vive en <code>conf/</code> (evita hardcodear valores en el código).</li>
+          <li>Nuevas cadenas deben añadirse en <code>conf/locales/</code> y utilizar <code>_("clave")</code> al referenciarlas.</li>
+          <li>Manual de usuario y README deben actualizarse en EN/ES/DE cuando cambie un flujo.</li>
+          <li>Soporte para proveedores personalizados documentado en <code>docs/custom_model_providers_es.md</code>.</li>
+        </ul>
+
+        <h2>Plugins y extensibilidad</h2>
+        <ul>
+          <li>Los plugins se cargan desde <code>plugins/</code>; cada uno debe registrar comandos, traducciones y documentación local.</li>
+          <li>No mezcles la documentación específica de un plugin con los manuales generales.</li>
+          <li>Respetar los prompts sistema y evitar duplicar conexiones SSH/SFTP fuera de las tools oficiales.</li>
+        </ul>
+
+        <h2>Política de documentación web</h2>
+        <ul>
+          <li>La web en <code>website/</code> es parte integral del producto y debe reflejar cada cambio funcional o narrativo.</li>
+          <li>Cuando se actualicen manuales, comandos o proveedores, sincroniza el contenido del sitio (secciones, tarjetas, enlaces y traducciones).</li>
+          <li>Los manuales en línea usan las páginas HTML de <code>website/manuals/</code>; duplica cambios relevantes desde <code>docs/</code>.</li>
+        </ul>
+
+        <h2>Flujo recomendado</h2>
+        <ol>
+          <li>Activar entorno virtual (<code>source .venv/bin/activate</code>).</li>
+          <li>Instalar dependencias (<code>make install</code>).</li>
+          <li>Tras cambios: <code>make format</code>, <code>make lint</code>, <code>make test</code> (si aplica).</li>
+          <li>Validar la TUI con <code>make run</code> y la web con <code>make website-serve</code>.</li>
+        </ol>
+
+        <p>
+          Para más detalle consulta el archivo completo <code>AGENTS.md</code>, que actúa como contrato
+          operativo para el equipo. Asegúrate de mantener web, manuales y repositorio coherentes tras
+          cada aportación.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2024 Almost Human Sys Admin. Actualiza esta guía cuando cambien las políticas internas.
+      </footer>
+    </div>
+  </body>
+</html>
