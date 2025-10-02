@@ -26,7 +26,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Express goals in natural language; the assistant translates them into safe SSH/SFTP actions you can review.",
         "Embedded knowledge base surfaces runbooks, best practices and context-sensitive hints in English, Spanish and German.",
-        "Modular LLM providers (LM Studio, Cerebras, Bedrock, OpenAI, Ollama) let you balance latency, compliance and cost.",
+        "Modular LLM providers and plugin-ready architecture extend commands, dashboards and automations without touching the core.",
       ],
     },
     features: {
@@ -49,9 +49,9 @@ window.TRANSLATIONS = {
         },
         {
           icon: "🔄",
-          title: "Extensible provider stack",
+          title: "Extensible providers & plugins",
           body:
-            "Swap LLM backends or extend custom providers without touching the TUI. Streaming, tool calling and MCP support are first-class.",
+            "Swap LLM backends or ship plugins that add commands, dashboards or MCP bridges—all without modifying the TUI core.",
         },
         {
           icon: "🛡️",
@@ -239,7 +239,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Expresa objetivos en lenguaje natural; el asistente los traduce en acciones SSH/SFTP seguras que puedes revisar.",
         "Una base de conocimiento integrada destaca runbooks, buenas prácticas y pistas contextuales en inglés, español y alemán.",
-        "Proveedores LLM modulares (LM Studio, Cerebras, Bedrock, OpenAI, Ollama) para equilibrar latencia, cumplimiento y costes.",
+        "Proveedores LLM modulares y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
       ],
     },
     features: {
@@ -262,9 +262,9 @@ window.TRANSLATIONS = {
         },
         {
           icon: "🔄",
-          title: "Proveedor extensible",
+          title: "Proveedores y plugins extensibles",
           body:
-            "Cambia de backend LLM o extiende proveedores personalizados sin tocar la TUI. Streaming, herramientas y MCP son de primera clase.",
+            "Cambia de backend LLM o crea plugins que añadan comandos, paneles o puentes MCP sin modificar el núcleo de la TUI.",
         },
         {
           icon: "🛡️",
@@ -452,7 +452,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Formuliere Ziele in natürlicher Sprache; der Assistent übersetzt sie in überprüfbare, sichere SSH/SFTP-Aktionen.",
         "Eine integrierte Wissensbasis liefert Runbooks, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
-        "Modulare LLM-Provider (LM Studio, Cerebras, Bedrock, OpenAI, Ollama) lassen sich nach Latenz, Compliance und Kosten wählen.",
+        "Modulare LLM-Provider und eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
       ],
     },
     features: {
@@ -475,9 +475,9 @@ window.TRANSLATIONS = {
         },
         {
           icon: "🔄",
-          title: "Erweiterbarer Provider-Stack",
+          title: "Erweiterbare Provider & Plugins",
           body:
-            "Wechsle LLM-Backends oder füge eigene Provider hinzu, ohne die TUI anzupassen. Streaming, Tool-Calling und MCP sind eingebaut.",
+            "Wechsle LLM-Backends oder entwickle Plugins für zusätzliche Befehle, Dashboards oder MCP-Brücken – ganz ohne Kernänderungen.",
         },
         {
           icon: "🛡️",
