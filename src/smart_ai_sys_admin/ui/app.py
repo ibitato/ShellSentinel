@@ -208,10 +208,9 @@ class SmartAISysAdminApp(App[None]):
     def _initialize_agent_runtime(self) -> None:
         assert self._conversation is not None
         self._agent_runtime.initialize()
-        if self._agent_runtime.status_message:
-            self._conversation.add_agent_markdown(self._agent_runtime.status_message)
         if self._agent_runtime.error_message:
             self._conversation.add_agent_markdown(self._agent_runtime.error_message)
+        self._update_connection_info()
 
     def _show_welcome_screen(self) -> None:
         if self._welcome_shown:

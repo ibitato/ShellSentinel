@@ -342,10 +342,11 @@ class ConnectionInfo(Static):
                 f"  {_('connection.status.thinking')}",
                 style=f"{self._panel_config.text_style} italic",
             )
-        self._status_node.update(status_text)
         if self._provider_message:
-            self._indicator_node.update(
-                Text(self._provider_message, style=self._panel_config.text_style)
+            status_text.append(
+                f"\n{self._provider_message}",
+                style=self._panel_config.text_style,
             )
-        else:
+        self._status_node.update(status_text)
+        if self._indicator_node:
             self._indicator_node.update(Text("", style=self._panel_config.text_style))
