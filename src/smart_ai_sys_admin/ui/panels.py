@@ -333,19 +333,16 @@ class ConnectionInfo(Static):
     def _render(self) -> None:
         if not self._status_node or not self._indicator_node:
             return
-        status_text = Text.assemble(
-            (f"{self._panel_config.title}: ", self._panel_config.border_style),
-            (self._message, self._panel_config.text_style),
-        )
+        status_text = Text()
+        if self._provider_message:
+            status_text.append(self._provider_message, style=self._panel_config.text_style)
+            status_text.append("  ·  ", style=self._panel_config.text_style)
+        status_text.append(f"{self._panel_config.title}: ", style=self._panel_config.border_style)
+        status_text.append(self._message, style=self._panel_config.text_style)
         if self._thinking:
             status_text.append(
                 f"  {_('connection.status.thinking')}",
                 style=f"{self._panel_config.text_style} italic",
-            )
-        if self._provider_message:
-            status_text.append(
-                f"\n{self._provider_message}",
-                style=self._panel_config.text_style,
             )
         self._status_node.update(status_text)
         if self._indicator_node:

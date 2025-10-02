@@ -98,8 +98,8 @@ class SmartAISysAdminApp(App[None]):
         exit_shortcut = self._config.shortcuts.exit
         self.bind(exit_shortcut.binding, "quit", description=exit_shortcut.description)
         self._warn_if_term_incompatible()
-        self._update_connection_info()
         self._initialize_agent_runtime()
+        self._update_connection_info()
         self._show_welcome_screen()
 
     async def on_command_input_submitted(self, message: CommandInput.Submitted) -> None:
