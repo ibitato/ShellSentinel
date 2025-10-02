@@ -34,7 +34,7 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
   # or
   python -m smart_ai_sys_admin
   ```
-- The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status.
+- The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status plus the active LLM provider/model.
 - Submit instructions with the configured shortcut (default `Ctrl+S`).
 - Supported commands (aliases available in English, Spanish and German):
 - `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH/SFTP session (optional port, defaults to 22).
@@ -50,7 +50,7 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 - Override the config location with `SMART_AI_SYS_ADMIN_CONFIG_FILE` (full path) or `SMART_AI_SYS_ADMIN_CONFIG_DIR` (directory containing `app_config.json`).
 - Avoid hardcoding values in the source; update the configuration file and restart the app.
 - Recent additions to `conf/app_config.json`:
-  - `ui.connection_panel`: styles of the footer panel that shows SSH status.
+  - `ui.connection_panel`: styles of the footer panel that shows SSH status and the active provider summary.
 - `logging`: default level `DEBUG`, directory `logs/`, filename `app.log`, rotation policy (daily with 3 backups) using `TimedRotatingFileHandler`.
   - Chatty dependency loggers (`markdown_it`, `botocore.parsers`, `paramiko.transport`, etc.) are lowered to `INFO` when running in `DEBUG` to reduce noise.
   - `log_to_console`: when `true`, mirrors logs to stdout (disabled by default so the TUI is not disrupted).
