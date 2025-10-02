@@ -267,5 +267,51 @@ class AgentRuntime:
         self._ready = False
         self._permission_manager.restore()
 
+    def provider_info(self) -> tuple[str, str] | None:
+        if not self._config:
+            return None
+        provider = self._config.provider
+        try:
+            provider_cfg = self._config.provider_config()
+        except AgentConfigError:
+            return provider, ""
+        model_id = getattr(provider_cfg, "model_id", "")
+        return provider, model_id
+
+    def provider_footer_summary(self) -> str | None:
+        info = self.provider_info()
+        if not info:
+            return None
+        provider, model_id = info
+        return _(
+            "connection.status.provider",
+            provider=provider,
+            model=model_id or "-",
+        )
+
+    def agent_summary(self) -> dict[str, Any]:
+        provider = ""
+        model_id = ""
+        streaming: bool | None = None
+        config_path: str | None = None
+        if self._config:
+            provider = self._config.provider
+            try:
+                provider_cfg = self._config.provider_config()
+                model_id = getattr(provider_cfg, "model_id", "")
+            except AgentConfigError:
+                model_id = ""
+            streaming = bool(self._config.options.streaming)
+            config_path = str(self._config.config_path)
+        return {
+            "ready": self.ready,
+            "status": self._status_message,
+            "error": self._error_message,
+            "provider": provider,
+            "model": model_id,
+            "streaming": streaming,
+            "config_path": config_path,
+        }
+
 
 __all__ = ["AgentRuntime"]

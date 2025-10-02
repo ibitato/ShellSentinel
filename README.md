@@ -39,6 +39,7 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
   - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente (el puerto es opcional, por defecto 22).
   - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
   - `/help` (`/ayuda`, `/hilfe`) muestra un resumen en Markdown de los comandos disponibles.
+  - `/status` (`/estado`) muestra el estado actual del agente y la conexión.
   - `/exit` (`/salir`, `/beenden`, `/quit`) abre un diálogo de confirmación para cerrar la aplicación.
 - El sistema mostrará las respuestas en formato Markdown y en un esquema de color retro naranja/verde.
 - Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.

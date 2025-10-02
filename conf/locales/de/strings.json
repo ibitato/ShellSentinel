@@ -4,6 +4,10 @@
     "unknown_label": "unbekannt",
     "detected_label": "Erkanntes Terminal"
   },
+  "common": {
+    "yes": "ja",
+    "no": "nein"
+  },
   "ui": {
     "output_panel": {
       "title": "Remote-Sitzung",
@@ -55,7 +59,19 @@
         "success": "✅ Verbindung getrennt.",
         "help": "**Verwendung von `{command}`**\n- Schließt die aktive SSH/SFTP-Sitzung.\n- Akzeptiert keine zusätzlichen Argumente."
       },
-      "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
+      "status": {
+        "header": "**Systemstatus**",
+        "no_args": "⚠️ `{command}` akzeptiert keine Argumente.",
+        "help": "**Verwendung von `{command}`**\n- Zeigt den aktuellen Agenten- und Verbindungsstatus an.\n- Akzeptiert keine zusätzlichen Argumente.",
+        "connection": "Verbindung",
+        "provider": "Provider",
+        "model": "Modell",
+        "streaming": "Streaming",
+        "agent_ready": "Agent bereit",
+        "config_path": "Konfiguration",
+        "error": "Fehler"
+      },
+      "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{status_usage}` zeigt den Status von Agent und Verbindung an.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
       "help": {
         "unknown": "⚠️ Keine zusätzliche Hilfe für `{command}` verfügbar."
       },
@@ -83,6 +99,10 @@
         "exit": {
           "no_args": "`{command}` akzeptiert keine Argumente.",
           "description": "`{command}` öffnet einen Bestätigungsdialog zum Beenden. Du kannst auch `{primary}` verwenden."
+        },
+        "status": {
+          "no_args": "`{command}` akzeptiert keine Argumente.",
+          "description": "`{command}` zeigt den Systemstatus an."
         }
       }
     },
@@ -105,7 +125,8 @@
     "status": {
       "none": "Keine aktive Verbindung",
       "connected": "Verbunden als {username}@{host}:{port} ({method})",
-      "thinking": "⏳ wird verarbeitet…"
+      "thinking": "⏳ wird verarbeitet…",
+      "provider": "Provider: {provider} · Modell: {model}"
     },
     "errors": {
       "already_open": "Es besteht bereits eine aktive Verbindung. Bitte zuerst trennen.",

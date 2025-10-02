@@ -42,14 +42,15 @@ class SmartAISysAdminApp(App[None]):
         self._connection_manager = SSHConnectionManager(
             logging.getLogger("smart_ai_sys_admin.connection")
         )
-        self._command_processor = SlashCommandProcessor(
-            self._connection_manager,
-            self._config.ui.output_panel,
-            logging.getLogger("smart_ai_sys_admin.ui.commands"),
-        )
         self._agent_runtime = AgentRuntime(
             self._connection_manager,
             logging.getLogger("smart_ai_sys_admin.agent.runtime"),
+        )
+        self._command_processor = SlashCommandProcessor(
+            self._connection_manager,
+            self._agent_runtime,
+            self._config.ui.output_panel,
+            logging.getLogger("smart_ai_sys_admin.ui.commands"),
         )
         self._plugin_manager = PluginManager(logging.getLogger("smart_ai_sys_admin.plugins"))
         self._plugin_manager.load()
@@ -167,7 +168,10 @@ class SmartAISysAdminApp(App[None]):
     def _update_connection_info(self) -> None:
         if not self._connection_info:
             return
-        self._connection_info.refresh_status(self._connection_manager.status_summary())
+        provider_summary = self._agent_runtime.provider_footer_summary()
+        self._connection_info.refresh_status(
+            self._connection_manager.status_summary(), provider_summary
+        )
 
     def _show_exit_confirmation(self) -> None:
         modal = ExitConfirmationModal(self._exit_dialog_config)

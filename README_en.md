@@ -40,6 +40,7 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 - `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH/SFTP session (optional port, defaults to 22).
   - `/disconnect` (`/desconectar`, `/trennen`) closes the active connection if any.
   - `/help` (`/ayuda`, `/hilfe`) shows a Markdown summary of all commands.
+  - `/status` (`/estado`) displays the current agent and connection status.
   - `/exit` (`/salir`, `/beenden`, `/quit`) opens the confirmation dialog before quitting.
 - Responses are rendered in Markdown using the retro orange/green palette.
 - For best results use an `xterm` or `xterm-256color` terminal.

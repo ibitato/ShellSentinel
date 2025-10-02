@@ -49,6 +49,7 @@ Commands are available in English, Spanish and German.
 - `/connect <host> <user> <password|key_path> [port]` — open the remote session (optional port, defaults to 22).
 - `/disconnect` — close the active connection.
 - `/help` — display a summary of commands.
+- `/status` — display the current agent and connection status.
 - `/exit` — open the confirmation dialog to quit.
 
 Useful aliases: `/conectar`, `/desconectar`, `/ayuda`, `/salir`, `/verbinden`, `/trennen`, `/hilfe`, `/beenden`.

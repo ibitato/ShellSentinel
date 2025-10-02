@@ -49,6 +49,7 @@ Alle Befehle stehen auf Englisch, Spanisch und Deutsch zur Verfügung.
 - `/connect <host> <user> <password|key_path> [Port]` — baut die Remote-Sitzung auf (Port optional, Standard 22).
 - `/disconnect` — beendet die aktive Verbindung.
 - `/help` — listet die verfügbaren Befehle.
+- `/status` — zeigt den aktuellen Agenten- und Verbindungsstatus.
 - `/exit` — öffnet den Bestätigungsdialog zum Beenden.
 
 Nützliche Aliasse: `/conectar`, `/desconectar`, `/ayuda`, `/salir`, `/verbinden`, `/trennen`, `/hilfe`, `/beenden`.

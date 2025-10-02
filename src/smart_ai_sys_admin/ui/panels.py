@@ -290,6 +290,7 @@ class ConnectionInfo(Static):
         self._thinking = False
         self._status_node: Static | None = None
         self._indicator_node: Static | None = None
+        self._provider_message: str = ""
 
     def compose(self) -> ComposeResult:
         yield Horizontal(
@@ -320,8 +321,9 @@ class ConnectionInfo(Static):
 
         self.refresh_status(self._message)
 
-    def refresh_status(self, message: str) -> None:
+    def refresh_status(self, message: str, provider: str | None = None) -> None:
         self._message = message
+        self._provider_message = provider or ""
         self._render()
 
     def set_thinking(self, active: bool) -> None:
@@ -341,5 +343,9 @@ class ConnectionInfo(Static):
                 style=f"{self._panel_config.text_style} italic",
             )
         self._status_node.update(status_text)
-        # Mantenemos el nodo indicador para futuras extensiones, pero lo dejamos vacío.
-        self._indicator_node.update(Text("", style=self._panel_config.text_style))
+        if self._provider_message:
+            self._indicator_node.update(
+                Text(self._provider_message, style=self._panel_config.text_style)
+            )
+        else:
+            self._indicator_node.update(Text("", style=self._panel_config.text_style))

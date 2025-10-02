@@ -40,6 +40,7 @@ Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_
 - `/connect <host> <user> <password|key_path> [Port]` (`/conectar`, `/verbinden`) öffnet eine persistente SSH/SFTP-Sitzung (Port optional, Standard 22).
   - `/disconnect` (`/desconectar`, `/trennen`) beendet eine aktive Verbindung.
   - `/help` (`/ayuda`, `/hilfe`) zeigt eine Markdown-Zusammenfassung der verfügbaren Befehle.
+  - `/status` (`/estado`) zeigt den aktuellen Agenten- und Verbindungsstatus an.
   - `/exit` (`/salir`, `/beenden`, `/quit`) öffnet den Bestätigungsdialog zum Beenden.
 - Ausgaben erscheinen im Markdown-Format im retro-orangen/grünen Farbschema.
 - Für eine optimale Darstellung wird ein Terminal wie `xterm` oder `xterm-256color` empfohlen.

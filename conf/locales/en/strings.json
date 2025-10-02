@@ -4,6 +4,10 @@
     "unknown_label": "unknown",
     "detected_label": "Detected terminal"
   },
+  "common": {
+    "yes": "yes",
+    "no": "no"
+  },
   "ui": {
     "output_panel": {
       "title": "Remote Session",
@@ -55,7 +59,19 @@
         "success": "✅ Connection closed.",
         "help": "**Using `{command}`**\n- Closes the active SSH/SFTP session.\n- Does not accept additional arguments."
       },
-      "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
+      "status": {
+        "header": "**System status**",
+        "no_args": "⚠️ `{command}` does not accept arguments.",
+        "help": "**Using `{command}`**\n- Shows the current agent and connection status.\n- Does not accept additional arguments.",
+        "connection": "Connection",
+        "provider": "Provider",
+        "model": "Model",
+        "streaming": "Streaming",
+        "agent_ready": "Agent ready",
+        "config_path": "Configuration",
+        "error": "Error"
+      },
+      "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{status_usage}` shows the agent and connection status.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
       "help": {
         "unknown": "⚠️ No additional help is available for `{command}`."
       },
@@ -83,6 +99,10 @@
         "exit": {
           "no_args": "`{command}` does not accept arguments.",
           "description": "`{command}` opens a confirmation dialog to quit. You can also use `{primary}`."
+        },
+        "status": {
+          "no_args": "`{command}` does not accept arguments.",
+          "description": "`{command}` shows the system status."
         }
       }
     },
@@ -105,7 +125,8 @@
     "status": {
       "none": "No active connection",
       "connected": "Connected to {username}@{host}:{port} ({method})",
-      "thinking": "⏳ thinking…"
+      "thinking": "⏳ thinking…",
+      "provider": "Provider: {provider} · Model: {model}"
     },
     "errors": {
       "already_open": "An active connection already exists. Disconnect first.",

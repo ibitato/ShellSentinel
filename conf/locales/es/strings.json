@@ -4,6 +4,10 @@
     "unknown_label": "desconocido",
     "detected_label": "Terminal detectado"
   },
+  "common": {
+    "yes": "sí",
+    "no": "no"
+  },
   "ui": {
     "output_panel": {
       "title": "Sesión remota",
@@ -55,7 +59,19 @@
         "success": "✅ Conexión cerrada.",
         "help": "**Uso `{command}`**\n- Cierra la sesión SSH/SFTP activa.\n- No admite argumentos adicionales."
       },
-      "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
+      "status": {
+        "header": "**Estado del sistema**",
+        "no_args": "⚠️ `{command}` no admite argumentos.",
+        "help": "**Uso `{command}`**\n- Muestra el estado del agente y la conexión activa.\n- No admite argumentos adicionales.",
+        "connection": "Conexión",
+        "provider": "Proveedor",
+        "model": "Modelo",
+        "streaming": "Streaming",
+        "agent_ready": "Agente listo",
+        "config_path": "Configuración",
+        "error": "Error"
+      },
+      "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{status_usage}` muestra el estado del agente y la conexión.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
       "help": {
         "unknown": "⚠️ No hay ayuda adicional para `{command}`."
       },
@@ -83,6 +99,10 @@
         "exit": {
           "no_args": "`{command}` no admite argumentos adicionales.",
           "description": "`{command}` abre un diálogo de confirmación para cerrar. También puedes usar `{primary}`."
+        },
+        "status": {
+          "no_args": "`{command}` no admite argumentos adicionales.",
+          "description": "`{command}` muestra el estado del sistema."
         }
       }
     },
@@ -105,7 +125,8 @@
     "status": {
       "none": "Sin conexión activa",
       "connected": "Conectado a {username}@{host}:{port} ({method})",
-      "thinking": "⏳ pensando…"
+      "thinking": "⏳ pensando…",
+      "provider": "Proveedor: {provider} · Modelo: {model}"
     },
     "errors": {
       "already_open": "Ya existe una conexión activa. Usa /disconnect o /desconectar primero.",

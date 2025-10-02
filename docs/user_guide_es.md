@@ -49,6 +49,7 @@ Puedes usar los comandos en inglés, español o alemán.
 - `/connect <host> <user> <password|key_path> [puerto]` — conecta al servidor (puerto opcional, 22 por defecto).
 - `/disconnect` — cierra la conexión activa.
 - `/help` — muestra el resumen de comandos disponibles.
+- `/status` — muestra el estado actual del agente y la conexión.
 - `/exit` — abre el diálogo de confirmación para salir.
 
 Alias útiles: `/conectar`, `/desconectar`, `/ayuda`, `/salir`, `/verbinden`, `/trennen`, `/hilfe`, `/beenden`.

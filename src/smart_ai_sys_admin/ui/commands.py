@@ -6,6 +6,7 @@ import logging
 import shlex
 from collections.abc import Callable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from ..config import OutputPanelConfig
 from ..connection import (
@@ -17,15 +18,20 @@ from ..connection import (
 from ..localization import _
 from ..plugins.types import PluginSlashCommand
 
+if TYPE_CHECKING:  # pragma: no cover
+    from ..agent.runtime import AgentRuntime
+
 PRIMARY_CONNECT = "/connect"
 PRIMARY_DISCONNECT = "/disconnect"
 PRIMARY_HELP = "/help"
 PRIMARY_EXIT = "/exit"
+PRIMARY_STATUS = "/status"
 
 CONNECT_ALIASES = frozenset({PRIMARY_CONNECT, "/conectar", "/verbinden"})
 DISCONNECT_ALIASES = frozenset({PRIMARY_DISCONNECT, "/desconectar", "/trennen"})
 HELP_ALIASES = frozenset({PRIMARY_HELP, "/ayuda", "/hilfe"})
 EXIT_ALIASES = frozenset({PRIMARY_EXIT, "/salir", "/quit", "/beenden"})
+STATUS_ALIASES = frozenset({PRIMARY_STATUS, "/estado"})
 
 
 class SlashCommandProcessor:
@@ -34,17 +40,25 @@ class SlashCommandProcessor:
     def __init__(
         self,
         connection_manager: SSHConnectionManager,
+        agent_runtime: AgentRuntime,
         output_config: OutputPanelConfig,
         logger: logging.Logger | None = None,
     ) -> None:
         self._connection_manager = connection_manager
+        self._agent_runtime = agent_runtime
         self._output_config = output_config
         self._logger = logger or logging.getLogger("smart_ai_sys_admin.ui.commands")
         self._plugin_commands: list[PluginSlashCommand] = []
         self._plugin_alias_index: dict[str, PluginSlashCommand] = {}
         self._reserved_aliases = set(
             alias.lower()
-            for group in [CONNECT_ALIASES, DISCONNECT_ALIASES, HELP_ALIASES, EXIT_ALIASES]
+            for group in [
+                CONNECT_ALIASES,
+                DISCONNECT_ALIASES,
+                HELP_ALIASES,
+                EXIT_ALIASES,
+                STATUS_ALIASES,
+            ]
             for alias in group
         )
 
@@ -93,6 +107,8 @@ class SlashCommandProcessor:
             return self._suggest_help(command_raw, tokens)
         if command in EXIT_ALIASES:
             return self._suggest_exit(command_raw, tokens)
+        if command in STATUS_ALIASES:
+            return self._suggest_status(command_raw, tokens)
         plugin = self._plugin_alias_index.get(command)
         if plugin is None:
             return None
@@ -128,6 +144,8 @@ class SlashCommandProcessor:
             handler = self._command_disconnect
         elif command in HELP_ALIASES:
             handler = self._command_help
+        elif command in STATUS_ALIASES:
+            handler = self._command_status
         else:
             plugin = self._plugin_alias_index.get(command)
             if plugin:
@@ -311,6 +329,7 @@ class SlashCommandProcessor:
             connect_usage=self._connect_usage(),
             disconnect_usage=self._disconnect_usage(),
             help_usage=self._help_usage(),
+            status_usage=self._status_usage(),
             exit_command=PRIMARY_EXIT,
         )
         if not self._plugin_commands:
@@ -389,6 +408,17 @@ class SlashCommandProcessor:
             primary=PRIMARY_EXIT,
         )
 
+    def _suggest_status(self, command_raw: str, tokens: list[str]) -> str | None:
+        if len(tokens) > 1:
+            return _(
+                "ui.input.suggestions.status.no_args",
+                command=command_raw,
+            )
+        return _(
+            "ui.input.suggestions.status.description",
+            command=command_raw,
+        )
+
     def _connect_help(self) -> str:
         return _(
             "ui.commands.connect.help",
@@ -418,6 +448,9 @@ class SlashCommandProcessor:
     def _help_usage(self) -> str:
         return PRIMARY_HELP
 
+    def _status_usage(self) -> str:
+        return PRIMARY_STATUS
+
     def _exit_help(self) -> str:
         return _(
             "ui.input.suggestions.exit.description",
@@ -431,3 +464,54 @@ class SlashCommandProcessor:
             return _(key)
         except KeyError:
             return method
+
+    def _command_status(self, args: list[str]) -> str:
+        if args:
+            return self._format_help(
+                _("ui.commands.status.no_args", command=PRIMARY_STATUS),
+                self._status_help(),
+            )
+        lines: list[str] = [_("ui.commands.status.header")]
+        connection_summary = self._connection_manager.status_summary()
+        lines.append(
+            f"- {_('ui.commands.status.connection')}: {connection_summary}"
+        )
+        if self._agent_runtime:
+            summary = self._agent_runtime.agent_summary()
+            yes_label = _("common.yes")
+            no_label = _("common.no")
+            ready_value = yes_label if summary.get("ready") else no_label
+            streaming_value = (
+                yes_label if summary.get("streaming") else no_label
+            )
+            if summary.get("provider"):
+                lines.append(
+                    f"- {_('ui.commands.status.provider')}: {summary['provider']}"
+                )
+            if summary.get("model"):
+                lines.append(
+                    f"- {_('ui.commands.status.model')}: {summary['model']}"
+                )
+            lines.append(
+                f"- {_('ui.commands.status.agent_ready')}: {ready_value}"
+            )
+            lines.append(
+                f"- {_('ui.commands.status.streaming')}: {streaming_value}"
+            )
+            if summary.get("config_path"):
+                lines.append(
+                    f"- {_('ui.commands.status.config_path')}: `{summary['config_path']}`"
+                )
+            if summary.get("status"):
+                lines.append(f"- {summary['status']}")
+            if summary.get("error"):
+                lines.append(
+                    f"- {_('ui.commands.status.error')}: {summary['error']}"
+                )
+        return "\n".join(lines)
+
+    def _status_help(self) -> str:
+        return _(
+            "ui.commands.status.help",
+            command=PRIMARY_STATUS,
+        )
