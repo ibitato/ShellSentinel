@@ -6,7 +6,7 @@ PYTEST := .venv/bin/pytest
 
 export PYTHONPATH := src
 
-.PHONY: help install format lint test run clean
+.PHONY: help install format lint test run clean website-serve
 
 help:
 	@echo "Comandos disponibles:"
@@ -15,6 +15,7 @@ help:
 	@echo "  make lint     - Ejecuta linting con Ruff"
 	@echo "  make test     - Ejecuta la suite de pruebas"
 	@echo "  make run      - Ejecuta la CLI"
+	@echo "  make website-serve - Sirve la web estática en localhost:8000"
 	@echo "  make clean    - Elimina artefactos temporales"
 
 install: .venv/bin/activate
@@ -39,6 +40,10 @@ test: .venv/bin/activate
 
 run: .venv/bin/activate
 	$(PYTHON) -m smart_ai_sys_admin
+
+website-serve:
+	@echo "Sirviendo website en http://localhost:8000 (Ctrl+C para detener)"
+	@cd website && python3 -m http.server 8000
 
 clean:
 	rm -rf __pycache__ */__pycache__ .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
