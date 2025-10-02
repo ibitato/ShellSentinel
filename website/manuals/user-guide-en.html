@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Guide · Almost Human Sys Admin</title>
+    <meta
+      name="description"
+      content="Official user guide for Almost Human Sys Admin: requirements, installation, language configuration and conversational workflows."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../index.html#docs">&larr; Back to documentation</a>
+          <span>/ User Guide (EN)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>User Guide — Almost Human Sys Admin</h1>
+
+        <h2>Overview</h2>
+        <p>
+          Almost Human Sys Admin is a terminal-native companion that keeps a persistent SSH/SFTP
+          session against a remote server and lets you manage infrastructure through natural
+          language. The assistant understands your intent, suggests safe commands and documents
+          every action.
+        </p>
+
+        <h2>Requirements</h2>
+        <ul>
+          <li>Colour-capable terminal (recommended: <code>xterm-256color</code>).</li>
+          <li>Python 3.10 or newer.</li>
+          <li>Access to a server exposing SSH/SFTP.</li>
+        </ul>
+
+        <h2>Installation</h2>
+        <ol>
+          <li>Create a virtual environment:</li>
+        </ol>
+        <pre><code>python3 -m venv .venv
+source .venv/bin/activate</code></pre>
+        <ol start="2">
+          <li>Install dependencies:</li>
+        </ol>
+        <pre><code>make install</code></pre>
+
+        <h2>Language configuration</h2>
+        <p>
+          The app reads <code>SMART_AI_SYS_ADMIN_LOCALE</code>. If the variable is not defined it
+          falls back to the system locale (default: English).
+        </p>
+        <pre><code>export SMART_AI_SYS_ADMIN_LOCALE=en   # English
+export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanish
+export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
+
+        <h2>Launching the app</h2>
+        <pre><code>make run
+# or
+python -m smart_ai_sys_admin</code></pre>
+        <p>
+          A retro welcome screen appears and closes automatically after 5 seconds or when you press
+          any key.
+        </p>
+
+        <h2>Interface layout</h2>
+        <ul>
+          <li><strong>Conversation panel</strong>: renders Markdown responses from the assistant.</li>
+          <li><strong>Input area</strong>: multi-line editor; submit with <code>Ctrl+S</code> by default.</li>
+          <li><strong>Footer</strong>: shows the SSH status, active provider/model and thinking state.</li>
+        </ul>
+
+        <h2>Core commands</h2>
+        <p>Commands and aliases are available in English, Spanish and German.</p>
+        <ul>
+          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [port]</code> — open the session (default port 22).</li>
+          <li><code>/disconnect</code> — close the active connection.</li>
+          <li><code>/help</code> — show the command summary.</li>
+          <li><code>/status</code> — inspect agent, provider, model and streaming status.</li>
+          <li><code>/exit</code> — display the confirmation dialog before quitting.</li>
+        </ul>
+
+        <h2>Working with the assistant</h2>
+        <p>
+          Type natural-language instructions. When the message is not a slash command, the Strands
+          agent processes it. Examples:
+        </p>
+        <ul>
+          <li>
+            <code>List the top CPU processes</code>
+          </li>
+          <li>
+            <code>Upload /tmp/script.sh to /home/ubuntu/bin/script.sh</code>
+          </li>
+        </ul>
+        <p>
+          The agent reuses the active SSH/SFTP session to execute remote commands or transfer files
+          and records every action in the logs.
+        </p>
+
+        <h2>Configuration reference</h2>
+        <ul>
+          <li>
+            <code>conf/app_config.json</code> stores styling, prompts and shortcuts using
+            placeholders like <code>{{ui.output_panel.title}}</code> that resolve per locale.
+          </li>
+          <li>
+            Translations live in <code>conf/locales/&lt;lang&gt;/strings.json</code>. Add new text with
+            <code>_("key")</code> in the codebase and provide entries for every supported language.
+          </li>
+          <li>
+            <code>conf/agent.conf</code> defines the LLM provider, tool options and timeouts.
+            <br />Copy <code>conf/agent.conf.example</code> before tweaking it.
+            <br />LM Studio requires <code>lms server start</code>; Cerebras expects
+            <code>CEREBRAS_API_KEY</code> (or <code>api_key_env</code>) and leverages the official SDK
+            with SSE streaming.
+          </li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+        <ul>
+          <li>
+            <strong>Colours look wrong</strong>: verify <code>TERM</code> and switch to
+            <code>xterm-256color</code> if necessary.
+          </li>
+          <li>
+            <strong>Assistant not responding</strong>: review <code>conf/agent.conf</code>, provider
+            credentials and <code>logs/app.log</code>.
+          </li>
+          <li>
+            <strong>"No active SSH connection"</strong>: run <code>/connect</code> before asking the
+            agent to execute remote actions.
+          </li>
+        </ul>
+
+        <h2>Additional resources</h2>
+        <ul>
+          <li><code>AGENTS.md</code>: in-depth guide for contributors and agents.</li>
+          <li><code>README.md</code>: project overview, development workflow and tooling.</li>
+        </ul>
+      </main>
+      <footer class="manual-footer">
+        © 2024 Almost Human Sys Admin. Documentation evolves with every release.
+      </footer>
+    </div>
+  </body>
+</html>

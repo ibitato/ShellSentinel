@@ -42,6 +42,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - El bloque `mcp` del agente solo debe habilitarse cuando los servidores declarados estén disponibles; la inicialización fallará en caso contrario.
 - Dependencias nuevas deben agregarse al `requirements.txt` (ejecución) y, si aplica, cascada en `requirements-dev.txt`.
 - Para desarrollar proveedores de modelo personalizados revisa `docs/custom_model_providers_es.md` antes de tocar el paquete `smart_ai_sys_admin.agent` o la configuración del agente.
+- Mantén la web estática en `website/` sincronizada con las novedades del producto: cada flujo, manual o cambio visual debe reflejarse en todas las traducciones y secciones de ayuda.
 
 ## Flujo de trabajo recomendado
 1. Activar entorno virtual: `source .venv/bin/activate`

@@ -145,6 +145,40 @@
     return details;
   }
 
+  function buildDocCard(doc) {
+    const card = document.createElement('article');
+    card.className = 'card doc-card';
+
+    if (doc.language) {
+      const badge = document.createElement('span');
+      badge.className = 'doc-lang';
+      badge.textContent = doc.language;
+      card.appendChild(badge);
+    }
+
+    const title = document.createElement('h3');
+    title.className = 'card-title';
+    title.textContent = doc.title || '';
+    card.appendChild(title);
+
+    if (doc.summary) {
+      const body = document.createElement('p');
+      body.className = 'card-body';
+      body.textContent = doc.summary;
+      card.appendChild(body);
+    }
+
+    if (doc.href) {
+      const btn = document.createElement('a');
+      btn.className = 'btn btn-secondary';
+      btn.href = doc.href;
+      btn.textContent = doc.cta || 'Read online';
+      card.appendChild(btn);
+    }
+
+    return card;
+  }
+
   function setActiveLanguageButton(lang) {
     languageButtons.forEach((btn) => {
       if (btn.dataset.lang === lang) {
@@ -180,6 +214,8 @@
       ? map.quickstart.steps
       : [];
     renderList('[data-region="quickstart-steps"]', quickStartSteps, buildQuickstartItem);
+    const docCards = map.docs && Array.isArray(map.docs.cards) ? map.docs.cards : [];
+    renderList('[data-region="docs-cards"]', docCards, buildDocCard);
     const helpPanels = map.help && Array.isArray(map.help.panels) ? map.help.panels : [];
     renderList('[data-region="help-panels"]', helpPanels, buildHelpPanel);
     const faqItems = map.faq && Array.isArray(map.faq.items) ? map.faq.items : [];

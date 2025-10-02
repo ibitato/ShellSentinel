@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benutzerhandbuch · Almost Human Sys Admin</title>
+    <meta
+      name="description"
+      content="Deutsches Benutzerhandbuch für Almost Human Sys Admin: Voraussetzungen, Installation, Sprachkonfiguration und konversationelle Workflows."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../index.html#docs">&larr; Zur Dokumentation</a>
+          <span>/ Benutzerhandbuch (DE)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Benutzerhandbuch — Almost Human Sys Admin</h1>
+
+        <h2>Überblick</h2>
+        <p>
+          Almost Human Sys Admin ist eine Terminal-Anwendung, die eine persistente SSH/SFTP-Sitzung
+          zu einem entfernten Server aufbaut und einen KI-Assistenten bereitstellt, der natürliche
+          Sprache in überprüfbare Administrationsaufgaben umsetzt.
+        </p>
+
+        <h2>Voraussetzungen</h2>
+        <ul>
+          <li>Terminal mit Farbfähigkeit (empfohlen <code>xterm-256color</code>).</li>
+          <li>Python 3.10 oder neuer.</li>
+          <li>Zugriff auf einen Server mit aktivem SSH/SFTP.</li>
+        </ul>
+
+        <h2>Installation</h2>
+        <ol>
+          <li>Virtuelle Umgebung erstellen:</li>
+        </ol>
+        <pre><code>python3 -m venv .venv
+source .venv/bin/activate</code></pre>
+        <ol start="2">
+          <li>Abhängigkeiten installieren:</li>
+        </ol>
+        <pre><code>make install</code></pre>
+
+        <h2>Sprachkonfiguration</h2>
+        <p>
+          Die Anwendung liest <code>SMART_AI_SYS_ADMIN_LOCALE</code>. Ist die Variable nicht gesetzt,
+          wird das Systemlocale verwendet (Standard: Englisch).
+        </p>
+        <pre><code>export SMART_AI_SYS_ADMIN_LOCALE=de   # Deutsch
+export SMART_AI_SYS_ADMIN_LOCALE=en   # Englisch
+export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
+
+        <h2>Start der Anwendung</h2>
+        <pre><code>make run
+# oder
+python -m smart_ai_sys_admin</code></pre>
+        <p>
+          Beim Start erscheint ein retro-inspirierter Begrüßungsbildschirm, der sich nach fünf
+          Sekunden schließt oder sobald eine Taste gedrückt wird.
+        </p>
+
+        <h2>Oberfläche</h2>
+        <ul>
+          <li><strong>Gesprächspanel</strong>: zeigt Antworten des Assistenten im Markdown-Format.</li>
+          <li><strong>Eingabefeld</strong>: mehrzeilig; Standard-Tastenkombination zum Senden ist <code>Ctrl+S</code>.</li>
+          <li><strong>Fußzeile</strong>: informiert über den SSH-Status sowie Provider-/Modellinformationen.</li>
+        </ul>
+
+        <h2>Wichtige Befehle</h2>
+        <p>Alle Befehle stehen auf Englisch, Spanisch und Deutsch zur Verfügung.</p>
+        <ul>
+          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [Port]</code> — baut die Remote-Sitzung auf (Standardport 22).</li>
+          <li><code>/disconnect</code> — beendet die aktive Verbindung.</li>
+          <li><code>/help</code> — listet verfügbare Befehle.</li>
+          <li><code>/status</code> — zeigt Agenten-, Provider- und Modellstatus.</li>
+          <li><code>/exit</code> — öffnet den Bestätigungsdialog zum Beenden.</li>
+        </ul>
+
+        <h2>Arbeiten mit dem Assistenten</h2>
+        <p>
+          Formuliere Anweisungen in natürlicher Sprache. Wenn es kein Slash-Befehl ist, verarbeitet
+          der Strands-Agent die Eingabe. Beispiele:
+        </p>
+        <ul>
+          <li><code>Zeige die Prozesse mit der höchsten CPU-Auslastung</code></li>
+          <li><code>Lade /tmp/script.sh nach /home/ubuntu/bin/script.sh hoch</code></li>
+        </ul>
+        <p>
+          Der Assistent nutzt die aktive SSH/SFTP-Sitzung für Befehle und Dateiübertragungen und
+          protokolliert jede Aktion ausführlich.
+        </p>
+
+        <h2>Konfiguration</h2>
+        <ul>
+          <li>
+            <code>conf/app_config.json</code> enthält Styles, Texte und Shortcuts als Platzhalter wie
+            <code>{{ui.output_panel.title}}</code>, die pro Locale aufgelöst werden.
+          </li>
+          <li>
+            Übersetzungen befinden sich unter <code>conf/locales/&lt;sprache&gt;/strings.json</code>.
+            Neue Texte werden im Code mit <code>_("schlüssel")</code> referenziert und für jede
+            Sprache gepflegt.
+          </li>
+          <li>
+            <code>conf/agent.conf</code> legt Provider, Tools und Timeouts fest.
+            <br />Nutze <code>conf/agent.conf.example</code> als Ausgangsbasis.
+            <br />Für LM Studio den lokalen Server mit <code>lms server start</code> starten; für
+            Cerebras <code>CEREBRAS_API_KEY</code> exportieren oder <code>api_key_env</code> setzen (SDK
+            mit SSE-Unterstützung).
+          </li>
+        </ul>
+
+        <h2>Fehlerbehebung</h2>
+        <ul>
+          <li><strong>Farb-/Darstellungsprobleme</strong>: <code>TERM</code> prüfen und ggf. auf <code>xterm-256color</code> wechseln.</li>
+          <li><strong>Assistent reagiert nicht</strong>: <code>conf/agent.conf</code>, Zugangsdaten und <code>logs/app.log</code> kontrollieren.</li>
+          <li><strong>"Keine aktive SSH-Verbindung"</strong>: Vor Remote-Aktionen <code>/connect</code> ausführen.</li>
+        </ul>
+
+        <h2>Weitere Ressourcen</h2>
+        <ul>
+          <li><code>AGENTS.md</code>: Leitfaden für Mitwirkende und Agenten.</li>
+          <li><code>README.md</code>: Projektüberblick, Entwicklungs-Workflow und Tools.</li>
+        </ul>
+      </main>
+      <footer class="manual-footer">
+        © 2024 Almost Human Sys Admin. Dokumentation entwickelt sich mit jeder Version weiter.
+      </footer>
+    </div>
+  </body>
+</html>

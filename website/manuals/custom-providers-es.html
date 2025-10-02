@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guía de proveedores personalizados · Almost Human Sys Admin</title>
+    <meta
+      name="description"
+      content="Checklist para implementar proveedores LLM personalizados con el SDK de Strands dentro de Almost Human Sys Admin."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../index.html#docs">&larr; Volver a la documentación</a>
+          <span>/ Proveedores personalizados (ES)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Guía — Proveedores de modelo personalizados</h1>
+
+        <h2>Alcance</h2>
+        <p>
+          Este documento resume los pasos y criterios para implementar proveedores de modelo
+          personalizados en el SDK de Strands Agents dentro de Almost Human Sys Admin. Sirve como
+          checklist interno y complemento de la documentación oficial.
+        </p>
+
+        <h2>Requisitos previos</h2>
+        <ul>
+          <li>Conocer la jerarquía <code>strands.models.Model</code> (revisa ejemplos como <code>BedrockModel</code>).</li>
+          <li>Comprender los tipos <code>Messages</code>, <code>StreamEvent</code> y <code>ToolSpec</code>.</li>
+          <li>Cliente Python para el servicio LLM propietario (sincrónico o asíncrono).</li>
+          <li>Configuración declarativa en <code>conf/</code> y credenciales vía variables de entorno.</li>
+        </ul>
+
+        <h2>Flujo de implementación</h2>
+        <ol>
+          <li>
+            <strong>Definir configuración</strong>: crea una <code>ModelConfig</code> tipada con los
+            parámetros admitidos y expón <code>get_config</code>/<code>update_config</code>.
+          </li>
+          <li>
+            <strong>Inicializar el cliente</strong>: resuelve credenciales desde el entorno seguro,
+            instancia el cliente remoto y registra logging (<code>smart_ai_sys_admin.agent</code>).
+          </li>
+          <li>
+            <strong>Implementar <code>stream(...)</code></strong>:
+            <ul>
+              <li>Convierte <code>messages</code>, <code>tool_specs</code> y <code>system_prompt</code> al formato que espera el servicio externo.</li>
+              <li>Adapta la respuesta al protocolo <code>StreamEvent</code> (eventos <code>messageStart</code>, <code>contentBlockDelta</code>, <code>messageStop</code>, etc.).</li>
+              <li>Gestiona errores de ventana de contexto, timeouts y autenticación con trazas útiles.</li>
+              <li>Si el SDK es sincrónico, usa <code>asyncio.to_thread</code> para no bloquear el event loop.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Soportar herramientas</strong>: reutiliza <code>stream</code> en <code>structured_output(...)</code>,
+            convierte modelos Pydantic a <code>ToolSpec</code> y valida la respuesta.
+          </li>
+          <li>
+            <strong>Registrar el proveedor</strong>: expón la clase dentro de <code>smart_ai_sys_admin.agent</code>
+            y añade la configuración correspondiente en <code>conf/agent.conf</code>.
+          </li>
+        </ol>
+
+        <h2>Consideraciones adicionales</h2>
+        <ul>
+          <li>Usa logging con nivel <code>DEBUG</code> para facilitar el troubleshooting.</li>
+          <li>Documenta cualquier nuevo parámetro en los manuales de usuario cuando afecte al operario.</li>
+          <li>No hardcodees tokens ni endpoints; emplea variables de entorno y archivos en <code>conf/</code>.</li>
+          <li>Prepara pruebas de humo o scripts manuales antes de integrar el proveedor en la TUI.</li>
+        </ul>
+
+        <h2>Caso práctico: LM Studio</h2>
+        <ul>
+          <li>Servidor local compatible con la API de OpenAI (<code>/v1/*</code>); configura <code>base_url</code>, <code>api_key</code> y <code>model_id</code>.</li>
+          <li>Arranca con <code>lms server start</code>; ajusta <code>client_args</code> para controlar timeouts.</li>
+          <li>
+            La REST API nativa (<code>/api/v0/*</code>) expone métricas; úsala para telemetría y cálculo de
+            límites (<code>max_context_length</code>).
+          </li>
+        </ul>
+
+        <h2>Caso práctico: Cerebras</h2>
+        <ul>
+          <li>Integra <code>cerebras_cloud_sdk</code> dentro de un modelo personalizado con streaming SSE.</li>
+          <li>Configura <code>model_id</code>, <code>params</code>, <code>client_args</code> y <code>api_key_env</code> en <code>providers.cerebras</code>.</li>
+          <li>Convierte <code>ChatChunkResponse</code> en eventos nativos, exponiendo <code>metadata</code> con uso y tiempos.</li>
+          <li>Para salidas estructuradas, genera un <code>ToolSpec</code> y parsea <code>tool_call.function.arguments</code>.</li>
+        </ul>
+
+        <h2>Referencias externas</h2>
+        <ul>
+          <li>
+            Documentación oficial:
+            <a href="https://strandsagents.com/latest/documentation/docs/user-guide/concepts/model-providers/custom_model_provider/" rel="noopener" target="_blank">Strands Agents</a>
+          </li>
+          <li>
+            Código de ejemplo (<code>BedrockModel</code>):
+            <a href="https://github.com/strands-agents/sdk-python/blob/main/src/strands/models/bedrock.py" rel="noopener" target="_blank">Repositorio oficial</a>
+          </li>
+        </ul>
+      </main>
+      <footer class="manual-footer">
+        © 2024 Almost Human Sys Admin. Actualiza esta guía cada vez que se integre un nuevo proveedor.
+      </footer>
+    </div>
+  </body>
+</html>

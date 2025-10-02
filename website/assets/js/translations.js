@@ -5,6 +5,7 @@ window.TRANSLATIONS = {
       features: "Features",
       how: "How it works",
       quickstart: "Quick start",
+      docs: "Documentation",
       help: "Help",
       download: "Download",
     },
@@ -119,6 +120,46 @@ window.TRANSLATIONS = {
       note:
         "Before committing changes, run `make format` and `make lint` and sync any new guidance into your runbooks.",
     },
+    docs: {
+      eyebrow: "Manuals",
+      title: "Product manuals & handbooks",
+      lead:
+        "Dive into the living documentation: user guides, provider cookbooks and checklists curated for each language.",
+      cards: [
+        {
+          title: "User Guide",
+          language: "EN",
+          summary:
+            "Install the app, configure locales, explore the interface and master conversational workflows.",
+          href: "manuals/user-guide-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Guía de usuario",
+          language: "ES",
+          summary:
+            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+          href: "manuals/user-guide-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Benutzerhandbuch",
+          language: "DE",
+          summary:
+            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch für alltägliche Aufgaben.",
+          href: "manuals/user-guide-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Custom providers playbook",
+          language: "ES",
+          summary:
+            "Spanish-language checklist to implement custom LLM providers for Strands within Almost Human Sys Admin.",
+          href: "manuals/custom-providers-es.html",
+          cta: "Leer en línea",
+        },
+      ],
+    },
     help: {
       eyebrow: "Support",
       title: "Help & knowledge base",
@@ -218,6 +259,7 @@ window.TRANSLATIONS = {
       features: "Funciones",
       how: "Cómo funciona",
       quickstart: "Inicio rápido",
+      docs: "Documentación",
       help: "Ayuda",
       download: "Descarga",
     },
@@ -332,6 +374,46 @@ window.TRANSLATIONS = {
       note:
         "Antes de subir cambios, ejecuta `make format` y `make lint` y sincroniza las novedades en tus runbooks.",
     },
+    docs: {
+      eyebrow: "Manuales",
+      title: "Manuales y cuadernos de referencia",
+      lead:
+        "Consulta la documentación viva: guías de usuario, recetas de proveedores y checklists en cada idioma.",
+      cards: [
+        {
+          title: "User Guide",
+          language: "EN",
+          summary:
+            "Install the app, configure locales, explore the interface and master conversational workflows.",
+          href: "manuals/user-guide-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Guía de usuario",
+          language: "ES",
+          summary:
+            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+          href: "manuals/user-guide-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Benutzerhandbuch",
+          language: "DE",
+          summary:
+            "Manual en alemán para configurar el entorno, explorar la TUI y trabajar con el asistente en el día a día.",
+          href: "manuals/user-guide-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Proveedores personalizados",
+          language: "ES",
+          summary:
+            "Checklist para implementar proveedores LLM personalizados sobre el SDK de Strands dentro de Almost Human Sys Admin.",
+          href: "manuals/custom-providers-es.html",
+          cta: "Leer en línea",
+        },
+      ],
+    },
     help: {
       eyebrow: "Soporte",
       title: "Centro de ayuda",
@@ -431,6 +513,7 @@ window.TRANSLATIONS = {
       features: "Funktionen",
       how: "Funktionsweise",
       quickstart: "Schnellstart",
+      docs: "Dokumentation",
       help: "Hilfe",
       download: "Download",
     },
@@ -544,6 +627,46 @@ window.TRANSLATIONS = {
       ],
       note:
         "Vor Commits `make format` und `make lint` ausführen und neue Hinweise in deine Runbooks übernehmen.",
+    },
+    docs: {
+      eyebrow: "Handbücher",
+      title: "Produkt-Handbücher & Leitfäden",
+      lead:
+        "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Playbooks und Checklisten je nach Sprache.",
+      cards: [
+        {
+          title: "User Guide",
+          language: "EN",
+          summary:
+            "Install the app, configure locales, explore the interface and master conversational workflows.",
+          href: "manuals/user-guide-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Guía de usuario",
+          language: "ES",
+          summary:
+            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+          href: "manuals/user-guide-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Benutzerhandbuch",
+          language: "DE",
+          summary:
+            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch für alltägliche Aufgaben.",
+          href: "manuals/user-guide-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Custom Provider Playbook",
+          language: "ES",
+          summary:
+            "Spanischer Leitfaden mit einer Checkliste zur Implementierung eigener LLM-Provider für das Strands SDK.",
+          href: "manuals/custom-providers-es.html",
+          cta: "Online lesen",
+        },
+      ],
     },
     help: {
       eyebrow: "Hilfe",

@@ -236,6 +236,10 @@ section {
   transition: transform 0.2s ease, border 0.2s ease;
 }
 
+.card a.btn {
+  align-self: flex-start;
+}
+
 .card:hover {
   transform: translateY(-6px);
   border-color: rgba(255, 140, 0, 0.4);
@@ -254,6 +258,41 @@ section {
   margin: 0;
   color: var(--color-muted);
   line-height: 1.6;
+}
+
+.doc-card {
+  position: relative;
+  padding-top: 38px;
+}
+
+.doc-lang {
+  position: absolute;
+  top: 20px;
+  left: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.16);
+  color: var(--color-secondary);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.doc-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.doc-card .btn {
+  margin-top: auto;
+}
+
+.docs-grid {
+  margin-top: 24px;
 }
 
 .timeline {
