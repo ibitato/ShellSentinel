@@ -42,8 +42,8 @@ run: .venv/bin/activate
 	$(PYTHON) -m smart_ai_sys_admin
 
 website-serve:
-	@echo "Sirviendo website en http://localhost:8000 (Ctrl+C para detener)"
-	@cd website && python3 -m http.server 8000
+	@echo "Sirviendo website en http://localhost:8787 (Ctrl+C para detener)"
+	@cd website && python3 -m http.server 8787
 
 clean:
 	rm -rf __pycache__ */__pycache__ .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage

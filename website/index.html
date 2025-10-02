@@ -104,8 +104,8 @@
       <section id="hero" class="hero">
         <div class="hero-content">
           <div class="hero-text">
-            <p class="badge" data-i18n="hero.badge">Terminal-native AI agent</p>
-            <h1 data-i18n="hero.title">Automate remote administration with confidence</h1>
+            <p class="badge" data-i18n="hero.badge">Conversational ops assistant</p>
+            <h1 data-i18n="hero.title">Manage remote servers through natural language</h1>
             <p class="hero-subtitle" data-i18n="hero.subtitle">
               Almost Human Sys Admin pairs a retro-inspired TUI with an intelligent assistant that keeps SSH and SFTP sessions alive while documenting every action.
             </p>
@@ -114,7 +114,7 @@
               <a class="btn btn-secondary" href="#quickstart" data-i18n="hero.secondaryCta">Explore quick start</a>
             </div>
             <p class="hero-note" data-i18n="hero.note">
-              Built for operations teams that need traceability, multilingual support and seamless SSH tooling.
+              Bring human dialogue to infrastructure work while keeping tight control, observability and multilingual guidance.
             </p>
           </div>
           <div class="hero-visual" aria-hidden="true">
@@ -128,11 +128,10 @@
                 <pre>
 $ connect bastion prod-admin
 ✅ Connected to prod-admin@bastion:22 (key)
-> ¿Qué deseas hacer hoy?
+> Necesito revisar los logs de nginx y comprobar el espacio en /var
 
-/estado
-- Agente listo · Proveedor: Cerebras · Modelo: qwen-3-coder-480b
-- Conexión activa · Streaming habilitado
+Assistant ▸ Recomiendo `sudo journalctl -u nginx --since "-15 minutes"`
+Assistant ▸ También verifiqué `df -h /var` · 32% utilizado
                 </pre>
               </div>
             </div>
@@ -144,15 +143,15 @@ $ connect bastion prod-admin
         <div class="section-inner">
           <div class="section-header">
             <p class="section-eyebrow" data-i18n="product.eyebrow">Overview</p>
-            <h2 data-i18n="product.title">A companion for demanding sysadmins</h2>
+            <h2 data-i18n="product.title">Human-centric operations, AI flexibility</h2>
             <p class="section-lead" data-i18n="product.lead">
-              Purpose-built for teams managing sensitive infrastructure: persistent sessions, secure remote tooling and multilingual documentation.
+              Delivers the familiarity of collaborating with a human SRE while leveraging AI to adapt, explain and execute across languages.
             </p>
           </div>
           <ul class="feature-bullets" data-region="product-bullets">
-            <li>Persistent SSH/SFTP orchestration with AI guidance</li>
-            <li>Localized UI (English, Spanish, German) with retro aesthetics</li>
-            <li>Custom providers: LM Studio, Cerebras, Bedrock, OpenAI, Ollama</li>
+            <li>Express goals in natural language; the assistant translates them into safe SSH/SFTP actions.</li>
+            <li>Embedded knowledge surfaces runbooks and multilingual guidance exactly when you need it.</li>
+            <li>Modular LLM providers balance latency, compliance requirements and operational costs.</li>
           </ul>
         </div>
       </section>
@@ -161,9 +160,9 @@ $ connect bastion prod-admin
         <div class="section-inner">
           <div class="section-header">
             <p class="section-eyebrow" data-i18n="features.eyebrow">Capabilities</p>
-            <h2 data-i18n="features.title">Product highlights</h2>
+            <h2 data-i18n="features.title">What makes it different</h2>
             <p class="section-lead" data-i18n="features.lead">
-              Every module is engineered for operational reliability, traceability and a comfortable terminal-first workflow.
+              Human-friendly conversations, machine precision and extensible tooling—packaged in a retro terminal experience.
             </p>
           </div>
           <div class="card-grid" data-region="features-cards"></div>
@@ -176,7 +175,7 @@ $ connect bastion prod-admin
             <p class="section-eyebrow" data-i18n="how.eyebrow">Workflow</p>
             <h2 data-i18n="how.title">How it works</h2>
             <p class="section-lead" data-i18n="how.lead">
-              From the initial SSH handshake to continuous automation, the assistant guides you with contextual answers.
+              From the first SSH handshake to continuous optimisation, the assistant keeps you informed with conversational context.
             </p>
           </div>
           <div class="timeline" data-region="how-steps"></div>
@@ -189,12 +188,12 @@ $ connect bastion prod-admin
             <p class="section-eyebrow" data-i18n="quickstart.eyebrow">Kick-off</p>
             <h2 data-i18n="quickstart.title">Quick start in minutes</h2>
             <p class="section-lead" data-i18n="quickstart.lead">
-              Follow these steps to bring the assistant to life locally and start collaborating with your servers.
+              Get the environment ready, enable your knowledge sources and manage servers through conversation.
             </p>
           </div>
           <ol class="quickstart-steps" data-region="quickstart-steps"></ol>
           <p class="quickstart-note" data-i18n="quickstart.note">
-            Tip: run <code>make run</code> to launch the TUI with the current configuration.
+            Before committing changes, run <code>make format</code>, <code>make lint</code> and update your runbooks with the latest guidance.
           </p>
         </div>
       </section>
@@ -205,7 +204,7 @@ $ connect bastion prod-admin
             <p class="section-eyebrow" data-i18n="help.eyebrow">Support</p>
             <h2 data-i18n="help.title">Help & knowledge base</h2>
             <p class="section-lead" data-i18n="help.lead">
-              Everything you need to master the flow: commands, multilingual guides, best practices and troubleshooting.
+              Resources to turn conversations into reliable actions, maintain shared knowledge and troubleshoot quickly.
             </p>
           </div>
           <div class="info-panels" data-region="help-panels"></div>
@@ -218,7 +217,7 @@ $ connect bastion prod-admin
             <p class="section-eyebrow" data-i18n="faq.eyebrow">FAQ</p>
             <h2 data-i18n="faq.title">Frequently asked questions</h2>
             <p class="section-lead" data-i18n="faq.lead">
-              We address common questions about the agent architecture and day-to-day operation.
+              Clarify how the conversational assistant fits into your operational workflows.
             </p>
           </div>
           <div class="faq-list" data-region="faq-items"></div>
@@ -231,7 +230,7 @@ $ connect bastion prod-admin
             <p class="section-eyebrow" data-i18n="download.eyebrow">Availability</p>
             <h2 data-i18n="download.title">Download & onboarding</h2>
             <p class="section-lead" data-i18n="download.lead">
-              We are preparing the official distribution with installers and platform packages. In the meantime, follow the installation guide to get started.
+              Official packages are in progress. Keep the quick start guide handy while installers and signed archives are prepared.
             </p>
             <div class="download-actions">
               <button class="btn btn-primary btn-disabled" type="button" disabled data-i18n="download.primaryCta">
@@ -240,7 +239,7 @@ $ connect bastion prod-admin
               <a class="btn btn-secondary" href="#help" data-i18n="download.secondaryCta">Read installation guide</a>
             </div>
             <p class="download-note" data-i18n="download.note">
-              Want us to notify you when binaries are ready? Subscribe to the newsletter (coming soon).
+              Want early access to binaries? Subscribe to the product bulletin (coming soon).
             </p>
           </div>
         </div>
