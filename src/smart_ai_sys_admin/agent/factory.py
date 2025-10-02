@@ -23,6 +23,7 @@ from .config import (
     AgentConfigError,
     AgentOptions,
     BedrockProviderConfig,
+    LMStudioProviderConfig,
     LocalProviderConfig,
     MCPConfig,
     OpenAIProviderConfig,
@@ -77,6 +78,8 @@ class AgentFactory:
             return self._build_openai_model(provider_cfg)
         if isinstance(provider_cfg, LocalProviderConfig):
             return self._build_local_model(provider_cfg)
+        if isinstance(provider_cfg, LMStudioProviderConfig):
+            return self._build_lmstudio_model(provider_cfg)
         raise AgentConfigError("Tipo de proveedor no soportado")
 
     def _build_bedrock_model(self, cfg: BedrockProviderConfig) -> BedrockModel:
@@ -154,6 +157,40 @@ class AgentFactory:
             "Instanciando OllamaModel contra %s con parámetros: %s", cfg.host, params.keys()
         )
         return OllamaModel(host=cfg.host, model_id=cfg.model_id, **params)
+
+    def _build_lmstudio_model(self, cfg: LMStudioProviderConfig) -> OpenAIModel:
+        client_args = dict(cfg.client_args)
+        if "base_url" not in client_args:
+            client_args["base_url"] = cfg.base_url
+
+        api_key = None
+        if cfg.api_key_env:
+            api_key = os.getenv(cfg.api_key_env)
+            if not api_key:
+                logger.debug(
+                    "Variable de entorno %s no definida; se usará api_key explícita si existe",
+                    cfg.api_key_env,
+                )
+        if not api_key:
+            api_key = cfg.api_key or client_args.get("api_key")
+
+        if not api_key:
+            raise AgentConfigError(
+                "LM Studio requiere especificar 'api_key' o 'api_key_env' en la configuración"
+            )
+
+        client_args["api_key"] = api_key
+
+        params = dict(cfg.params)
+        if "stream" not in params:
+            params["stream"] = self._config.options.streaming
+
+        logger.debug(
+            "Instanciando OpenAIModel contra LM Studio en %s con parámetros: %s",
+            client_args["base_url"],
+            params.keys(),
+        )
+        return OpenAIModel(client_args=client_args, model_id=cfg.model_id, params=params or None)
 
     def _build_conversation_manager(self, options: AgentOptions):
         conversation = options.conversation

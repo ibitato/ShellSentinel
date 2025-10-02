@@ -63,7 +63,7 @@ Der Agent nutzt die aktive SSH-/SFTP-Sitzung für Befehle und Dateiübertragunge
 ## Konfiguration
 - `conf/app_config.json` enthält Styles, Texte und Tastenkürzel in Form von Platzhaltern wie `{{ui.output_panel.title}}`, die automatisch für das aktive Locale ersetzt werden.
 - Übersetzungen liegen in `conf/locales/<sprache>/strings.json`. Beim Hinzufügen neuer Texte verwende im Code `_('schlüssel')` und ergänze die Einträge in jeder Sprache.
-- `conf/agent.conf` steuert den LLM-Anbieter, Tool-Optionen und Timeouts. Nutze `conf/agent.conf.example` als Ausgangspunkt.
+- `conf/agent.conf` steuert den LLM-Anbieter, Tool-Optionen und Timeouts. Nutze `conf/agent.conf.example` als Ausgangspunkt und starte bei Auswahl von `lmstudio` den lokalen Server mit `lms server start`; passe `base_url` und `api_key` an deine Umgebung an.
 
 ## Fehlerbehebung
 - **Farb- oder Anzeigeprobleme**: `TERM` prüfen und ggf. auf `xterm-256color` wechseln.

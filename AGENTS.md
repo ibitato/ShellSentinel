@@ -35,8 +35,11 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - El sistema de logging se inicializa desde `conf/app_config.json` con nivel por defecto `DEBUG`. Respeta este canal y usa los loggers `smart_ai_sys_admin.*` para observabilidad consistente.
 - Nunca persistas claves API en el JSON. Usa las variables `OPENAI_API_KEY`, `AWS_*`, etc. y añade instrucciones de export en la documentación cuando se introduzca un nuevo proveedor.
 - Los *system prompts* de cada proveedor residen en `system_prompts/`. Mantenerlos en español y actualizar referencias si se renombran.
+- LM Studio funciona mediante el modo compatible con OpenAI. Antes de usarlo, ejecuta `lms server start` en la máquina local y ajusta `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`) en `conf/agent.conf`.
+- El modelo de ejemplo `openai/gpt-oss-20b` reporta `max_context_length = 131072` (consulta `GET /api/v0/models/<model>`), por lo que se fijó `max_completion_tokens` en ese valor para aprovechar todo el contexto disponible.
 - El bloque `mcp` del agente solo debe habilitarse cuando los servidores declarados estén disponibles; la inicialización fallará en caso contrario.
 - Dependencias nuevas deben agregarse al `requirements.txt` (ejecución) y, si aplica, cascada en `requirements-dev.txt`.
+- Para desarrollar proveedores de modelo personalizados revisa `docs/custom_model_providers_es.md` antes de tocar el paquete `smart_ai_sys_admin.agent` o la configuración del agente.
 
 ## Flujo de trabajo recomendado
 1. Activar entorno virtual: `source .venv/bin/activate`

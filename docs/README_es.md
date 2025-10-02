@@ -62,7 +62,8 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - El fichero `conf/app_config.json` contiene referencias `{{clave.de.traduccion}}` que se resuelven en tiempo de carga usando el locale activo; no elimines las llaves dobles al personalizar valores.
 
 ### Configuración del agente IA (Strands Agents)
-- Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI u Ollama/local.
+- Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI, LM Studio u Ollama/local.
+- Si trabajas con LM Studio, inicia el servidor con `lms server start` y personaliza `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`, `client_args`) para alinearlo con tu entorno.
 - Cada proveedor cuenta con su propio `system_prompt`, ubicado en `system_prompts/`. Puedes personalizar esos ficheros o apuntar a otros paths.
 - Copia el fichero de ejemplo y ajusta las credenciales vía variables de entorno (por ejemplo `export OPENAI_API_KEY="..."`). El archivo no almacena claves en texto plano.
 - Los modelos OpenAI y Bedrock admiten respuestas largas; por defecto `conf/agent.conf.example` fija `max_completion_tokens` (OpenAI) en **32 768** y `max_tokens` (Bedrock) en **8 192**. Ajusta estos límites según las cuotas de tu cuenta.

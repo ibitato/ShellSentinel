@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal
 
-ProviderLiteral = Literal["bedrock", "openai", "local"]
+ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
 
@@ -45,6 +45,16 @@ class OpenAIProviderConfig(ProviderBaseConfig):
 class LocalProviderConfig(ProviderBaseConfig):
     host: str
     model_id: str
+    params: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class LMStudioProviderConfig(ProviderBaseConfig):
+    model_id: str
+    base_url: str
+    api_key: str | None
+    api_key_env: str | None
+    client_args: Mapping[str, Any]
     params: Mapping[str, Any]
 
 
@@ -220,6 +230,26 @@ def _build_provider_configs(
             params=_mapping_proxy(data.get("params")),
         )
 
+    if "lmstudio" in payload:
+        data = payload["lmstudio"]
+        system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
+        base_url = data.get("base_url")
+        if not base_url:
+            raise AgentConfigError(
+                "La configuración de LM Studio requiere la clave 'base_url'."
+            )
+        providers["lmstudio"] = LMStudioProviderConfig(
+            system_prompt_path=prompt_path,
+            system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
+            model_id=data["model_id"],
+            base_url=base_url,
+            api_key=data.get("api_key"),
+            api_key_env=data.get("api_key_env"),
+            client_args=_mapping_proxy(data.get("client_args")),
+            params=_mapping_proxy(data.get("params")),
+        )
+
     return MappingProxyType(providers)
 
 
@@ -308,7 +338,7 @@ def load_agent_config(path: str | Path | None = None) -> AgentConfig:
         raise AgentConfigError(f"Versión de configuración no soportada: {version}")
 
     provider = raw.get("provider")
-    if provider not in {"bedrock", "openai", "local"}:
+    if provider not in {"bedrock", "openai", "local", "lmstudio"}:
         raise AgentConfigError("Debes especificar un proveedor válido en 'provider'.")
 
     providers_section = raw.get("providers")
@@ -343,6 +373,7 @@ __all__ = [
     "BedrockProviderConfig",
     "ConversationConfig",
     "LocalProviderConfig",
+    "LMStudioProviderConfig",
     "MCPConfig",
     "MCPTransportConfig",
     "OpenAIProviderConfig",

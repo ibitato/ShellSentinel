@@ -65,7 +65,8 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 - `conf/app_config.json` contains `{{translation.key}}` placeholders resolved at load time; keep the double braces when customising values.
 
 ### AI agent configuration (Strands Agents)
-- Copy `conf/agent.conf.example` to `conf/agent.conf` and adjust the `provider` block to select Amazon Bedrock, OpenAI or Ollama/local.
+- Copy `conf/agent.conf.example` to `conf/agent.conf` and adjust the `provider` block to select Amazon Bedrock, OpenAI, LM Studio or Ollama/local.
+- When you pick LM Studio, start the local server with `lms server start` and review `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`, `client_args`) so it matches your environment.
 - Each provider ships with its own `system_prompt` in `system_prompts/`. Custom prompts can be referenced by path.
 - Copy the example file and set credentials via environment variables (e.g. `export OPENAI_API_KEY="..."`). The config file never stores secrets in plain text.
 - OpenAI and Bedrock defaults allow long outputs; the example config sets `max_completion_tokens` (OpenAI) to **32 768** and `max_tokens` (Bedrock) to **8 192**. Adjust to match your account quotas.
