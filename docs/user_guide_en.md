@@ -63,7 +63,7 @@ The agent reuses the active SSH/SFTP session to run remote commands and transfer
 ## Configuration reference
 - `conf/app_config.json` stores styling, prompts and shortcuts using placeholders such as `{{ui.output_panel.title}}`, automatically resolved for the active locale.
 - Translations live in `conf/locales/<lang>/strings.json`. When adding new strings, call `_('key')` in the code and create entries for every supported language.
-- `conf/agent.conf` defines the LLM provider, tool options and timeouts. Copy `conf/agent.conf.example` before customizing it and, when selecting `lmstudio`, start the local server with `lms server start` and adjust `base_url`/`api_key` to match your setup.
+- `conf/agent.conf` defines the LLM provider, tool options and timeouts. Copy `conf/agent.conf.example` before customizing it and, when selecting `lmstudio`, start the local server with `lms server start` and adjust `base_url`/`api_key` to match your setup. For `cerebras`, export `CEREBRAS_API_KEY` (or set `api_key_env`) and tweak `client_args`/`params`; the integration wraps the official SDK with SSE streaming support.
 
 ## Troubleshooting
 - **Colors look wrong / warning about terminal**: check `TERM` and switch to `xterm-256color` if needed.

@@ -32,6 +32,12 @@ Este documento resume los pasos y criterios que debemos seguir al implementar pr
 - La REST API nativa (`/api/v0/*`) ofrece métricas enriquecidas. Úsala como consulta auxiliar cuando debas mostrar estadísticas (TTFT, tokens/segundo) en los logs o telemetría.
 - `GET /api/v0/models/<model_id>` devuelve `max_context_length`; úsalo para calcular límites sensatos de `max_completion_tokens` (ej. `openai/gpt-oss-20b` expone 131072 tokens de contexto).
 
+## Caso práctico: Cerebras
+- Integra el SDK oficial (`cerebras_cloud_sdk`) dentro de un `Model` personalizado para aprovechar streaming vía SSE y soporte de herramientas. En `providers.cerebras` define `model_id`, `params`, `client_args` y una referencia a la clave (`api_key_env` o `CEREBRAS_API_KEY`).
+- El proveedor construye un cliente `AsyncCerebras` persistente; evita reinstanciarlo en cada llamada para mantener conexiones calientes.
+- El método `stream()` convierte los `ChatChunkResponse` en `StreamEvent` nativo (texto, razonamiento y tool calls). Los metadatos (`usage`, `time_info.total_time`) se exponen como `metadata` para el panel de observabilidad.
+- Para salidas estructuradas, genera un `ToolSpec` mediante `convert_pydantic_to_tool_spec`, fuerza `tool_choice` y parsea el `tool_call.function.arguments` devuelto.
+
 ## Referencias externas
 - Documentación oficial: https://strandsagents.com/latest/documentation/docs/user-guide/concepts/model-providers/custom_model_provider/
 - Código de ejemplo (`BedrockModel`): https://github.com/strands-agents/sdk-python/blob/main/src/strands/models/bedrock.py

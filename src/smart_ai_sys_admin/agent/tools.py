@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections.abc import Callable, Sequence
+from datetime import datetime
 from typing import Any
 
 from strands import tool
@@ -180,11 +181,20 @@ async def remote_sftp_transfer(
         return f"❌ {exc}"
 
 
+@tool
+async def local_datetime(agent: Any) -> str:  # noqa: ARG001 - agente inyectado
+    """Devuelve la fecha y hora locales de la aplicación en formato ISO 8601."""
+
+    now = datetime.now().astimezone()
+    return now.isoformat()
+
+
 DEFAULT_STRANDS_TOOLS: tuple[ToolCallable, ...] = (
     shell_tool,
     file_read,
     file_write,
     sleep,
+    local_datetime,
     remote_ssh_command,
     remote_sftp_transfer,
 )
@@ -200,6 +210,7 @@ def resolve_tools(custom_tools: Sequence[ToolCallable] | None = None) -> list[To
 __all__ = [
     "DEFAULT_STRANDS_TOOLS",
     "DEFAULT_REMOTE_TIMEOUT",
+    "local_datetime",
     "remote_ssh_command",
     "remote_sftp_transfer",
     "resolve_tools",

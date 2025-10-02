@@ -23,6 +23,7 @@ from .config import (
     AgentConfigError,
     AgentOptions,
     BedrockProviderConfig,
+    CerebrasProviderConfig,
     LMStudioProviderConfig,
     LocalProviderConfig,
     MCPConfig,
@@ -30,6 +31,7 @@ from .config import (
     ProviderBaseConfig,
     RemoteCommandConfig,
 )
+from .providers import CerebrasModel
 
 logger = logging.getLogger("smart_ai_sys_admin.agent.factory")
 
@@ -80,6 +82,8 @@ class AgentFactory:
             return self._build_local_model(provider_cfg)
         if isinstance(provider_cfg, LMStudioProviderConfig):
             return self._build_lmstudio_model(provider_cfg)
+        if isinstance(provider_cfg, CerebrasProviderConfig):
+            return self._build_cerebras_model(provider_cfg)
         raise AgentConfigError("Tipo de proveedor no soportado")
 
     def _build_bedrock_model(self, cfg: BedrockProviderConfig) -> BedrockModel:
@@ -191,6 +195,18 @@ class AgentFactory:
             params.keys(),
         )
         return OpenAIModel(client_args=client_args, model_id=cfg.model_id, params=params or None)
+
+    def _build_cerebras_model(self, cfg: CerebrasProviderConfig) -> CerebrasModel:
+        params = dict(cfg.params)
+        client_args = dict(cfg.client_args)
+        logger.debug("Instanciando CerebrasModel con parámetros: %s", params.keys())
+        return CerebrasModel(
+            model_id=cfg.model_id,
+            params=params,
+            client_args=client_args,
+            api_key=cfg.api_key,
+            api_key_env=cfg.api_key_env,
+        )
 
     def _build_conversation_manager(self, options: AgentOptions):
         conversation = options.conversation

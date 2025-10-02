@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal
 
-ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio"]
+ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
 
@@ -56,6 +56,15 @@ class LMStudioProviderConfig(ProviderBaseConfig):
     api_key_env: str | None
     client_args: Mapping[str, Any]
     params: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class CerebrasProviderConfig(ProviderBaseConfig):
+    model_id: str
+    params: Mapping[str, Any]
+    client_args: Mapping[str, Any]
+    api_key: str | None
+    api_key_env: str | None
 
 
 @dataclass(frozen=True)
@@ -250,6 +259,20 @@ def _build_provider_configs(
             params=_mapping_proxy(data.get("params")),
         )
 
+    if "cerebras" in payload:
+        data = payload["cerebras"]
+        system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
+        providers["cerebras"] = CerebrasProviderConfig(
+            system_prompt_path=prompt_path,
+            system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
+            model_id=data["model_id"],
+            params=_mapping_proxy(data.get("params")),
+            client_args=_mapping_proxy(data.get("client_args")),
+            api_key=data.get("api_key"),
+            api_key_env=data.get("api_key_env"),
+        )
+
     return MappingProxyType(providers)
 
 
@@ -338,7 +361,7 @@ def load_agent_config(path: str | Path | None = None) -> AgentConfig:
         raise AgentConfigError(f"Versión de configuración no soportada: {version}")
 
     provider = raw.get("provider")
-    if provider not in {"bedrock", "openai", "local", "lmstudio"}:
+    if provider not in {"bedrock", "openai", "local", "lmstudio", "cerebras"}:
         raise AgentConfigError("Debes especificar un proveedor válido en 'provider'.")
 
     providers_section = raw.get("providers")
@@ -373,6 +396,7 @@ __all__ = [
     "BedrockProviderConfig",
     "ConversationConfig",
     "LocalProviderConfig",
+    "CerebrasProviderConfig",
     "LMStudioProviderConfig",
     "MCPConfig",
     "MCPTransportConfig",
