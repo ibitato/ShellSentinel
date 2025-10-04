@@ -1,11 +1,10 @@
-"""Utilidades para inicializar el agente Strands en Almost Human Sys Admin."""
+"""Utilidades para inicializar el agente Strands en Smart-AI-Sys-Admin."""
 
 from .config import (
     AgentConfig,
     AgentConfigError,
     AgentOptions,
     BedrockProviderConfig,
-    CerebrasProviderConfig,
     LocalProviderConfig,
     MCPConfig,
     MCPTransportConfig,
@@ -28,7 +27,6 @@ __all__ = [
     "AgentRuntime",
     "AgentOptions",
     "BedrockProviderConfig",
-    "CerebrasProviderConfig",
     "LocalProviderConfig",
     "MCPConfig",
     "MCPTransportConfig",

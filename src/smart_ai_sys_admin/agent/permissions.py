@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
-from collections.abc import Mapping
+from typing import Mapping
 
 __all__ = ["DEFAULT_PERMISSION_ENV_FLAGS", "ToolPermissionManager"]
 
@@ -83,3 +83,4 @@ class ToolPermissionManager:
         """Indica si los permisos están actualmente activados."""
 
         return self._active
+

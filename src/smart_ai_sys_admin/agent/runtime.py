@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import os
 import re
 from contextlib import ExitStack
 from typing import Any
@@ -15,11 +14,10 @@ from strands.agent.agent_result import AgentResult
 from strands.tools.mcp import MCPClient
 
 from ..connection import SSHConnectionManager
-from ..localization import _
 from .config import AgentConfig, AgentConfigError, MCPConfig, MCPTransportConfig, load_agent_config
 from .factory import AgentFactory
 from .permissions import ToolPermissionManager
-from .tools import remote_sftp_transfer, remote_ssh_command, resolve_tools
+from .tools import remote_ssh_command, resolve_tools
 
 
 class MCPManager:
@@ -72,24 +70,10 @@ class MCPManager:
         if cfg.transport_type == "stdio":
             if not cfg.command:
                 raise ValueError("El transporte MCP 'stdio' requiere el campo 'command'.")
-            env_map = dict(cfg.env)
-            missing_env = []
-            for var in cfg.env_passthrough:
-                value = os.environ.get(var)
-                if value is None:
-                    missing_env.append(var)
-                    continue
-                env_map[var] = value
-            if missing_env:
-                self._logger.warning(
-                    "Variables de entorno %s no están definidas; el MCP '%s' podría fallar",
-                    ", ".join(missing_env),
-                    cfg.identifier,
-                )
             params = StdioServerParameters(
                 command=cfg.command,
                 args=list(cfg.args),
-                env=env_map,
+                env=dict(cfg.env),
                 cwd=cfg.cwd,
             )
             return MCPClient(lambda: stdio_client(params))
@@ -147,10 +131,8 @@ class AgentRuntime:
             config = load_agent_config()
         except AgentConfigError as exc:
             self._error_message = (
-                _(
-                    "agent.config.load_error",
-                    error=str(exc),
-                )
+                "⚠️ No se pudo cargar `conf/agent.conf`: "
+                f"{exc}. El modo agente permanecerá deshabilitado."
             )
             self._logger.error("Error cargando la configuración del agente: %s", exc)
             return
@@ -180,25 +162,6 @@ class AgentRuntime:
                 if hasattr(remote_ssh_command, "_tool_name"):
                     remote_ssh_command._tool_name = tool_name  # type: ignore[attr-defined]
 
-        transfer_name = self._factory.sftp_transfer_name
-        if transfer_name:
-            current_transfer: str | None = None
-            if hasattr(remote_sftp_transfer, "tool_name"):
-                try:
-                    current_transfer = remote_sftp_transfer.tool_name  # type: ignore[attr-defined]
-                except Exception:  # pragma: no cover - defensivo
-                    current_transfer = None
-            if current_transfer != transfer_name:
-                if hasattr(remote_sftp_transfer, "tool_spec"):
-                    try:
-                        spec = remote_sftp_transfer.tool_spec  # type: ignore[attr-defined]
-                    except Exception:  # pragma: no cover - defensivo
-                        spec = None
-                    if isinstance(spec, dict):
-                        spec["name"] = transfer_name
-                if hasattr(remote_sftp_transfer, "_tool_name"):
-                    remote_sftp_transfer._tool_name = transfer_name  # type: ignore[attr-defined]
-
         base_tools = list(resolve_tools())
         self._mcp_manager = MCPManager(config.mcp, self._logger)
         try:
@@ -213,7 +176,8 @@ class AgentRuntime:
         except Exception as exc:  # pragma: no cover - depende del entorno
             self._logger.error("Error inicializando el agente Strands: %s", exc)
             self._error_message = (
-                _("agent.start.failure")
+                "⚠️ No fue posible inicializar el agente Strands. Revisa los registros "
+                "para más detalles."
             )
             if self._mcp_manager:
                 self._mcp_manager.close()
@@ -232,10 +196,7 @@ class AgentRuntime:
             self._permission_manager.restore()
         self._ready = True
         config_path = config.config_path
-        self._status_message = _(
-            "agent.start.success",
-            path=str(config_path),
-        )
+        self._status_message = f"✅ Agente Strands inicializado (configuración: `{config_path}`)"
 
     def invoke(self, prompt: str) -> str:
         if not self.ready:
@@ -245,10 +206,7 @@ class AgentRuntime:
             result = self._agent(prompt)
         except Exception as exc:  # pragma: no cover - depende del proveedor
             self._logger.exception("Error ejecutando el agente")
-            return _(
-                "agent.invoke.failure",
-                error=str(exc),
-            )
+            return f"❌ El agente falló al procesar la instrucción: {exc}"
         if isinstance(result, AgentResult):
             text = self._render_agent_result(result)
             return text or "(sin respuesta)"
@@ -266,52 +224,6 @@ class AgentRuntime:
         self._mcp_manager = None
         self._ready = False
         self._permission_manager.restore()
-
-    def provider_info(self) -> tuple[str, str] | None:
-        if not self._config:
-            return None
-        provider = self._config.provider
-        try:
-            provider_cfg = self._config.provider_config()
-        except AgentConfigError:
-            return provider, ""
-        model_id = getattr(provider_cfg, "model_id", "")
-        return provider, model_id
-
-    def provider_footer_summary(self) -> str | None:
-        info = self.provider_info()
-        if not info:
-            return None
-        provider, model_id = info
-        return _(
-            "connection.status.provider",
-            provider=provider,
-            model=model_id or "-",
-        )
-
-    def agent_summary(self) -> dict[str, Any]:
-        provider = ""
-        model_id = ""
-        streaming: bool | None = None
-        config_path: str | None = None
-        if self._config:
-            provider = self._config.provider
-            try:
-                provider_cfg = self._config.provider_config()
-                model_id = getattr(provider_cfg, "model_id", "")
-            except AgentConfigError:
-                model_id = ""
-            streaming = bool(self._config.options.streaming)
-            config_path = str(self._config.config_path)
-        return {
-            "ready": self.ready,
-            "status": self._status_message,
-            "error": self._error_message,
-            "provider": provider,
-            "model": model_id,
-            "streaming": streaming,
-            "config_path": config_path,
-        }
 
 
 __all__ = ["AgentRuntime"]

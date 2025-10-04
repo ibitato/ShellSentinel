@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "provider": "cerebras",
+  "provider": "bedrock",
   "agent": {
     "streaming": true,
     "conversation": {
@@ -9,7 +9,7 @@
       "truncate_tool_results": true
     },
     "trace_attributes": {
-      "app": "Almost Human Sys Admin"
+      "app": "Smart-AI-Sys-Admin"
     }
   },
   "providers": {
@@ -25,7 +25,7 @@
       "params": {
         "temperature": 0.3,
         "top_p": 0.8,
-        "max_tokens": 8192,
+        "max_tokens": 2048,
         "streaming": true
       }
     },
@@ -39,8 +39,8 @@
         "base_url": "https://api.openai.com/v1"
       },
       "params": {
-        "temperature": 1,
-        "max_completion_tokens": 32768
+        "temperature": 0.7,
+        "max_tokens": 1500
       }
     },
     "local": {
@@ -53,34 +53,6 @@
         "keep_alive": "10m",
         "top_p": 0.9
       }
-    },
-    "lmstudio": {
-      "system_prompt": "system_prompts/lmstudio.md",
-      "model_id": "openai/gpt-oss-20b",
-      "base_url": "http://127.0.0.1:1234/v1",
-      "api_key": "lm-studio",
-      "api_key_env": "LM_STUDIO_API_KEY",
-      "show_thinking": false,
-      "client_args": {
-        "timeout": 60
-      },
-      "params": {
-        "temperature": 0.7,
-        "max_completion_tokens": 131072
-      }
-    },
-    "cerebras": {
-      "system_prompt": "system_prompts/cerebras.md",
-      "model_id": "qwen-3-coder-480b",
-      "show_thinking": false,
-      "api_key_env": "CEREBRAS_API_KEY",
-      "client_args": {
-        "timeout": 60
-      },
-      "params": {
-        "temperature": 0.5,
-        "max_completion_tokens": 8192
-      }
     }
   },
   "tools": {
@@ -92,10 +64,7 @@
     ],
     "remote_command": {
       "name": "remote_ssh_command",
-      "timeout_seconds": 900
-    },
-    "sftp_transfer": {
-      "name": "remote_sftp_transfer"
+      "timeout_seconds": 120
     },
     "load_directory": false,
     "consent": {
