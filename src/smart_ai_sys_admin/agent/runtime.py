@@ -14,7 +14,15 @@ from strands.agent.agent_result import AgentResult
 from strands.tools.mcp import MCPClient
 
 from ..connection import SSHConnectionManager
-from .config import AgentConfig, AgentConfigError, MCPConfig, MCPTransportConfig, load_agent_config
+from ..localization import _
+from .config import (
+    AgentConfig,
+    AgentConfigError,
+    MCPConfig,
+    MCPTransportConfig,
+    ProviderBaseConfig,
+    load_agent_config,
+)
 from .factory import AgentFactory
 from .permissions import ToolPermissionManager
 from .tools import remote_ssh_command, resolve_tools
@@ -126,6 +134,37 @@ class AgentRuntime:
     def error_message(self) -> str | None:
         return self._error_message
 
+    # ------------------------------------------------------------------
+    # Información de soporte para la interfaz
+    # ------------------------------------------------------------------
+
+    def provider_footer_summary(self) -> str:
+        """Devuelve la etiqueta localizada para mostrar proveedor y modelo activos."""
+
+        if not self._config:
+            return ""
+        try:
+            provider_cfg = self._config.provider_config()
+        except AgentConfigError:
+            return ""
+
+        model = getattr(provider_cfg, "model_id", None)
+        if not model:
+            return ""
+
+        provider_label = self._format_provider_label(provider_cfg)
+        if not provider_label:
+            return ""
+
+        summary = _(
+            "connection.status.provider",
+            provider=provider_label,
+            model=model,
+        )
+        if summary == "connection.status.provider":
+            return f"{provider_label} · {model}"
+        return summary
+
     def initialize(self) -> None:
         try:
             config = load_agent_config()
@@ -224,6 +263,33 @@ class AgentRuntime:
         self._mcp_manager = None
         self._ready = False
         self._permission_manager.restore()
+
+    # ------------------------------------------------------------------
+    # Utilidades internas
+    # ------------------------------------------------------------------
+
+    def _format_provider_label(self, provider_cfg: ProviderBaseConfig) -> str:
+        mapping = {
+            "bedrock": "Amazon Bedrock",
+            "openai": "OpenAI",
+            "local": "Ollama",
+            "lmstudio": "LM Studio",
+            "cerebras": "Cerebras",
+        }
+
+        provider_key = self._config.provider if self._config else None
+        if provider_key and provider_key in mapping:
+            return mapping[provider_key]
+
+        class_name = provider_cfg.__class__.__name__
+        suffix = "ProviderConfig"
+        if class_name.endswith(suffix):
+            class_name = class_name[: -len(suffix)]
+
+        # Separar nombres en CamelCase para crear una etiqueta legible.
+        parts = re.findall(r"[A-Z]+(?=[A-Z][a-z]|$)|[A-Z]?[a-z]+|\d+", class_name)
+        label = " ".join(parts).strip()
+        return label or (provider_key or "")
 
 
 __all__ = ["AgentRuntime"]
