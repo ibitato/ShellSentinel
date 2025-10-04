@@ -22,6 +22,7 @@ htmlcov/
 # Archivos temporales
 *.log
 .DS_Store
+logs/
 
 # Configuración sensible del agente
 conf/agent.conf
