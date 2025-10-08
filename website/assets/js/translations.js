@@ -250,11 +250,11 @@ window.TRANSLATIONS = {
       eyebrow: "Availability",
       title: "Download & onboarding",
       lead:
-        "Official packages are in progress. Keep the quick start guide handy while installers and signed archives are prepared.",
-      primaryCta: "Packaging in progress",
-      secondaryCta: "Read installation guide",
+        "Stable builds are published through GitHub Releases. Grab version 1.0.0 and keep the quick start guide close when setting up.",
+      primaryCta: "Download Shell Sentinel 1.0",
+      secondaryCta: "Follow quick start guide",
       note:
-        "Want early access to binaries? Subscribe to the product bulletin (coming soon).",
+        "Install from source by creating a virtual environment, running make install and launching make run.",
       license:
         "Shell Sentinel ships under a source-available licence: non-commercial use only, with modifications and derivative works prohibited unless you obtain written permission.",
     },
@@ -532,11 +532,11 @@ window.TRANSLATIONS = {
       eyebrow: "Disponibilidad",
       title: "Descarga y onboarding",
       lead:
-        "Estamos preparando paquetes oficiales. Usa la guía de inicio rápido mientras se publican instaladores y artefactos firmados.",
-      primaryCta: "Empaquetado en progreso",
-      secondaryCta: "Ver guía de instalación",
+        "La versión estable 1.0.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
+      primaryCta: "Descargar Shell Sentinel 1.0",
+      secondaryCta: "Seguir guía de inicio rápido",
       note:
-        "¿Quieres acceso temprano a binarios? Suscríbete al boletín del producto (próximamente).",
+        "Instala desde el código creando un entorno virtual, ejecutando make install y arrancando con make run.",
       license:
         "Shell Sentinel se distribuye con una licencia de código disponible: solo se permite uso no comercial y queda prohibido modificar o crear derivados sin permiso escrito.",
     },
@@ -800,11 +800,11 @@ window.TRANSLATIONS = {
       eyebrow: "Verfügbarkeit",
       title: "Download & Onboarding",
       lead:
-        "Offizielle Pakete sind in Arbeit. Nutze den Schnellstart, während Installer und signierte Archive vorbereitet werden.",
-      primaryCta: "Packaging in Arbeit",
-      secondaryCta: "Installationsleitfaden lesen",
+        "Der stabile Release 1.0.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
+      primaryCta: "Shell Sentinel 1.0 herunterladen",
+      secondaryCta: "Schnellstart öffnen",
       note:
-        "Interesse an frühen Binaries? Melde dich für den Produkt-Newsletter an (bald verfügbar).",
+        "Installation aus dem Quellcode: Virtuelle Umgebung erstellen, make install ausführen und mit make run starten.",
       license:
         "Shell Sentinel steht unter einer Source-Available-Lizenz: ausschließlich nicht-kommerzielle Nutzung; Modifikationen oder Ableitungen sind nur mit schriftlicher Genehmigung erlaubt.",
     },
