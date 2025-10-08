@@ -32,8 +32,6 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán
 ## Inicio de la aplicación
 ```bash
 make run
-# o
-python -m smart_ai_sys_admin
 ```
 
 Al arrancar verás una pantalla de bienvenida que se cierra sola en 5 segundos o al presionar cualquier tecla.
@@ -70,7 +68,3 @@ El agente reutiliza la conexión SSH/SFTP abierta para ejecutar comandos y trans
 - **No hay colores o la interfaz se ve mal**: revisa la variable `TERM` y la advertencia mostrada al inicio.
 - **El agente no responde**: comprueba `conf/agent.conf`, variables de entorno de credenciales y los logs en `logs/app.log`.
 - **Error “No hay una conexión SSH activa”**: ejecuta `/connect` antes de solicitar acciones al agente.
-
-## Recursos adicionales
-- `AGENTS.md`: guía para colaboradores y agentes IA.
-- `README.md`: visión general del proyecto y tareas de desarrollo.

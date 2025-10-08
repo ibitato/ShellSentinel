@@ -9,6 +9,8 @@ Public repository: <https://github.com/david-lopez-b/Smart-AI-Sys-Admin>
 
 Formerly released as Almost Human Sys Admin. Official site: <https://www.shellsentinel.net>.
 
+Website navigation update: each header item now opens a dedicated page (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) instead of scrolling within a single landing view.
+
 Compatibility note: the Python package and entry point remain `smart_ai_sys_admin` so existing integrations do not break.
 
 ## Requirements
@@ -33,11 +35,9 @@ Compatibility note: the Python package and entry point remain `smart_ai_sys_admi
 
 ## CLI usage
 - Launch the TUI with:
-  ```bash
-  make run
-  # or
-  python -m smart_ai_sys_admin
-  ```
+```bash
+make run
+```
 - The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status plus the active LLM provider/model.
 - Submit instructions with the configured shortcut (default `Ctrl+S`).
 - Supported commands (aliases available in English, Spanish and German):

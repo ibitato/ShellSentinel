@@ -32,8 +32,6 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch
 ## Start der Anwendung
 ```bash
 make run
-# oder
-python -m smart_ai_sys_admin
 ```
 
 Zu Beginn erscheint ein Willkommensbildschirm, der sich nach 5 Sekunden automatisch schließt oder sobald du eine Taste drückst.
@@ -70,7 +68,3 @@ Der Agent nutzt die aktive SSH-/SFTP-Sitzung für Befehle und Dateiübertragunge
 - **Farb- oder Anzeigeprobleme**: `TERM` prüfen und ggf. auf `xterm-256color` wechseln.
 - **Agent reagiert nicht**: `conf/agent.conf`, Zugangsdaten und Logdateien (`logs/app.log`) kontrollieren.
 - **Fehler „Keine aktive SSH-Verbindung“**: Vor Agent-Aufgaben zuerst `/connect` ausführen.
-
-## Weitere Ressourcen
-- `AGENTS.md`: detaillierte Anleitung für Mitwirkende und KI-Agenten.
-- `README.md`: Projektüberblick, Entwicklungs-Workflow und genutzte Tools.

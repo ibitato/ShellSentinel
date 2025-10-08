@@ -143,6 +143,29 @@ section {
   width: min(500px, 100%);
 }
 
+.hero-visual-screenshot img {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lg);
+  display: block;
+}
+
+.hero-screenshot-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  cursor: pointer;
+}
+
+.hero-screenshot-button:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 4px;
+  border-radius: 20px;
+}
+
 .terminal-card {
   background: rgba(8, 10, 16, 0.92);
   border-radius: 18px;

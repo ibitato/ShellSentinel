@@ -32,8 +32,6 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German
 ## Launching the app
 ```bash
 make run
-# or
-python -m smart_ai_sys_admin
 ```
 
 A welcome screen appears on startup and closes automatically after 5 seconds or when you press any key.
@@ -70,7 +68,3 @@ The agent reuses the active SSH/SFTP session to run remote commands and transfer
 - **Colors look wrong / warning about terminal**: check `TERM` and switch to `xterm-256color` if needed.
 - **Agent not responding**: verify `conf/agent.conf`, provider credentials and logs under `logs/app.log`.
 - **"No active SSH connection" errors**: run `/connect` before asking the agent to execute remote actions.
-
-## Additional resources
-- `AGENTS.md`: in-depth guide for contributors and AI agents.
-- `README.md`: project overview, development workflow and tooling.

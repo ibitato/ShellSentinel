@@ -9,6 +9,8 @@ Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Di
 
 Früher unter dem Namen Almost Human Sys Admin veröffentlicht. Offizielle Website: <https://www.shellsentinel.net>.
 
+Aktualisierung der Website-Navigation: Jeder Header-Eintrag öffnet jetzt eine eigene Seite (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) statt nur innerhalb der Startseite zu scrollen.
+
 Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_admin`, damit bestehende Integrationen weiterhin funktionieren.
 
 ## Voraussetzungen
@@ -33,11 +35,9 @@ Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_
 
 ## Verwendung der CLI
 - TUI starten mit:
-  ```bash
-  make run
-  # oder
-  python -m smart_ai_sys_admin
-  ```
+```bash
+make run
+```
 - Die Konsole ist in zwei Bereiche aufgeteilt: Ausgabeverlauf (oben) und Eingabefeld (unten). Die Fußzeile zeigt jederzeit den SSH-Verbindungsstatus sowie den aktiven LLM-Provider und das Modell an.
 - Anweisungen werden über das konfigurierte Tastenkürzel gesendet (Standard `Strg+S`).
 - Unterstützte Befehle (Alias auf Englisch, Spanisch und Deutsch):

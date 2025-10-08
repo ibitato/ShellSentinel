@@ -296,6 +296,7 @@
     renderList('[data-region="faq-items"]', faqItems, buildFaqItem);
     setActiveLanguageButton(lang);
     localStorage.setItem(STORAGE_KEY, lang);
+    initGalleryTriggers();
   }
 
   function initLanguageSelector() {
@@ -336,5 +337,39 @@
     initLanguageSelector();
     initMenuToggle();
     applyLanguage(lang);
+    initHeroScreenshot();
   });
+  function initGalleryTriggers() {
+    const triggers = document.querySelectorAll('[data-gallery-trigger]');
+    triggers.forEach((trigger) => {
+      if (trigger.dataset.galleryAttached === 'true') return;
+      trigger.addEventListener('click', () => {
+        const item = {
+          src: trigger.getAttribute('data-gallery-src') || '',
+          alt: trigger.getAttribute('data-gallery-alt') || '',
+          caption: trigger.getAttribute('data-gallery-caption') || '',
+        };
+        openLightbox(item);
+      });
+      trigger.dataset.galleryAttached = 'true';
+    });
+  }
+
+  function initHeroScreenshot() {
+    const button = document.querySelector('.hero-screenshot-button');
+    if (!button || button.dataset.heroAttached === 'true') return;
+    button.addEventListener('click', () => {
+      const item = {
+        src:
+          button.getAttribute('data-gallery-src') ||
+          (button.querySelector('img') ? button.querySelector('img').src : ''),
+        alt:
+          button.getAttribute('data-gallery-alt') ||
+          (button.querySelector('img') ? button.querySelector('img').alt : ''),
+        caption: button.getAttribute('data-gallery-caption') || '',
+      };
+      openLightbox(item);
+    });
+    button.dataset.heroAttached = 'true';
+  }
 })();

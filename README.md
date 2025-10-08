@@ -8,6 +8,8 @@ Repositorio público: <https://github.com/david-lopez-b/Smart-AI-Sys-Admin>
 
 Sitio oficial: <https://www.shellsentinel.net>.
 
+Actualización de la navegación web: cada opción del encabezado abre una página independiente (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) en lugar de desplazar la landing principal.
+
 Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
 
 ## Requisitos
@@ -32,11 +34,9 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 
 ## Uso de la CLI
 - Lanza la interfaz TUI con:
-  ```bash
-  make run
-  # o
-  python -m smart_ai_sys_admin
-  ```
+```bash
+make run
+```
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH y el proveedor/modelo LLM activo.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles (puedes usar los alias en inglés, español o alemán):

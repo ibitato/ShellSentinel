@@ -19,6 +19,7 @@ window.TRANSLATIONS = {
       secondaryCta: "Explore quick start",
       note:
         "Bring human dialogue to infrastructure work while keeping tight control, observability and multilingual guidance.",
+      openLightbox: "Open full-size screenshot",
     },
     product: {
       eyebrow: "Overview",
@@ -27,7 +28,7 @@ window.TRANSLATIONS = {
         "Delivers the familiarity of collaborating with a human SRE while leveraging AI to adapt, explain and execute across languages.",
       bullets: [
         "Express goals in natural language; the assistant translates them into safe SSH/SFTP actions you can review.",
-        "Embedded knowledge base surfaces runbooks, best practices and context-sensitive hints in English, Spanish and German.",
+        "Embedded knowledge base surfaces internal guides, best practices and context-sensitive hints in English, Spanish and German.",
         "Modular LLM providers and plugin-ready architecture extend commands, dashboards and automations without touching the core.",
       ],
     },
@@ -47,7 +48,7 @@ window.TRANSLATIONS = {
           icon: "📚",
           title: "Context-rich knowledge",
           body:
-            "Built-in guidance connects to guides, runbooks and localized best practices so answers stay actionable and explainable.",
+            "Built-in guidance connects to manuals and localized best practices so answers stay actionable and explainable.",
         },
         {
           icon: "🔄",
@@ -70,24 +71,24 @@ window.TRANSLATIONS = {
         "Discover the retro TUI, guided plans and audit-ready summaries the assistant produces.",
       items: [
         {
-          alt: "Shell Sentinel help screen with available commands and plugins",
-          caption: "Command palette with native commands and plugin shortcuts (Spanish locale).",
-          src: "assets/img/shell-sentinel-tui-help.png",
+          alt: "Shell Sentinel command palette highlighting slash commands and plugins",
+          caption: "Command palette mixing built-in actions with plugin shortcuts.",
+          src: "assets/img/shell-sentinel-command-palette.png",
         },
         {
-          alt: "Shell Sentinel proposing a diagnostic plan in Spanish",
-          caption: "Non-intrusive diagnostic plan presented before running commands (Spanish).",
-          src: "assets/img/shell-sentinel-plan-es.png",
+          alt: "Shell Sentinel displaying a guided remediation plan",
+          caption: "Remediation plan with confirmation checkpoints before execution.",
+          src: "assets/img/shell-sentinel-plan-overview.png",
         },
         {
-          alt: "Shell Sentinel switching to English with the same plan",
-          caption: "Instant language switch while keeping context and confirmation steps (English).",
-          src: "assets/img/shell-sentinel-plan-en.png",
+          alt: "Shell Sentinel plugin inspector listing registered extensions",
+          caption: "Plugin inspector showing localisation and suggestions per command.",
+          src: "assets/img/shell-sentinel-plugin-inspector.png",
         },
         {
-          alt: "Shell Sentinel summarizing server checks with findings",
-          caption: "Audit summary highlighting services, anomalies and prioritized recommendations.",
-          src: "assets/img/shell-sentinel-report.png",
+          alt: "Shell Sentinel session summary consolidating recent actions",
+          caption: "Session summary delivering audit-ready context for operations teams.",
+          src: "assets/img/shell-sentinel-session-summary.png",
         },
       ],
     },
@@ -100,7 +101,7 @@ window.TRANSLATIONS = {
         {
           title: "1. Provision the copilot",
           body:
-            "Copy `conf/agent.conf`, choose your provider, hook in runbooks or MCP tools and export required credentials.",
+            "Copy `conf/agent.conf`, choose your provider, connect internal knowledge sources or MCP tools and export required credentials.",
         },
         {
           title: "2. Open a trusted session",
@@ -147,81 +148,30 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Before committing changes, run `make format` and `make lint` and sync any new guidance into your runbooks.",
+        "Before committing changes, run `make format` and `make lint` to keep the repo clean.",
     },
     docs: {
       eyebrow: "Manuals",
       title: "Product manuals & handbooks",
       lead:
-        "Dive into the living documentation: user guides, provider cookbooks, contributor handbooks and operational playbooks curated for each language.",
+        "Dive into the living documentation: user guides, provider cookbooks, contributor handbooks and plugin development guides curated for each language.",
       cards: [
         {
           title: "User Guide",
-          language: "EN",
           summary:
             "Install Shell Sentinel, configure locales, explore the interface and master conversational workflows.",
           href: "manuals/user-guide-en.html",
           cta: "Read online",
         },
         {
-          title: "Guía de usuario",
-          language: "ES",
-          summary:
-            "Instala la aplicación, ajusta idiomas, conoce los comandos clave y colabora con el asistente en español.",
-          href: "manuals/user-guide-es.html",
-          cta: "Leer en línea",
-        },
-        {
-          title: "Benutzerhandbuch",
-          language: "DE",
-          summary:
-            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch im Tagesgeschäft.",
-          href: "manuals/user-guide-de.html",
-          cta: "Online lesen",
-        },
-        {
           title: "Plugin development",
-          language: "EN",
           summary:
             "Step-by-step guide to build, localise and distribute plugins that extend Shell Sentinel.",
           href: "manuals/plugin-development-en.html",
           cta: "Read online",
         },
         {
-          title: "Desarrollo de plugins",
-          language: "ES",
-          summary:
-            "Guía práctica para crear, traducir y distribuir plugins personalizados dentro de Shell Sentinel.",
-          href: "manuals/plugin-development-es.html",
-          cta: "Leer en línea",
-        },
-        {
-          title: "Plugin-Entwicklung",
-          language: "DE",
-          summary:
-            "Anleitung zur Erstellung, Lokalisierung und Verteilung individueller Shell-Sentinel-Plugins.",
-          href: "manuals/plugin-development-de.html",
-          cta: "Online lesen",
-        },
-        {
-          title: "Custom provider playbook",
-          language: "ES",
-          summary:
-            "Checklist en español para integrar proveedores LLM personalizados en el ecosistema de Shell Sentinel.",
-          href: "manuals/custom-providers-es.html",
-          cta: "Leer en línea",
-        },
-        {
-          title: "Contributor handbook",
-          language: "ES",
-          summary:
-            "Políticas internas sobre documentación multilingüe, publicación web y control de calidad del producto.",
-          href: "manuals/contributor-handbook-es.html",
-          cta: "Leer en línea",
-        },
-        {
           title: "Product overview",
-          language: "EN",
           summary:
             "Architecture, technology stack and operational responsibilities behind Shell Sentinel.",
           href: "manuals/project-overview-en.html",
@@ -252,7 +202,7 @@ window.TRANSLATIONS = {
             "Keep the assistant aligned with your organization by updating the multilingual documentation set.",
           bullets: [
             "Multi-language user guides covering onboarding, day-to-day operations and FAQs.",
-            "Playbooks for custom providers and the plugin development manual.",
+            "Plugin documentation that explains how to extend commands, dashboards and integrations.",
             "A system prompt library to fine-tune tone, guardrails and workflow guidance.",
           ],
         },
@@ -285,9 +235,9 @@ window.TRANSLATIONS = {
             "It reuses your live SSH session, consults the local datetime tool and logs every action so you can verify outputs instantly.",
         },
         {
-          question: "Can it incorporate my own runbooks?",
+          question: "Can it incorporate my own knowledge base?",
           answer:
-            "Yes. Keep documentation in your knowledge base, expose it via MCP or plugins, and reference it during conversations for guided responses.",
+            "Yes. Keep documentation in your preferred knowledge base, expose it via MCP or plugins, and reference it during conversations for guided responses.",
         },
         {
           question: "Which languages can I speak to it?",
@@ -319,7 +269,7 @@ window.TRANSLATIONS = {
       contactTitle: "Stay in touch",
       contactBody:
         "Reach us at support@shellsentinel.net to discuss enterprise integrations or pilot programs.",
-      rights: "© 2024 Shell Sentinel. All rights reserved.",
+      rights: "© 2025 Shell Sentinel. All rights reserved.",
       privacy: "Privacy policy",
       terms: "Terms of service",
     },
@@ -344,6 +294,7 @@ window.TRANSLATIONS = {
       secondaryCta: "Explorar guía rápida",
       note:
         "Lleva el lenguaje humano al trabajo de infraestructura manteniendo el control, la observabilidad y la guía multilingüe.",
+      openLightbox: "Abrir captura a tamaño completo",
     },
     product: {
       eyebrow: "Resumen",
@@ -352,7 +303,7 @@ window.TRANSLATIONS = {
         "La experiencia más cercana a colaborar con un SRE humano mientras aprovechas la IA para adaptarse, explicar y ejecutar en varios idiomas.",
       bullets: [
         "Expresa objetivos en lenguaje natural; el asistente los traduce en acciones SSH/SFTP seguras que puedes revisar.",
-        "Una base de conocimiento integrada destaca runbooks, buenas prácticas y pistas contextuales en inglés, español y alemán.",
+        "Una base de conocimiento integrada destaca guías internas, buenas prácticas y pistas contextuales en inglés, español y alemán.",
         "Proveedores LLM modulares y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
       ],
     },
@@ -372,7 +323,7 @@ window.TRANSLATIONS = {
           icon: "📚",
           title: "Conocimiento contextual",
           body:
-            "La guía integrada enlaza con manuales, runbooks y mejores prácticas localizadas para respuestas accionables y explicables.",
+            "La guía integrada enlaza con manuales y mejores prácticas localizadas para respuestas accionables y explicables.",
         },
         {
           icon: "🔄",
@@ -395,24 +346,24 @@ window.TRANSLATIONS = {
         "Conoce la TUI retro, los planes guiados y los resúmenes auditables que entrega el asistente.",
       items: [
         {
-          alt: "Pantalla de ayuda de Shell Sentinel con comandos y plugins disponibles",
-          caption: "Paleta de comandos con funciones nativas y atajos de plugins (locale español).",
-          src: "assets/img/shell-sentinel-tui-help.png",
+          alt: "Paleta de comandos de Shell Sentinel con accesos directos de plugins",
+          caption: "Paleta de comandos que combina acciones nativas con atajos de plugins.",
+          src: "assets/img/shell-sentinel-command-palette.png",
         },
         {
-          alt: "Shell Sentinel proponiendo un plan de diagnóstico en español",
-          caption: "Plan de diagnóstico no intrusivo antes de ejecutar comandos (español).",
-          src: "assets/img/shell-sentinel-plan-es.png",
+          alt: "Shell Sentinel mostrando un plan guiado de remediación",
+          caption: "Plan de remediación con puntos de confirmación antes de ejecutar cada paso.",
+          src: "assets/img/shell-sentinel-plan-overview.png",
         },
         {
-          alt: "Shell Sentinel cambiando a inglés con el mismo plan",
-          caption: "Cambio instantáneo de idioma manteniendo contexto y pasos de confirmación (inglés).",
-          src: "assets/img/shell-sentinel-plan-en.png",
+          alt: "Inspector de plugins de Shell Sentinel con extensiones registradas",
+          caption: "Inspector de plugins con traducciones y sugerencias según cada comando.",
+          src: "assets/img/shell-sentinel-plugin-inspector.png",
         },
         {
-          alt: "Shell Sentinel resumiendo comprobaciones del servidor con hallazgos",
-          caption: "Resumen de auditoría con servicios detectados, anomalías y acciones priorizadas.",
-          src: "assets/img/shell-sentinel-report.png",
+          alt: "Resumen de sesión de Shell Sentinel consolidando acciones recientes",
+          caption: "Resumen de sesión con contexto listo para auditorías del equipo de operaciones.",
+          src: "assets/img/shell-sentinel-session-summary.png",
         },
       ],
     },
@@ -425,7 +376,7 @@ window.TRANSLATIONS = {
         {
           title: "1. Prepara el copiloto",
           body:
-            "Copia `conf/agent.conf`, elige proveedor, conecta runbooks o herramientas MCP y exporta las credenciales necesarias.",
+            "Copia `conf/agent.conf`, elige proveedor, conecta fuentes de conocimiento internas o herramientas MCP y exporta las credenciales necesarias.",
         },
         {
           title: "2. Abre una sesión confiable",
@@ -472,65 +423,30 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Antes de subir cambios, ejecuta `make format` y `make lint` y sincroniza las novedades en tus runbooks.",
+        "Antes de subir cambios, ejecuta `make format` y `make lint` para mantener el repositorio limpio.",
     },
     docs: {
       eyebrow: "Manuales",
       title: "Manuales y cuadernos de referencia",
       lead:
-        "Consulta la documentación viva: guías de usuario, recetas de proveedores, manuales de contribución y playbooks operativos.",
+        "Consulta la documentación viva: guías de usuario, recetas de proveedores, manuales de contribución y guías de desarrollo de plugins.",
       cards: [
         {
           title: "Guía de usuario",
-          language: "ES",
           summary:
             "Instala la aplicación, ajusta idiomas, conoce los comandos clave y colabora con el asistente en español.",
           href: "manuals/user-guide-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "User Guide",
-          language: "EN",
-          summary:
-            "Overview en inglés con instalación, configuración de locales y flujos conversacionales.",
-          href: "manuals/user-guide-en.html",
-          cta: "Read online",
-        },
-        {
-          title: "Benutzerhandbuch",
-          language: "DE",
-          summary:
-            "Manual en alemán para preparar el entorno, conocer la TUI y operar con el asistente día a día.",
-          href: "manuals/user-guide-de.html",
-          cta: "Online lesen",
-        },
-        {
           title: "Desarrollo de plugins",
-          language: "ES",
           summary:
             "Guía práctica para crear, traducir y distribuir plugins personalizados dentro de Shell Sentinel.",
           href: "manuals/plugin-development-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "Plugin development",
-          language: "EN",
-          summary:
-            "Step-by-step guide to build, localise and distribute plugins that extend Shell Sentinel.",
-          href: "manuals/plugin-development-en.html",
-          cta: "Read online",
-        },
-        {
-          title: "Plugin-Entwicklung",
-          language: "DE",
-          summary:
-            "Anleitung zur Erstellung, Lokalisierung und Verteilung individueller Shell-Sentinel-Plugins.",
-          href: "manuals/plugin-development-de.html",
-          cta: "Online lesen",
-        },
-        {
           title: "Proveedores personalizados",
-          language: "ES",
           summary:
             "Checklist para integrar proveedores LLM personalizados en el ecosistema de Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
@@ -538,19 +454,10 @@ window.TRANSLATIONS = {
         },
         {
           title: "Manual de colaboración",
-          language: "ES",
           summary:
             "Políticas internas sobre documentación multilingüe, publicación web y control de calidad del producto.",
           href: "manuals/contributor-handbook-es.html",
           cta: "Leer en línea",
-        },
-        {
-          title: "Visión del producto",
-          language: "EN",
-          summary:
-            "Arquitectura, tecnología y responsabilidades operativas detrás de Shell Sentinel.",
-          href: "manuals/project-overview-en.html",
-          cta: "Read online",
         },
       ],
     },
@@ -577,7 +484,7 @@ window.TRANSLATIONS = {
             "Mantén alineado al asistente actualizando el set de documentación multilingüe.",
           bullets: [
             "Guías de usuario disponibles en EN/ES/DE con onboarding, flujos y FAQ actualizadas.",
-            "Playbooks para proveedores personalizados y el manual de plugins explican cómo extender la plataforma.",
+            "La documentación de plugins explica cómo extender comandos, paneles y nuevas integraciones.",
             "La biblioteca de system prompts permite ajustar tono, medidas de seguridad y pasos operativos.",
           ],
         },
@@ -610,9 +517,9 @@ window.TRANSLATIONS = {
             "Reutiliza tu sesión SSH activa, consulta la herramienta de fecha local y registra cada acción para que verifiques resultados al instante.",
         },
         {
-          question: "¿Puede usar mis runbooks?",
+          question: "¿Puede usar mi propia base de conocimiento?",
           answer:
-            "Sí. Mantén la documentación en tu base de conocimiento, exponla vía MCP o plugins y utilízala en la conversación para respuestas guiadas.",
+            "Sí. Mantén la documentación en tu base de conocimiento preferida, exponla vía MCP o plugins y utilízala en la conversación para respuestas guiadas.",
         },
         {
           question: "¿En qué idiomas puedo hablarle?",
@@ -644,7 +551,7 @@ window.TRANSLATIONS = {
       contactTitle: "Contacto",
       contactBody:
         "Escríbenos a support@shellsentinel.net para valorar integraciones empresariales o pilotos.",
-      rights: "© 2024 Shell Sentinel. Todos los derechos reservados.",
+      rights: "© 2025 Shell Sentinel. Todos los derechos reservados.",
       privacy: "Política de privacidad",
       terms: "Términos de servicio",
     },
@@ -669,6 +576,7 @@ window.TRANSLATIONS = {
       secondaryCta: "Schnellstart ansehen",
       note:
         "Bringe menschliche Sprache in die Infrastrukturarbeit und behalte gleichzeitig Kontrolle, Observability und Mehrsprachigkeit.",
+      openLightbox: "Screenshot in voller Größe öffnen",
     },
     product: {
       eyebrow: "Überblick",
@@ -677,7 +585,7 @@ window.TRANSLATIONS = {
         "Das Erlebnis ähnelt einer Zusammenarbeit mit einem menschlichen SRE und nutzt gleichzeitig KI, um sich anzupassen, zu erklären und in mehreren Sprachen auszuführen.",
       bullets: [
         "Formuliere Ziele in natürlicher Sprache; der Assistent übersetzt sie in überprüfbare, sichere SSH/SFTP-Aktionen.",
-        "Eine integrierte Wissensbasis liefert Runbooks, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
+        "Eine integrierte Wissensbasis liefert interne Leitfäden, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
         "Modulare LLM-Provider und eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
       ],
     },
@@ -697,7 +605,7 @@ window.TRANSLATIONS = {
           icon: "📚",
           title: "Kontextreiches Wissen",
           body:
-            "Integrierte Hinweise verweisen auf Guides, Runbooks und lokalisierte Best Practices, damit Antworten nachvollziehbar bleiben.",
+            "Integrierte Hinweise verweisen auf Guides und lokalisierte Best Practices, damit Antworten nachvollziehbar bleiben.",
         },
         {
           icon: "🔄",
@@ -720,24 +628,24 @@ window.TRANSLATIONS = {
         "Ein Blick auf die Retro-TUI, geführte Pläne und revisionssichere Zusammenfassungen des Assistenten.",
       items: [
         {
-          alt: "Shell-Sentinel-Hilfeseite mit Befehlen und Plugins",
-          caption: "Befehlsübersicht mit Kernfunktionen und Plugin-Kürzeln (Locale Spanisch).",
-          src: "assets/img/shell-sentinel-tui-help.png",
+          alt: "Shell-Sentinel-Befehlsübersicht mit Plugin-Kürzeln",
+          caption: "Befehls-Palette, die Kernbefehle und Plugin-Verknüpfungen kombiniert.",
+          src: "assets/img/shell-sentinel-command-palette.png",
         },
         {
-          alt: "Shell Sentinel schlägt einen Diagnoseplan auf Spanisch vor",
-          caption: "Nicht-intrusiver Diagnoseplan, bevor Befehle ausgeführt werden (Spanisch).",
-          src: "assets/img/shell-sentinel-plan-es.png",
+          alt: "Shell Sentinel zeigt einen geführten Remediationsplan",
+          caption: "Geführter Plan mit Freigabe-Punkten vor jedem ausgeführten Schritt.",
+          src: "assets/img/shell-sentinel-plan-overview.png",
         },
         {
-          alt: "Shell Sentinel wechselt auf Englisch mit demselben Plan",
-          caption: "Sprachwechsel in Echtzeit bei identischem Kontext und Freigabe-Schritten (Englisch).",
-          src: "assets/img/shell-sentinel-plan-en.png",
+          alt: "Shell Sentinel Plugin-Inspector mit registrierten Erweiterungen",
+          caption: "Plugin-Inspector mit Übersetzungen und Vorschlägen pro Kommando.",
+          src: "assets/img/shell-sentinel-plugin-inspector.png",
         },
         {
-          alt: "Shell Sentinel fasst Serverprüfungen mit Befunden zusammen",
-          caption: "Audit-Zusammenfassung mit erkannten Diensten, Anomalien und priorisierten Maßnahmen.",
-          src: "assets/img/shell-sentinel-report.png",
+          alt: "Shell Sentinel Session-Report mit den letzten Aktionen",
+          caption: "Sessionszusammenfassung mit auditfähigem Kontext für das Ops-Team.",
+          src: "assets/img/shell-sentinel-session-summary.png",
         },
       ],
     },
@@ -750,7 +658,7 @@ window.TRANSLATIONS = {
         {
           title: "1. Copilot vorbereiten",
           body:
-            "Kopiere `conf/agent.conf`, wähle deinen Provider, binde Runbooks oder MCP-Tools ein und exportiere benötigte Credentials.",
+            "Kopiere `conf/agent.conf`, wähle deinen Provider, binde interne Wissensquellen oder MCP-Tools ein und exportiere benötigte Credentials.",
         },
         {
           title: "2. Vertrauenswürdige Session öffnen",
@@ -797,85 +705,27 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Vor Commits `make format` und `make lint` ausführen und neue Hinweise in deine Runbooks übernehmen.",
+        "Vor Commits `make format` und `make lint` ausführen, damit das Repository sauber bleibt.",
     },
     docs: {
       eyebrow: "Handbücher",
       title: "Produkt-Handbücher & Leitfäden",
       lead:
-        "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Playbooks, Beitragsrichtlinien und operative Leitfäden.",
+        "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Guides, Beitragsrichtlinien und Plugin-Entwicklungsleitfäden.",
       cards: [
         {
           title: "Benutzerhandbuch",
-          language: "DE",
           summary:
             "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch im operativen Alltag.",
           href: "manuals/user-guide-de.html",
           cta: "Online lesen",
         },
         {
-          title: "User Guide",
-          language: "EN",
-          summary:
-            "English overview covering installation, locale setup and conversational workflows.",
-          href: "manuals/user-guide-en.html",
-          cta: "Read online",
-        },
-        {
-          title: "Guía de usuario",
-          language: "ES",
-          summary:
-            "Manual en español con instalación, idiomas y flujos colaborativos.",
-          href: "manuals/user-guide-es.html",
-          cta: "Leer en línea",
-        },
-        {
           title: "Plugin-Entwicklung",
-          language: "DE",
           summary:
             "Schritt-für-Schritt-Anleitung zur Erstellung, Lokalisierung und Verteilung eigener Plugins.",
           href: "manuals/plugin-development-de.html",
           cta: "Online lesen",
-        },
-        {
-          title: "Plugin development",
-          language: "EN",
-          summary:
-            "Detailed playbook to build, localise and distribute Shell Sentinel plugins.",
-          href: "manuals/plugin-development-en.html",
-          cta: "Read online",
-        },
-        {
-          title: "Desarrollo de plugins",
-          language: "ES",
-          summary:
-            "Guía en español para crear y publicar extensiones personalizadas de Shell Sentinel.",
-          href: "manuals/plugin-development-es.html",
-          cta: "Leer en línea",
-        },
-        {
-          title: "Custom Provider Playbook",
-          language: "ES",
-          summary:
-            "Spanischer Leitfaden mit einer Checkliste zur Integration eigener LLM-Provider in Shell Sentinel.",
-          href: "manuals/custom-providers-es.html",
-          cta: "Online lesen",
-        },
-        {
-          title: "Contributor-Handbuch",
-          language: "ES",
-          summary:
-            "Interne Richtlinien zu mehrsprachiger Dokumentation, Webpflege und Qualitätsstandards.",
-          href: "manuals/contributor-handbook-es.html",
-          cta: "Online lesen",
-        },
-        {
-          title: "Produktüberblick",
-          language: "EN",
-          summary:
-            "Architektur, Technologie-Stack und operative Verantwortlichkeiten von Shell Sentinel.",
-          href: "manuals/project-overview-en.html",
-          cta: "Read online",
         },
       ],
     },
@@ -902,7 +752,7 @@ window.TRANSLATIONS = {
             "Halte den Assistenten synchron, indem du die mehrsprachige Dokumentation aktuell hältst.",
           bullets: [
             "Benutzerhandbücher in EN/ES/DE mit Onboarding, Betriebsabläufen und FAQ.",
-            "Playbooks für Custom Provider sowie das Plugin-Handbuch erläutern Erweiterungsmöglichkeiten.",
+            "Plugin-Dokumentation erläutert, wie sich Befehle, Dashboards und Integrationen erweitern lassen.",
             "Die System-Prompt-Bibliothek steuert Tonalität, Sicherheitsmaßnahmen und Workflows.",
           ],
         },
@@ -935,9 +785,9 @@ window.TRANSLATIONS = {
             "Er nutzt deine laufende SSH-Sitzung, fragt das lokale Datum/Uhrzeit ab und protokolliert jede Aktion zur sofortigen Überprüfung.",
         },
         {
-          question: "Kann er meine Runbooks nutzen?",
+          question: "Kann er meine Wissensbasis einbinden?",
           answer:
-            "Ja. Halte die Dokumentation in deiner Wissensbasis bereit, binde sie über MCP oder Plugins ein und referenziere sie im Gespräch für geführte Antworten.",
+            "Ja. Halte die Dokumentation in deiner bevorzugten Wissensbasis bereit, binde sie über MCP oder Plugins ein und referenziere sie im Gespräch für geführte Antworten.",
         },
         {
           question: "Welche Sprachen werden unterstützt?",
@@ -969,7 +819,7 @@ window.TRANSLATIONS = {
       contactTitle: "Kontakt",
       contactBody:
         "Schreibe an support@shellsentinel.net, um Enterprise-Integrationen oder Pilotprojekte zu besprechen.",
-      rights: "© 2024 Shell Sentinel. Alle Rechte vorbehalten.",
+      rights: "© 2025 Shell Sentinel. Alle Rechte vorbehalten.",
       privacy: "Datenschutz",
       terms: "Nutzungsbedingungen",
     },

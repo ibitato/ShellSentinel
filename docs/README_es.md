@@ -28,11 +28,9 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 
 ## Uso de la CLI
 - Lanza la interfaz TUI con:
-  ```bash
-  make run
-  # o
-  python -m smart_ai_sys_admin
-  ```
+```bash
+make run
+```
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH y el proveedor/modelo LLM activo.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles (puedes usar los alias en inglés, español o alemán):
