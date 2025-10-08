@@ -1,4 +1,4 @@
-"""Paquete principal de Almost Human Sys Admin."""
+"""Paquete principal de Shell Sentinel."""
 
 from .cli import main
 

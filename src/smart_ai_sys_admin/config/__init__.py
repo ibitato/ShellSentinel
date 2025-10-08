@@ -1,4 +1,4 @@
-"""Carga de configuraciones para Almost Human Sys Admin."""
+"""Carga de configuraciones para Shell Sentinel."""
 
 from __future__ import annotations
 

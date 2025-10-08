@@ -84,6 +84,7 @@ class AgentOptions:
 class RemoteCommandConfig:
     name: str
     timeout_seconds: int | None
+    max_output_chars: int | None
 
 
 @dataclass(frozen=True)
@@ -299,6 +300,11 @@ def _build_tools_config(payload: Mapping[str, Any]) -> ToolsConfig:
     remote = RemoteCommandConfig(
         name=remote_cfg.get("name", "remote_ssh_command"),
         timeout_seconds=remote_cfg.get("timeout_seconds"),
+        max_output_chars=(
+            int(remote_cfg["max_output_chars"])
+            if "max_output_chars" in remote_cfg and remote_cfg["max_output_chars"] is not None
+            else None
+        ),
     )
     sftp_name = payload.get("sftp_transfer", {}).get("name", "remote_sftp_transfer")
     load_directory = bool(payload.get("load_directory", False))

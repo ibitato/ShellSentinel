@@ -13,7 +13,7 @@ window.TRANSLATIONS = {
       badge: "Conversational ops assistant",
       title: "Manage remote servers through natural language",
       subtitle:
-        "Almost Human Sys Admin turns infrastructure management into a dialogue—pairing persistent SSH/SFTP sessions with an LLM that understands your intent and shares operational context.",
+        "Shell Sentinel turns infrastructure management into a dialogue—pairing persistent SSH/SFTP sessions with an LLM that understands your intent and shares operational context.",
       primaryCta: "Download (coming soon)",
       secondaryCta: "Explore quick start",
       note:
@@ -154,7 +154,7 @@ window.TRANSLATIONS = {
           title: "Custom providers playbook",
           language: "ES",
           summary:
-            "Spanish-language checklist to implement custom LLM providers for Strands within Almost Human Sys Admin.",
+            "Spanish-language checklist to implement custom LLM providers for Strands within Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
@@ -263,8 +263,8 @@ window.TRANSLATIONS = {
       download: "Download",
       contactTitle: "Stay in touch",
       contactBody:
-        "Reach us at support@almosthuman.systems to discuss enterprise integrations or pilot programs.",
-      rights: "© 2024 Almost Human Sys Admin. All rights reserved.",
+        "Reach us at support@shellsentinel.net to discuss enterprise integrations or pilot programs.",
+      rights: "© 2024 Shell Sentinel. All rights reserved.",
       privacy: "Privacy policy",
       terms: "Terms of service",
     },
@@ -283,7 +283,7 @@ window.TRANSLATIONS = {
       badge: "Asistente conversacional de operaciones",
       title: "Gestiona servidores remotos con lenguaje natural",
       subtitle:
-        "Almost Human Sys Admin convierte la administración de infraestructuras en una conversación: combina sesiones SSH/SFTP persistentes con un LLM que entiende tu intención y comparte contexto operativo.",
+        "Shell Sentinel convierte la administración de infraestructuras en una conversación: combina sesiones SSH/SFTP persistentes con un LLM que entiende tu intención y comparte contexto operativo.",
       primaryCta: "Descarga (próximamente)",
       secondaryCta: "Explorar guía rápida",
       note:
@@ -424,7 +424,7 @@ window.TRANSLATIONS = {
           title: "Proveedores personalizados",
           language: "ES",
           summary:
-            "Checklist para implementar proveedores LLM personalizados sobre el SDK de Strands dentro de Almost Human Sys Admin.",
+            "Checklist para implementar proveedores LLM personalizados sobre el SDK de Strands dentro de Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
@@ -533,8 +533,8 @@ window.TRANSLATIONS = {
       download: "Descarga",
       contactTitle: "Contacto",
       contactBody:
-        "Escríbenos a support@almosthuman.systems para valorar integraciones empresariales o pilotos.",
-      rights: "© 2024 Almost Human Sys Admin. Todos los derechos reservados.",
+        "Escríbenos a support@shellsentinel.net para valorar integraciones empresariales o pilotos.",
+      rights: "© 2024 Shell Sentinel. Todos los derechos reservados.",
       privacy: "Política de privacidad",
       terms: "Términos de servicio",
     },
@@ -553,7 +553,7 @@ window.TRANSLATIONS = {
       badge: "Konversationeller Ops-Assistent",
       title: "Verwalte entfernte Server mit natürlicher Sprache",
       subtitle:
-        "Almost Human Sys Admin verwandelt Infrastrukturverwaltung in einen Dialog: persistente SSH/SFTP-Sitzungen treffen auf ein LLM, das deine Absicht versteht und Kontext teilt.",
+        "Shell Sentinel verwandelt Infrastrukturverwaltung in einen Dialog: persistente SSH/SFTP-Sitzungen treffen auf ein LLM, das deine Absicht versteht und Kontext teilt.",
       primaryCta: "Download (bald verfügbar)",
       secondaryCta: "Schnellstart ansehen",
       note:
@@ -803,8 +803,8 @@ window.TRANSLATIONS = {
       download: "Download",
       contactTitle: "Kontakt",
       contactBody:
-        "Schreibe an support@almosthuman.systems, um Enterprise-Integrationen oder Pilotprojekte zu besprechen.",
-      rights: "© 2024 Almost Human Sys Admin. Alle Rechte vorbehalten.",
+        "Schreibe an support@shellsentinel.net, um Enterprise-Integrationen oder Pilotprojekte zu besprechen.",
+      rights: "© 2024 Shell Sentinel. Alle Rechte vorbehalten.",
       privacy: "Datenschutz",
       terms: "Nutzungsbedingungen",
     },

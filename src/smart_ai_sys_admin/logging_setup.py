@@ -1,4 +1,4 @@
-"""Configuración de logging para Almost Human Sys Admin."""
+"""Configuración de logging para Shell Sentinel."""
 
 from __future__ import annotations
 

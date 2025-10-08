@@ -229,6 +229,9 @@ class AgentRuntime:
         timeout = self._factory.remote_command.timeout_seconds
         if timeout is not None:
             self._agent.remote_command_timeout = timeout  # type: ignore[attr-defined]
+        max_output_chars = self._factory.remote_command.max_output_chars
+        if max_output_chars is not None:
+            self._agent.remote_command_max_output_chars = max_output_chars  # type: ignore[attr-defined]
         if self._factory.consent_bypass:
             self._permission_manager.activate()
         else:

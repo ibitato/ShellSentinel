@@ -1,9 +1,11 @@
-# Almost Human Sys Admin
+# Shell Sentinel
 
 Verfügbar in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
 ## Überblick
-Almost Human Sys Admin ist ein terminalbasierter, KI-gestützter Systemadministrator. Die Anwendung hält eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufrecht und setzt Anweisungen in natürlicher Sprache in sichere und nachvollziehbare Aktionen um.
+Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Die Anwendung hält eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufrecht und setzt Anweisungen in natürlicher Sprache in sichere und nachvollziehbare Aktionen um.
+
+Früher unter dem Namen Almost Human Sys Admin veröffentlicht. Offizielle Website: <https://www.shellsentinel.net>.
 
 Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_admin`, damit bestehende Integrationen weiterhin funktionieren.
 
@@ -141,6 +143,6 @@ def register(registry: PluginRegistry) -> None:
 ## Lizenz
 - Kostenfrei für Bildung, Studierende und Teams bis zu 5 Personen.
 - Für Installationen mit mehr als 5 Arbeitsplätzen/Benutzern ist eine kommerzielle Lizenz mit dem Maintainer zu vereinbaren.
-- Vollständige Details siehe `LICENSE` (Almost Human Sys Admin Community License 1.0).
+- Vollständige Details siehe `LICENSE` (Shell Sentinel Community License 1.0).
 
 Bei Fragen zu kommerziellen Lizenzen oder erweitertem Support bitte ein GitHub-Issue eröffnen oder den Maintainer direkt kontaktieren.

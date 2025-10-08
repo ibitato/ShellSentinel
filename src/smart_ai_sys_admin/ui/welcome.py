@@ -44,7 +44,7 @@ class WelcomeScreen(Screen[None]):
     def compose(self):
         art_text = Text(ASCII_ART.rstrip(), justify="center", style=f"bold {self._primary_color}")
         title = Text(
-            "Almost Human Sys Admin",
+            "Shell Sentinel",
             justify="center",
             style=f"bold {self._accent_color}",
         )

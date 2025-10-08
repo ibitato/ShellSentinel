@@ -1,9 +1,11 @@
-# Almost Human Sys Admin
+# Shell Sentinel
 
 Available in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
 ## Overview
-Almost Human Sys Admin is a terminal-based, AI-assisted system administrator. It keeps a persistent SSH/SFTP session with a remote server and translates natural-language instructions into safe, auditable actions.
+Shell Sentinel is a terminal-based, AI-assisted system administrator. It keeps a persistent SSH/SFTP session with a remote server and translates natural-language instructions into safe, auditable actions.
+
+Formerly released as Almost Human Sys Admin. Official site: <https://www.shellsentinel.net>.
 
 Compatibility note: the Python package and entry point remain `smart_ai_sys_admin` so existing integrations do not break.
 
@@ -141,6 +143,6 @@ def register(registry: PluginRegistry) -> None:
 ## Licence
 - Free for education, students and teams up to 5 people.
 - Larger deployments (more than 5 seats/users) require a commercial licence agreed with the maintainer.
-- See `LICENSE` (Almost Human Sys Admin Community License 1.0) for full details, definitions and limitations.
+- See `LICENSE` (Shell Sentinel Community License 1.0) for full details, definitions and limitations.
 
 For commercial licence inquiries or extended support, open a GitHub issue or contact the maintainer.

@@ -1,4 +1,4 @@
-"""Utilidades para inicializar el agente Strands en Smart-AI-Sys-Admin."""
+"""Utilidades para inicializar el agente Strands en Shell Sentinel."""
 
 from .config import (
     AgentConfig,

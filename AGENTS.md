@@ -1,4 +1,4 @@
-# AGENTS — Almost Human Sys Admin
+# AGENTS — Shell Sentinel
 
 ## Objetivo del proyecto
 Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y expone un agente de IA que traduce instrucciones en lenguaje natural a acciones administrativas sobre dicho servidor.

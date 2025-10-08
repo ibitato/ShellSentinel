@@ -1,6 +1,6 @@
 {
   "terminal": {
-    "warning_message": "Es wird empfohlen, Almost Human Sys Admin in einem xterm- oder xterm-256color-Terminal auszuführen, um die volle Farbdarstellung zu erhalten.",
+    "warning_message": "Es wird empfohlen, Shell Sentinel in einem xterm- oder xterm-256color-Terminal auszuführen, um die volle Farbdarstellung zu erhalten.",
     "unknown_label": "unbekannt",
     "detected_label": "Erkanntes Terminal"
   },
@@ -11,7 +11,7 @@
   "ui": {
     "output_panel": {
       "title": "Remote-Sitzung",
-      "initial_markdown": "_Almost Human Sys Admin bereit. Warte auf Anweisungen._",
+      "initial_markdown": "_Shell Sentinel bereit. Warte auf Anweisungen._",
       "placeholder_response": "_(KI-Agent-Integration in Entwicklung)_"
     },
     "user_panel": {
@@ -26,7 +26,7 @@
     "dialogs": {
       "exit": {
         "title": "Beenden bestätigen",
-        "message": "Möchtest du Almost Human Sys Admin wirklich schließen?",
+        "message": "Möchtest du Shell Sentinel wirklich schließen?",
         "confirm": "Beenden",
         "cancel": "Abbrechen",
         "prompt_markdown": "🔒 **Bestätigung erforderlich**. Prüfe das mittlere Panel, um fortzufahren."
@@ -168,7 +168,11 @@
         "exit_code": "Rückgabecode: {code}",
         "stdout": "Ausgabe:",
         "stderr": "Fehler:",
-        "empty": "(keine Ausgabe)"
+        "empty": "(keine Ausgabe)",
+        "stdout_truncated": "Ausgabe gekürzt: Der Befehl erzeugte mehr als {limit} Zeichen. Passe die Anweisung an (z. B. mit `tail`, `head`, Datumsfiltern oder einer Aufteilung in mehrere Schritte) und versuche es erneut.",
+        "stdout_preview": "Anfangsvorschau der Ausgabe:",
+        "stderr_truncated": "Fehlerausgabe gekürzt: Der Befehl erzeugte mehr als {limit} Zeichen. Passe die Anweisung an und versuche es erneut.",
+        "stderr_preview": "Anfangsvorschau der Fehlerausgabe:"
       },
       "transfer": {
         "invalid_action": "❌ Ungültige Aktion. Verwende `upload`/`put` für Uploads oder `download`/`get` für Downloads.",

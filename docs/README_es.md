@@ -1,6 +1,8 @@
-# Almost Human Sys Admin
+# Shell Sentinel
 
-Administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
+Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables. Hasta ahora se conocía como Almost Human Sys Admin.
+
+Sitio oficial: <https://www.shellsentinel.net>.
 
 Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
 
@@ -97,6 +99,6 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 ## Licencia
 - Uso gratuito para educación, estudiantes y equipos de hasta 5 personas.
 - Para entornos con más de 5 puestos/usuarios, se requiere una licencia comercial acordada con el desarrollador.
-- Consulta el archivo `LICENSE` (Almost Human Sys Admin Community License 1.0) para detalles completos, definiciones y limitaciones.
+- Consulta el archivo `LICENSE` (Shell Sentinel Community License 1.0) para detalles completos, definiciones y limitaciones.
 
 Para consultas sobre licencias comerciales o soporte extendido, abre un issue en GitHub o contacta al mantenedor.

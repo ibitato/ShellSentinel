@@ -1,7 +1,7 @@
-# Benutzerhandbuch — Almost Human Sys Admin (DE)
+# Benutzerhandbuch — Shell Sentinel (DE)
 
 ## Überblick
-Almost Human Sys Admin ist eine Terminal-Anwendung, die eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufbaut und einen KI-Assistenten bereitstellt, der Anweisungen in natürlicher Sprache in sichere Administrationsaufgaben umsetzt.
+Shell Sentinel ist eine Terminal-Anwendung, die eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufbaut und einen KI-Assistenten bereitstellt, der Anweisungen in natürlicher Sprache in sichere Administrationsaufgaben umsetzt. Das Projekt wurde zuvor als Almost Human Sys Admin veröffentlicht.
 
 ## Voraussetzungen
 - Terminal mit Farbfähigkeiten (empfohlen: `xterm` oder `xterm-256color`).

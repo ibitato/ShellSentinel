@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://almosthuman.systems/sitemap.xml
+Sitemap: https://www.shellsentinel.net/sitemap.xml

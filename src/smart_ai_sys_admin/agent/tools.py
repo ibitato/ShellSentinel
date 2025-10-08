@@ -19,6 +19,7 @@ ToolCallable = Callable[..., Any]
 
 
 DEFAULT_REMOTE_TIMEOUT = 900
+DEFAULT_MAX_PREVIEW_CHARS = 2000
 
 
 @tool
@@ -76,19 +77,69 @@ async def remote_ssh_command(
     except ConnectionError as exc:
         logger.error("remote_ssh_command falló: %s", exc)
         return f"❌ {exc}"
-    output = stdout.strip()
-    error = stderr.strip()
+    raw_stdout = stdout or ""
+    raw_stderr = stderr or ""
+    output = raw_stdout.strip()
+    error = raw_stderr.strip()
     summary: list[str] = [
         _("agent.tools.summary.exit_code", code=code)
     ]
+    max_output_chars = getattr(agent, "remote_command_max_output_chars", None)
+    try:
+        limit = int(max_output_chars) if max_output_chars is not None else None
+    except (TypeError, ValueError):
+        limit = None
+
+    def _preview_length(max_chars: int) -> int:
+        if max_chars <= 0:
+            return 0
+        calculated = max_chars // 50
+        if calculated <= 0:
+            calculated = max_chars if max_chars < DEFAULT_MAX_PREVIEW_CHARS else DEFAULT_MAX_PREVIEW_CHARS
+        return min(DEFAULT_MAX_PREVIEW_CHARS, max(calculated, 200))
+
     if output:
-        summary.append(
-            _("agent.tools.summary.stdout") + "\n" + output
-        )
+        if limit is not None and limit > 0 and len(raw_stdout) > limit:
+            logger.warning(
+                "remote_ssh_command salida truncada: tamaño=%d, límite=%d",
+                len(raw_stdout),
+                limit,
+            )
+            summary.append(
+                _("agent.tools.summary.stdout_truncated", limit=limit)
+            )
+            preview_len = _preview_length(limit)
+            if preview_len > 0:
+                preview = raw_stdout[:preview_len].strip()
+                if preview:
+                    summary.append(
+                        _("agent.tools.summary.stdout_preview") + "\n" + preview
+                    )
+        else:
+            summary.append(
+                _("agent.tools.summary.stdout") + "\n" + output
+            )
     if error:
-        summary.append(
-            _("agent.tools.summary.stderr") + "\n" + error
-        )
+        if limit is not None and limit > 0 and len(raw_stderr) > limit:
+            logger.warning(
+                "remote_ssh_command stderr truncado: tamaño=%d, límite=%d",
+                len(raw_stderr),
+                limit,
+            )
+            summary.append(
+                _("agent.tools.summary.stderr_truncated", limit=limit)
+            )
+            preview_len = _preview_length(limit)
+            if preview_len > 0:
+                preview = raw_stderr[:preview_len].strip()
+                if preview:
+                    summary.append(
+                        _("agent.tools.summary.stderr_preview") + "\n" + preview
+                    )
+        else:
+            summary.append(
+                _("agent.tools.summary.stderr") + "\n" + error
+            )
     if not output and not error:
         summary.append(_("agent.tools.summary.empty"))
     stdout_preview = stdout.strip()

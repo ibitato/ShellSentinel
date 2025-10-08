@@ -1,7 +1,7 @@
 # GitHub Copilot Instructions
 
 ## Resumen del dominio
-- Almost Human Sys Admin es una TUI en Textual que mantiene una sesión SSH/SFTP persistente y la expone a un agente Strands para ejecutar instrucciones remotas.
+- Shell Sentinel es una TUI en Textual que mantiene una sesión SSH/SFTP persistente y la expone a un agente Strands para ejecutar instrucciones remotas.
 - El entrypoint `src/smart_ai_sys_admin/cli.py` prepara el logging y delega en `SmartAISysAdminApp` (`ui/app.py`).
 - El objetivo es traducir lenguaje natural en acciones de administración sobre un servidor ya conectado.
 

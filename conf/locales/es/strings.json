@@ -1,6 +1,6 @@
 {
   "terminal": {
-    "warning_message": "Se recomienda ejecutar Almost Human Sys Admin en un terminal xterm o xterm-256color para una experiencia completa de color.",
+    "warning_message": "Se recomienda ejecutar Shell Sentinel en un terminal xterm o xterm-256color para una experiencia completa de color.",
     "unknown_label": "desconocido",
     "detected_label": "Terminal detectado"
   },
@@ -11,7 +11,7 @@
   "ui": {
     "output_panel": {
       "title": "Sesión remota",
-      "initial_markdown": "_Almost Human Sys Admin listo. Esperando instrucciones._",
+      "initial_markdown": "_Shell Sentinel listo. Esperando instrucciones._",
       "placeholder_response": "_(Integración con agente IA en desarrollo)_"
     },
     "user_panel": {
@@ -26,7 +26,7 @@
     "dialogs": {
       "exit": {
         "title": "Confirmar salida",
-        "message": "¿Seguro que quieres cerrar Almost Human Sys Admin?",
+        "message": "¿Seguro que quieres cerrar Shell Sentinel?",
         "confirm": "Salir",
         "cancel": "Cancelar",
         "prompt_markdown": "🔒 **Confirmación necesaria**. Revisa el cuadro central para continuar."
@@ -168,7 +168,11 @@
         "exit_code": "Código de salida: {code}",
         "stdout": "Salida:",
         "stderr": "Errores:",
-        "empty": "(sin salida)"
+        "empty": "(sin salida)",
+        "stdout_truncated": "Salida truncada: el comando generó más de {limit} caracteres. Ajusta la instrucción (por ejemplo con `tail`, `head`, filtros por fecha o dividiendo la búsqueda) y vuelve a intentarlo.",
+        "stdout_preview": "Vista previa inicial de la salida:",
+        "stderr_truncated": "Errores truncados: el comando generó más de {limit} caracteres. Ajusta la instrucción y vuelve a intentarlo.",
+        "stderr_preview": "Vista previa inicial de los errores:"
       },
       "transfer": {
         "invalid_action": "❌ Acción inválida. Usa `upload`/`put` para subir archivos o `download`/`get` para descargarlos.",

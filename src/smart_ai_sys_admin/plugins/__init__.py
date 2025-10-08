@@ -1,4 +1,4 @@
-"""Infraestructura de plugins para Almost Human Sys Admin."""
+"""Infraestructura de plugins para Shell Sentinel."""
 
 from .manager import PluginManager
 from .registry import PluginRegistry

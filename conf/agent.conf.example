@@ -9,7 +9,7 @@
       "truncate_tool_results": true
     },
     "trace_attributes": {
-      "app": "Smart-AI-Sys-Admin"
+      "app": "Shell Sentinel"
     }
   },
   "providers": {
@@ -53,6 +53,17 @@
         "keep_alive": "10m",
         "top_p": 0.9
       }
+    },
+    "cerebras": {
+      "system_prompt": "system_prompts/cerebras.md",
+      "model_id": "qwen-3-coder-480b",
+      "show_thinking": false,
+      "params": {
+        "temperature": 0.4,
+        "max_tokens": 65536
+      },
+      "client_args": {},
+      "api_key_env": "CEREBRAS_API_KEY"
     }
   },
   "tools": {
@@ -64,7 +75,8 @@
     ],
     "remote_command": {
       "name": "remote_ssh_command",
-      "timeout_seconds": 120
+      "timeout_seconds": 120,
+      "max_output_chars": 120000
     },
     "load_directory": false,
     "consent": {

@@ -1,4 +1,4 @@
-"""Proveedores personalizados para Almost Human Sys Admin."""
+"""Proveedores personalizados para Shell Sentinel."""
 
 from .cerebras import CerebrasModel
 

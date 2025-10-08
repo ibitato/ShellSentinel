@@ -1,7 +1,7 @@
 # Guía — Proveedores de modelo personalizados en Strands Agents SDK (ES)
 
 ## Alcance
-Este documento resume los pasos y criterios que debemos seguir al implementar proveedores de modelo personalizados para el SDK de Strands Agents dentro de Almost Human Sys Admin. Complementa la documentación oficial y sirve como checklist interno.
+Este documento resume los pasos y criterios que debemos seguir al implementar proveedores de modelo personalizados para el SDK de Strands Agents dentro de Shell Sentinel. Complementa la documentación oficial y sirve como checklist interno.
 
 ## Requisitos previos
 - Familiaridad con la jerarquía `strands.models.Model` (revisar ejemplos oficiales como `BedrockModel`).
