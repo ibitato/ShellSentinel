@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from pathlib import Path
 
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Vertical
@@ -18,7 +19,7 @@ from ..connection import (
 )
 from ..localization import _
 from ..plugins import PluginManager
-from .commands import EXIT_ALIASES, SlashCommandProcessor
+from .commands import CONNECT_ALIASES, EXIT_ALIASES, SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
 from .welcome import WelcomeScreen
@@ -106,8 +107,8 @@ class SmartAISysAdminApp(App[None]):
         message.stop()
         assert self._conversation is not None
         assert self._input is not None
-        self._conversation.add_user_message(message.content)
         trimmed = message.content.strip()
+        self._conversation.add_user_message(self._sanitize_user_message(trimmed))
         if not trimmed:
             self._conversation.add_agent_markdown(_("ui.app.input_required"))
             self._input.focus_editor()
@@ -148,6 +149,21 @@ class SmartAISysAdminApp(App[None]):
         self._conversation.add_agent_markdown(agent_output)
         self._update_connection_info()
         self._input.focus_editor()
+
+    def _sanitize_user_message(self, content: str) -> str:
+        """Oculta contraseñas en comandos de conexión antes de mostrarlos en el chat."""
+        if not content:
+            return content
+        tokens = content.split()
+        if not tokens:
+            return content
+        command = tokens[0].lower()
+        if command in CONNECT_ALIASES and len(tokens) >= 4:
+            secret = tokens[3]
+            candidate = Path(secret).expanduser()
+            if not candidate.exists():
+                tokens[3] = "***"
+        return " ".join(tokens)
 
     def _handle_exit_request(self) -> None:
         assert self._conversation is not None
