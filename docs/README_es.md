@@ -1,6 +1,6 @@
 # Shell Sentinel
 
-Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables. Hasta ahora se conocía como Almost Human Sys Admin.
+Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
 
 Sitio oficial: <https://www.shellsentinel.net>.
 

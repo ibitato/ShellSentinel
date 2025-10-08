@@ -7,7 +7,7 @@ Shell Sentinel is a terminal-based, AI-assisted system administrator. It keeps a
 
 Public repository: <https://github.com/ibitato/ShellSentinel>
 
-Formerly released as Almost Human Sys Admin. Official site: <https://www.shellsentinel.net>.
+Official site: <https://www.shellsentinel.net>.
 
 Website navigation update: each header item now opens a dedicated page (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) instead of scrolling within a single landing view.
 

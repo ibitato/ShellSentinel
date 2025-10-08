@@ -1,7 +1,7 @@
 # Benutzerhandbuch — Shell Sentinel (DE)
 
 ## Überblick
-Shell Sentinel ist eine Terminal-Anwendung, die eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufbaut und einen KI-Assistenten bereitstellt, der Anweisungen in natürlicher Sprache in sichere Administrationsaufgaben umsetzt. Das Projekt wurde zuvor als Almost Human Sys Admin veröffentlicht.
+Shell Sentinel ist eine Terminal-Anwendung, die eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufbaut und einen KI-Assistenten bereitstellt, der Anweisungen in natürlicher Sprache in sichere Administrationsaufgaben umsetzt.
 
 ## Voraussetzungen
 - Terminal mit Farbfähigkeiten (empfohlen: `xterm` oder `xterm-256color`).

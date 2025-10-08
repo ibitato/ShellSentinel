@@ -2,7 +2,7 @@
 
 Disponible en: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
-Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables. Antes se distribuía como Almost Human Sys Admin; el paquete Python sigue siendo el mismo para no romper integraciones existentes.
+Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
 
 Repositorio público: <https://github.com/ibitato/ShellSentinel>
 
