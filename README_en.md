@@ -11,6 +11,11 @@ Formerly released as Almost Human Sys Admin. Official site: <https://www.shellse
 
 Website navigation update: each header item now opens a dedicated page (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) instead of scrolling within a single landing view.
 
+### Static website deployment
+- The marketing site lives under `website/`.
+- GitHub Pages publishes it automatically from the `main` branch via `.github/workflows/deploy-pages.yml`.
+- To trigger a manual deployment, run the "Deploy static site" workflow from the Actions tab.
+
 Compatibility note: the Python package and entry point remain `smart_ai_sys_admin` so existing integrations do not break.
 
 ## Requirements

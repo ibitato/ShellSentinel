@@ -11,6 +11,11 @@ Früher unter dem Namen Almost Human Sys Admin veröffentlicht. Offizielle Websi
 
 Aktualisierung der Website-Navigation: Jeder Header-Eintrag öffnet jetzt eine eigene Seite (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) statt nur innerhalb der Startseite zu scrollen.
 
+### Bereitstellung der statischen Website
+- Die Marketing-Seite liegt im Verzeichnis `website/`.
+- GitHub Pages veröffentlicht sie automatisch aus dem `main`-Branch über `.github/workflows/deploy-pages.yml`.
+- Einen manuellen Rollout kannst du über den Workflow „Deploy static site" in der Actions-Ansicht anstoßen.
+
 Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_admin`, damit bestehende Integrationen weiterhin funktionieren.
 
 ## Voraussetzungen

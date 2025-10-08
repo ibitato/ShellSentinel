@@ -10,6 +10,11 @@ Sitio oficial: <https://www.shellsentinel.net>.
 
 Actualización de la navegación web: cada opción del encabezado abre una página independiente (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) en lugar de desplazar la landing principal.
 
+### Despliegue del sitio estático
+- El sitio público reside en `website/`.
+- GitHub Pages lo publica automáticamente desde la rama `main` mediante `.github/workflows/deploy-pages.yml`.
+- Puedes forzar un despliegue ejecutando el workflow "Deploy static site" desde la pestaña Actions.
+
 Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
 
 ## Requisitos
