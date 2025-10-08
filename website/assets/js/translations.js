@@ -15,7 +15,7 @@ window.TRANSLATIONS = {
       title: "Manage remote servers through natural language",
       subtitle:
         "Shell Sentinel turns infrastructure management into a dialogue—pairing persistent SSH/SFTP sessions with an LLM that understands your intent and shares operational context.",
-      primaryCta: "Download (coming soon)",
+      primaryCta: "Download now",
       secondaryCta: "Explore quick start",
       note:
         "Bring human dialogue to infrastructure work while keeping tight control, observability and multilingual guidance.",
@@ -290,7 +290,7 @@ window.TRANSLATIONS = {
       title: "Gestiona servidores remotos con lenguaje natural",
       subtitle:
         "Shell Sentinel convierte la administración de infraestructuras en una conversación: combina sesiones SSH/SFTP persistentes con un LLM que entiende tu intención y comparte contexto operativo.",
-      primaryCta: "Descarga (próximamente)",
+      primaryCta: "Descargar ahora",
       secondaryCta: "Explorar guía rápida",
       note:
         "Lleva el lenguaje humano al trabajo de infraestructura manteniendo el control, la observabilidad y la guía multilingüe.",
@@ -572,7 +572,7 @@ window.TRANSLATIONS = {
       title: "Verwalte entfernte Server mit natürlicher Sprache",
       subtitle:
         "Shell Sentinel verwandelt Infrastrukturverwaltung in einen Dialog: persistente SSH/SFTP-Sitzungen treffen auf ein LLM, das deine Absicht versteht und Kontext teilt.",
-      primaryCta: "Download (bald verfügbar)",
+      primaryCta: "Jetzt herunterladen",
       secondaryCta: "Schnellstart ansehen",
       note:
         "Bringe menschliche Sprache in die Infrastrukturarbeit und behalte gleichzeitig Kontrolle, Observability und Mehrsprachigkeit.",
