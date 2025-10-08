@@ -711,6 +711,8 @@ section {
   display: grid;
   place-items: center;
   font-size: 1.1rem;
+  font-family: "Twemoji Mozilla", "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  line-height: 1;
   cursor: pointer;
   transition: border 0.2s ease, transform 0.2s ease;
 }
