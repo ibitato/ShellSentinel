@@ -3,6 +3,7 @@ window.TRANSLATIONS = {
     nav: {
       product: "Product",
       features: "Features",
+      gallery: "Screenshots",
       how: "How it works",
       quickstart: "Quick start",
       docs: "Documentation",
@@ -59,6 +60,34 @@ window.TRANSLATIONS = {
           title: "Human-centered safety",
           body:
             "Permission prompts, timeout awareness and the local datetime tool keep the conversation grounded before executing remotely.",
+        },
+      ],
+    },
+    gallery: {
+      eyebrow: "In action",
+      title: "Shell Sentinel in the terminal",
+      lead:
+        "Discover the retro TUI, guided plans and audit-ready summaries the assistant produces.",
+      items: [
+        {
+          alt: "Shell Sentinel help screen with available commands and plugins",
+          caption: "Command palette with native commands and plugin shortcuts (Spanish locale).",
+          src: "assets/img/shell-sentinel-tui-help.png",
+        },
+        {
+          alt: "Shell Sentinel proposing a diagnostic plan in Spanish",
+          caption: "Non-intrusive diagnostic plan presented before running commands (Spanish).",
+          src: "assets/img/shell-sentinel-plan-es.png",
+        },
+        {
+          alt: "Shell Sentinel switching to English with the same plan",
+          caption: "Instant language switch while keeping context and confirmation steps (English).",
+          src: "assets/img/shell-sentinel-plan-en.png",
+        },
+        {
+          alt: "Shell Sentinel summarizing server checks with findings",
+          caption: "Audit summary highlighting services, anomalies and prioritized recommendations.",
+          src: "assets/img/shell-sentinel-report.png",
         },
       ],
     },
@@ -275,6 +304,7 @@ window.TRANSLATIONS = {
     nav: {
       product: "Producto",
       features: "Funciones",
+      gallery: "Capturas",
       how: "Cómo funciona",
       quickstart: "Inicio rápido",
       docs: "Documentación",
@@ -331,6 +361,34 @@ window.TRANSLATIONS = {
           title: "Seguridad centrada en humanos",
           body:
             "Solicitudes de permiso, control de timeouts y la herramienta de fecha local mantienen la conversación anclada antes de ejecutar remotamente.",
+        },
+      ],
+    },
+    gallery: {
+      eyebrow: "En acción",
+      title: "Shell Sentinel en la terminal",
+      lead:
+        "Conoce la TUI retro, los planes guiados y los resúmenes auditables que entrega el asistente.",
+      items: [
+        {
+          alt: "Pantalla de ayuda de Shell Sentinel con comandos y plugins disponibles",
+          caption: "Paleta de comandos con funciones nativas y atajos de plugins (locale español).",
+          src: "assets/img/shell-sentinel-tui-help.png",
+        },
+        {
+          alt: "Shell Sentinel proponiendo un plan de diagnóstico en español",
+          caption: "Plan de diagnóstico no intrusivo antes de ejecutar comandos (español).",
+          src: "assets/img/shell-sentinel-plan-es.png",
+        },
+        {
+          alt: "Shell Sentinel cambiando a inglés con el mismo plan",
+          caption: "Cambio instantáneo de idioma manteniendo contexto y pasos de confirmación (inglés).",
+          src: "assets/img/shell-sentinel-plan-en.png",
+        },
+        {
+          alt: "Shell Sentinel resumiendo comprobaciones del servidor con hallazgos",
+          caption: "Resumen de auditoría con servicios detectados, anomalías y acciones priorizadas.",
+          src: "assets/img/shell-sentinel-report.png",
         },
       ],
     },
@@ -547,6 +605,7 @@ window.TRANSLATIONS = {
     nav: {
       product: "Produkt",
       features: "Funktionen",
+      gallery: "Screenshots",
       how: "Funktionsweise",
       quickstart: "Schnellstart",
       docs: "Dokumentation",
@@ -603,6 +662,34 @@ window.TRANSLATIONS = {
           title: "Menschorientierte Sicherheit",
           body:
             "Freigabe-Dialoge, Timeout-Achtsamkeit und das lokale Datums-Tool sorgen für Bodenhaftung vor Remote-Befehlen.",
+        },
+      ],
+    },
+    gallery: {
+      eyebrow: "Im Einsatz",
+      title: "Shell Sentinel im Terminal",
+      lead:
+        "Ein Blick auf die Retro-TUI, geführte Pläne und revisionssichere Zusammenfassungen des Assistenten.",
+      items: [
+        {
+          alt: "Shell-Sentinel-Hilfeseite mit Befehlen und Plugins",
+          caption: "Befehlsübersicht mit Kernfunktionen und Plugin-Kürzeln (Locale Spanisch).",
+          src: "assets/img/shell-sentinel-tui-help.png",
+        },
+        {
+          alt: "Shell Sentinel schlägt einen Diagnoseplan auf Spanisch vor",
+          caption: "Nicht-intrusiver Diagnoseplan, bevor Befehle ausgeführt werden (Spanisch).",
+          src: "assets/img/shell-sentinel-plan-es.png",
+        },
+        {
+          alt: "Shell Sentinel wechselt auf Englisch mit demselben Plan",
+          caption: "Sprachwechsel in Echtzeit bei identischem Kontext und Freigabe-Schritten (Englisch).",
+          src: "assets/img/shell-sentinel-plan-en.png",
+        },
+        {
+          alt: "Shell Sentinel fasst Serverprüfungen mit Befunden zusammen",
+          caption: "Audit-Zusammenfassung mit erkannten Diensten, Anomalien und priorisierten Maßnahmen.",
+          src: "assets/img/shell-sentinel-report.png",
         },
       ],
     },

@@ -68,6 +68,28 @@
     return card;
   }
 
+  function buildGalleryItem(item) {
+    const figure = document.createElement('figure');
+    figure.className = 'gallery-item';
+
+    if (item.src) {
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.alt = item.alt || '';
+      img.loading = 'lazy';
+      figure.appendChild(img);
+    }
+
+    if (item.caption) {
+      const caption = document.createElement('figcaption');
+      caption.className = 'gallery-caption';
+      caption.textContent = item.caption;
+      figure.appendChild(caption);
+    }
+
+    return figure;
+  }
+
   function buildTimelineItem(item, index) {
     const wrapper = document.createElement('article');
     wrapper.className = 'timeline-item';
@@ -206,6 +228,10 @@
       ? map.features.cards
       : [];
     renderList('[data-region="features-cards"]', featureCards, buildCard);
+    const galleryItems = map.gallery && Array.isArray(map.gallery.items)
+      ? map.gallery.items
+      : [];
+    renderList('[data-region="gallery-items"]', galleryItems, buildGalleryItem);
     const flowSteps = map.how && Array.isArray(map.how.steps) ? map.how.steps : [];
     renderList('[data-region="how-steps"]', flowSteps, (item, index) =>
       buildTimelineItem(item, index)

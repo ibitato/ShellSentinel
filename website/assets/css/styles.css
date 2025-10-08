@@ -224,6 +224,36 @@ section {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.gallery-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.gallery-item {
+  background: rgba(12, 16, 24, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gallery-caption {
+  padding: 18px 22px 22px;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .card {
   padding: 28px;
   border-radius: 18px;
