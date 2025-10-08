@@ -1,4 +1,5 @@
 # Shell Sentinel
+![Shell Sentinel TUI running in a retro-themed terminal](screenshots/shell-sentinel-tui-1280x640.png)
 
 Available in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
@@ -10,8 +11,6 @@ Public repository: <https://github.com/ibitato/ShellSentinel>
 Official site: <https://www.shellsentinel.net>.
 
 Website navigation update: each header item now opens a dedicated page (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) instead of scrolling within a single landing view.
-
-![Shell Sentinel TUI running in a retro-themed terminal](screenshots/shell-sentinel-tui-1280x640.png)
 
 ### Static website deployment
 - The marketing site lives under `website/`.

@@ -1,4 +1,5 @@
 # Shell Sentinel
+![Shell Sentinel TUI mit Retro-Look im Terminal](screenshots/shell-sentinel-tui-1280x640.png)
 
 Verfügbar in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
@@ -10,8 +11,6 @@ Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Di
 Offizielle Website: <https://www.shellsentinel.net>.
 
 Aktualisierung der Website-Navigation: Jeder Header-Eintrag öffnet jetzt eine eigene Seite (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) statt nur innerhalb der Startseite zu scrollen.
-
-![Shell Sentinel TUI mit Retro-Look im Terminal](screenshots/shell-sentinel-tui-1280x640.png)
 
 ### Bereitstellung der statischen Website
 - Die Marketing-Seite liegt im Verzeichnis `website/`.

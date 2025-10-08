@@ -1,4 +1,5 @@
 # Shell Sentinel
+![Interfaz retro de Shell Sentinel en ejecución](screenshots/shell-sentinel-tui-1280x640.png)
 
 Disponible en: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
 
@@ -9,8 +10,6 @@ Repositorio público: <https://github.com/ibitato/ShellSentinel>
 Sitio oficial: <https://www.shellsentinel.net>.
 
 Actualización de la navegación web: cada opción del encabezado abre una página independiente (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) en lugar de desplazar la landing principal.
-
-![Interfaz retro de Shell Sentinel en ejecución](screenshots/shell-sentinel-tui-1280x640.png)
 
 ### Despliegue del sitio estático
 - El sitio público reside en `website/`.
