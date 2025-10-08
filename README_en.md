@@ -11,6 +11,8 @@ Official site: <https://www.shellsentinel.net>.
 
 Website navigation update: each header item now opens a dedicated page (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) instead of scrolling within a single landing view.
 
+![Shell Sentinel TUI running in a retro-themed terminal](screenshots/shell-sentinel-tui-1280x640.png)
+
 ### Static website deployment
 - The marketing site lives under `website/`.
 - GitHub Pages publishes it automatically from the `main` branch via `.github/workflows/deploy-pages.yml`.

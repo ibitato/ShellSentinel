@@ -10,6 +10,8 @@ Sitio oficial: <https://www.shellsentinel.net>.
 
 Actualización de la navegación web: cada opción del encabezado abre una página independiente (`product.html`, `features.html`, `gallery.html`, `how.html`, `quickstart.html`, `docs.html`, `help.html`, `download.html`) en lugar de desplazar la landing principal.
 
+![Interfaz retro de Shell Sentinel en ejecución](screenshots/shell-sentinel-tui-1280x640.png)
+
 ### Despliegue del sitio estático
 - El sitio público reside en `website/`.
 - GitHub Pages lo publica automáticamente desde la rama `main` mediante `.github/workflows/deploy-pages.yml`.
