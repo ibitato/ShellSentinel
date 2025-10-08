@@ -5,7 +5,7 @@ Available in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](R
 ## Overview
 Shell Sentinel is a terminal-based, AI-assisted system administrator. It keeps a persistent SSH/SFTP session with a remote server and translates natural-language instructions into safe, auditable actions.
 
-Public repository: <https://github.com/david-lopez-b/Smart-AI-Sys-Admin>
+Public repository: <https://github.com/ibitato/ShellSentinel>
 
 Formerly released as Almost Human Sys Admin. Official site: <https://www.shellsentinel.net>.
 
