@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plugin-Entwicklung · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Anleitung zur Erweiterung von Shell Sentinel mit eigenen Plugins: Lebenszyklus, Struktur, Lokalisierung und Verteilung."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/manual.css" />
+  </head>
+  <body>
+    <div class="manual">
+      <header class="manual-header">
+        <div class="brand">
+          <span class="brand-mark">SS</span>
+          <span class="brand-name">Shell Sentinel</span>
+        </div>
+        <h1>Plugin-Entwicklung — Shell Sentinel</h1>
+        <p>
+          Erweitere Shell Sentinel um individuelle Funktionen, die zur Laufzeit geladen werden – ganz
+          ohne Änderungen am Kernprodukt.
+        </p>
+      </header>
+
+      <main class="manual-content">
+        <h2>Überblick</h2>
+        <p>
+          Plugins ermöglichen es, Workflows anzupassen, interne Runbooks sichtbar zu machen und
+          Integrationen wie native Features in der TUI bereitzustellen. Shell Sentinel lädt jedes
+          Python-Modul im konfigurierten <code>plugins/</code>-Verzeichnis automatisch beim Start.
+        </p>
+
+        <h2>Lebenszyklus</h2>
+        <ol>
+          <li>Lege ein Modul in <code>plugins/</code> (Standardpfad) oder im Verzeichnis an, das über <code>SMART_AI_SYS_ADMIN_PLUGINS_DIR</code> gesetzt wurde.</li>
+          <li>Implementiere eine Funktion <code>register(registry)</code>. Shell Sentinel ruft sie nach dem UI-Start genau einmal auf.</li>
+          <li>Nutze das Registry-Objekt, um Slash-Commands, Übersetzungen, Autocomplete-Vorschläge und Logging-Hooks zu registrieren.</li>
+          <li>Starte die Anwendung neu, um das Plugin zu aktivieren.</li>
+        </ol>
+
+        <h2>Erstes Kommando</h2>
+        <pre><code class="language-python"># plugins/status_report.py
+from smart_ai_sys_admin.plugins import PluginRegistry, PluginSlashCommand
+
+
+def _server_report(args: list[str]) -> str:
+    target = args[0] if args else "default"
+    return (
+        f"### Status für `{target}`\n"
+        "- Ausstehende Jobs: 3\n"
+        "- Letztes Backup: 2025-10-06\n"
+        "- Bereitschaft: infra@contoso.com"
+    )
+
+
+def register(registry: PluginRegistry) -> None:
+    registry.register_translations(
+        "de",
+        {"plugins": {"status_report": {"description": "Kurzer Systemstatus"}}},
+    )
+    registry.register_command(
+        PluginSlashCommand(
+            name="/status_report",
+            aliases=("/statusbericht",),
+            handler=_server_report,
+            description_key="plugins.status_report.description",
+        )
+    )
+</code></pre>
+        <p>
+          Handler liefern Markdown, das im Konversations-Panel angezeigt wird. Ausnahmen werden über
+          den Logger <code>smart_ai_sys_admin.plugins</code> protokolliert.
+        </p>
+
+        <h2>Lokalisierung &amp; UX</h2>
+        <ul>
+          <li>Registriere Übersetzungen mit <code>register_translations(locale, payload)</code>; Shell Sentinel wählt automatisch das aktuelle Locale.</li>
+          <li>Passe den Inline-Autocomplete über die optionale <code>suggestion</code>-Funktion an.</li>
+          <li>Nutze klares Markdown und kennzeichne riskante Aktionen, damit Operatoren sie prüfen können.</li>
+        </ul>
+
+        <h2>Verteilung</h2>
+        <p>
+          Verteile Plugins zusammen mit Deployments oder über ein internes Paket-Repository. Shell
+          Sentinel lädt jedes Modul, das im Plugin-Verzeichnis verfügbar ist. Dokumentiere benötigte
+          Zugangsdaten, Umgebungsvariablen und Rückrollpläne für das Ops-Team.
+        </p>
+
+        <h2>Support</h2>
+        <p>
+          Bei Ladefehlern findest du Details in <code>logs/app.log</code>. Nutze zusätzlich
+          <code>/status</code> in der TUI, um zu prüfen, ob die Befehle registriert wurden. Für Support
+          oder Zertifizierungen wende dich an das Shell-Sentinel-Team.
+        </p>
+      </main>
+
+      <footer class="manual-footer">
+        © 2024 Shell Sentinel. Aktualisiere dieses Handbuch, sobald neue Plugin-Funktionen erscheinen.
+      </footer>
+    </div>
+  </body>
+</html>

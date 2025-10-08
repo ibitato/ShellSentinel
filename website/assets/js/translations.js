@@ -159,7 +159,7 @@ window.TRANSLATIONS = {
           title: "User Guide",
           language: "EN",
           summary:
-            "Install the app, configure locales, explore the interface and master conversational workflows.",
+            "Install Shell Sentinel, configure locales, explore the interface and master conversational workflows.",
           href: "manuals/user-guide-en.html",
           cta: "Read online",
         },
@@ -167,7 +167,7 @@ window.TRANSLATIONS = {
           title: "Guía de usuario",
           language: "ES",
           summary:
-            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+            "Instala la aplicación, ajusta idiomas, conoce los comandos clave y colabora con el asistente en español.",
           href: "manuals/user-guide-es.html",
           cta: "Leer en línea",
         },
@@ -175,15 +175,39 @@ window.TRANSLATIONS = {
           title: "Benutzerhandbuch",
           language: "DE",
           summary:
-            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch für alltägliche Aufgaben.",
+            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch im Tagesgeschäft.",
           href: "manuals/user-guide-de.html",
           cta: "Online lesen",
         },
         {
-          title: "Custom providers playbook",
+          title: "Plugin development",
+          language: "EN",
+          summary:
+            "Step-by-step guide to build, localise and distribute plugins that extend Shell Sentinel.",
+          href: "manuals/plugin-development-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Desarrollo de plugins",
           language: "ES",
           summary:
-            "Spanish-language checklist to implement custom LLM providers for Strands within Shell Sentinel.",
+            "Guía práctica para crear, traducir y distribuir plugins personalizados dentro de Shell Sentinel.",
+          href: "manuals/plugin-development-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Plugin-Entwicklung",
+          language: "DE",
+          summary:
+            "Anleitung zur Erstellung, Lokalisierung und Verteilung individueller Shell-Sentinel-Plugins.",
+          href: "manuals/plugin-development-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Custom provider playbook",
+          language: "ES",
+          summary:
+            "Checklist en español para integrar proveedores LLM personalizados en el ecosistema de Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
@@ -191,15 +215,15 @@ window.TRANSLATIONS = {
           title: "Contributor handbook",
           language: "ES",
           summary:
-            "AGENTS.md recoge las normas de contribución, mantenimiento de manuales y la obligación de sincronizar la web con cada cambio.",
+            "Políticas internas sobre documentación multilingüe, publicación web y control de calidad del producto.",
           href: "manuals/contributor-handbook-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "Project overview",
+          title: "Product overview",
           language: "EN",
           summary:
-            "Multilingual README with product context, requirements, development workflow and tooling.",
+            "Architecture, technology stack and operational responsibilities behind Shell Sentinel.",
           href: "manuals/project-overview-en.html",
           cta: "Read online",
         },
@@ -227,9 +251,9 @@ window.TRANSLATIONS = {
           body:
             "Keep the assistant aligned with your organization by updating the multilingual documentation set.",
           bullets: [
-            "User guides: `docs/user_guide_en.md`, `docs/user_guide_es.md`, `docs/user_guide_de.md`.",
-            "Custom providers: `docs/custom_model_providers_es.md` plus Strands SDK notes.",
-            "System prompts: refine `system_prompts/` to tune tone, safety rails and workflows.",
+            "Multi-language user guides covering onboarding, day-to-day operations and FAQs.",
+            "Playbooks for custom providers and the plugin development manual.",
+            "A system prompt library to fine-tune tone, guardrails and workflow guidance.",
           ],
         },
         {
@@ -263,7 +287,7 @@ window.TRANSLATIONS = {
         {
           question: "Can it incorporate my own runbooks?",
           answer:
-            "Yes. Keep documentation in the docs/ directory, expose it via MCP or plugins, and reference it during conversations for guided responses.",
+            "Yes. Keep documentation in your knowledge base, expose it via MCP or plugins, and reference it during conversations for guided responses.",
         },
         {
           question: "Which languages can I speak to it?",
@@ -457,50 +481,74 @@ window.TRANSLATIONS = {
         "Consulta la documentación viva: guías de usuario, recetas de proveedores, manuales de contribución y playbooks operativos.",
       cards: [
         {
-          title: "User Guide",
-          language: "EN",
-          summary:
-            "Install the app, configure locales, explore the interface and master conversational workflows.",
-          href: "manuals/user-guide-en.html",
-          cta: "Read online",
-        },
-        {
           title: "Guía de usuario",
           language: "ES",
           summary:
-            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+            "Instala la aplicación, ajusta idiomas, conoce los comandos clave y colabora con el asistente en español.",
           href: "manuals/user-guide-es.html",
           cta: "Leer en línea",
+        },
+        {
+          title: "User Guide",
+          language: "EN",
+          summary:
+            "Overview en inglés con instalación, configuración de locales y flujos conversacionales.",
+          href: "manuals/user-guide-en.html",
+          cta: "Read online",
         },
         {
           title: "Benutzerhandbuch",
           language: "DE",
           summary:
-            "Manual en alemán para configurar el entorno, explorar la TUI y trabajar con el asistente en el día a día.",
+            "Manual en alemán para preparar el entorno, conocer la TUI y operar con el asistente día a día.",
           href: "manuals/user-guide-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Desarrollo de plugins",
+          language: "ES",
+          summary:
+            "Guía práctica para crear, traducir y distribuir plugins personalizados dentro de Shell Sentinel.",
+          href: "manuals/plugin-development-es.html",
+          cta: "Leer en línea",
+        },
+        {
+          title: "Plugin development",
+          language: "EN",
+          summary:
+            "Step-by-step guide to build, localise and distribute plugins that extend Shell Sentinel.",
+          href: "manuals/plugin-development-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Plugin-Entwicklung",
+          language: "DE",
+          summary:
+            "Anleitung zur Erstellung, Lokalisierung und Verteilung individueller Shell-Sentinel-Plugins.",
+          href: "manuals/plugin-development-de.html",
           cta: "Online lesen",
         },
         {
           title: "Proveedores personalizados",
           language: "ES",
           summary:
-            "Checklist para implementar proveedores LLM personalizados sobre el SDK de Strands dentro de Shell Sentinel.",
+            "Checklist para integrar proveedores LLM personalizados en el ecosistema de Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "Guía de contribución",
+          title: "Manual de colaboración",
           language: "ES",
           summary:
-            "AGENTS.md detalla las políticas del proyecto y recuerda mantener web y manuales sincronizados tras cada cambio funcional.",
+            "Políticas internas sobre documentación multilingüe, publicación web y control de calidad del producto.",
           href: "manuals/contributor-handbook-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "Visión del proyecto",
+          title: "Visión del producto",
           language: "EN",
           summary:
-            "README disponible en EN/ES/DE con requisitos, flujo de trabajo y herramientas del proyecto.",
+            "Arquitectura, tecnología y responsabilidades operativas detrás de Shell Sentinel.",
           href: "manuals/project-overview-en.html",
           cta: "Read online",
         },
@@ -528,9 +576,9 @@ window.TRANSLATIONS = {
           body:
             "Mantén alineado al asistente actualizando el set de documentación multilingüe.",
           bullets: [
-            "Guías de usuario: `docs/user_guide_en.md`, `docs/user_guide_es.md`, `docs/user_guide_de.md`.",
-            "Proveedores personalizados: `docs/custom_model_providers_es.md` y notas del Strands SDK.",
-            "Prompts del sistema: ajusta `system_prompts/` para definir tono, seguridad y flujos.",
+            "Guías de usuario disponibles en EN/ES/DE con onboarding, flujos y FAQ actualizadas.",
+            "Playbooks para proveedores personalizados y el manual de plugins explican cómo extender la plataforma.",
+            "La biblioteca de system prompts permite ajustar tono, medidas de seguridad y pasos operativos.",
           ],
         },
         {
@@ -564,7 +612,7 @@ window.TRANSLATIONS = {
         {
           question: "¿Puede usar mis runbooks?",
           answer:
-            "Sí. Mantén la documentación en `docs/`, exponla vía MCP o plugins y utilízala en la conversación para respuestas guiadas.",
+            "Sí. Mantén la documentación en tu base de conocimiento, exponla vía MCP o plugins y utilízala en la conversación para respuestas guiadas.",
         },
         {
           question: "¿En qué idiomas puedo hablarle?",
@@ -758,10 +806,18 @@ window.TRANSLATIONS = {
         "Greife auf die lebende Dokumentation zu – Benutzerhandbücher, Provider-Playbooks, Beitragsrichtlinien und operative Leitfäden.",
       cards: [
         {
+          title: "Benutzerhandbuch",
+          language: "DE",
+          summary:
+            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch im operativen Alltag.",
+          href: "manuals/user-guide-de.html",
+          cta: "Online lesen",
+        },
+        {
           title: "User Guide",
           language: "EN",
           summary:
-            "Install the app, configure locales, explore the interface and master conversational workflows.",
+            "English overview covering installation, locale setup and conversational workflows.",
           href: "manuals/user-guide-en.html",
           cta: "Read online",
         },
@@ -769,39 +825,55 @@ window.TRANSLATIONS = {
           title: "Guía de usuario",
           language: "ES",
           summary:
-            "Instala, configura el idioma, conoce los comandos clave y colabora con el asistente en español.",
+            "Manual en español con instalación, idiomas y flujos colaborativos.",
           href: "manuals/user-guide-es.html",
           cta: "Leer en línea",
         },
         {
-          title: "Benutzerhandbuch",
+          title: "Plugin-Entwicklung",
           language: "DE",
           summary:
-            "Richte die Umgebung ein, entdecke die TUI und nutze den Assistenten auf Deutsch für alltägliche Aufgaben.",
-          href: "manuals/user-guide-de.html",
+            "Schritt-für-Schritt-Anleitung zur Erstellung, Lokalisierung und Verteilung eigener Plugins.",
+          href: "manuals/plugin-development-de.html",
           cta: "Online lesen",
+        },
+        {
+          title: "Plugin development",
+          language: "EN",
+          summary:
+            "Detailed playbook to build, localise and distribute Shell Sentinel plugins.",
+          href: "manuals/plugin-development-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Desarrollo de plugins",
+          language: "ES",
+          summary:
+            "Guía en español para crear y publicar extensiones personalizadas de Shell Sentinel.",
+          href: "manuals/plugin-development-es.html",
+          cta: "Leer en línea",
         },
         {
           title: "Custom Provider Playbook",
           language: "ES",
           summary:
-            "Spanischer Leitfaden mit einer Checkliste zur Implementierung eigener LLM-Provider für das Strands SDK.",
+            "Spanischer Leitfaden mit einer Checkliste zur Integration eigener LLM-Provider in Shell Sentinel.",
           href: "manuals/custom-providers-es.html",
           cta: "Online lesen",
         },
         {
-          title: "Contributor handbook",
+          title: "Contributor-Handbuch",
           language: "ES",
           summary:
-            "AGENTS.md (EN/ES/DE) fasst Projektregeln zusammen und erinnert daran, Website und Handbücher aktuell zu halten.",
+            "Interne Richtlinien zu mehrsprachiger Dokumentation, Webpflege und Qualitätsstandards.",
           href: "manuals/contributor-handbook-es.html",
           cta: "Online lesen",
         },
         {
-          title: "Project overview",
+          title: "Produktüberblick",
           language: "EN",
           summary:
-            "README mit Überblick, Anforderungen und Entwicklungsworkflow in Englisch, Spanisch und Deutsch.",
+            "Architektur, Technologie-Stack und operative Verantwortlichkeiten von Shell Sentinel.",
           href: "manuals/project-overview-en.html",
           cta: "Read online",
         },
@@ -829,9 +901,9 @@ window.TRANSLATIONS = {
           body:
             "Halte den Assistenten synchron, indem du die mehrsprachige Dokumentation aktuell hältst.",
           bullets: [
-            "User Guides: `docs/user_guide_en.md`, `docs/user_guide_es.md`, `docs/user_guide_de.md`.",
-            "Custom Provider Leitfaden: `docs/custom_model_providers_es.md` plus Strands-Hinweise.",
-            "System Prompts: optimiere `system_prompts/` für Tonalität, Sicherheit und Workflows.",
+            "Benutzerhandbücher in EN/ES/DE mit Onboarding, Betriebsabläufen und FAQ.",
+            "Playbooks für Custom Provider sowie das Plugin-Handbuch erläutern Erweiterungsmöglichkeiten.",
+            "Die System-Prompt-Bibliothek steuert Tonalität, Sicherheitsmaßnahmen und Workflows.",
           ],
         },
         {
@@ -865,7 +937,7 @@ window.TRANSLATIONS = {
         {
           question: "Kann er meine Runbooks nutzen?",
           answer:
-            "Ja. Halte Dokumentation unter `docs/`, binde sie über MCP oder Plugins ein und referenziere sie im Gespräch für geführte Antworten.",
+            "Ja. Halte die Dokumentation in deiner Wissensbasis bereit, binde sie über MCP oder Plugins ein und referenziere sie im Gespräch für geführte Antworten.",
         },
         {
           question: "Welche Sprachen werden unterstützt?",
