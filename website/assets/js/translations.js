@@ -25,7 +25,7 @@ window.TRANSLATIONS = {
       eyebrow: "Overview",
       title: "Human-centric operations, AI flexibility",
       lead:
-        "Delivers the familiarity of collaborating with a human SRE while leveraging AI to adapt, explain and execute across languages.",
+        "Delivers the familiarity of collaborating with an experienced SRE while leveraging AI to adapt, explain and execute across languages.",
       bullets: [
         "Express goals in natural language; the assistant translates them into safe SSH/SFTP actions you can review.",
         "Embedded knowledge base surfaces internal guides, best practices and context-sensitive hints in English, Spanish and German.",
@@ -582,7 +582,7 @@ window.TRANSLATIONS = {
       eyebrow: "Überblick",
       title: "Menschenzentrierte Ops mit KI-Flexibilität",
       lead:
-        "Das Erlebnis ähnelt einer Zusammenarbeit mit einem menschlichen SRE und nutzt gleichzeitig KI, um sich anzupassen, zu erklären und in mehreren Sprachen auszuführen.",
+        "Das Erlebnis fühlt sich an wie die Zusammenarbeit mit einem erfahrenen SRE und nutzt gleichzeitig KI, um sich anzupassen, zu erklären und in mehreren Sprachen auszuführen.",
       bullets: [
         "Formuliere Ziele in natürlicher Sprache; der Assistent übersetzt sie in überprüfbare, sichere SSH/SFTP-Aktionen.",
         "Eine integrierte Wissensbasis liefert interne Leitfäden, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
