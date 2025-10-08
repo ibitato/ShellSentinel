@@ -300,7 +300,7 @@ window.TRANSLATIONS = {
       eyebrow: "Resumen",
       title: "Operaciones centradas en personas con flexibilidad IA",
       lead:
-        "La experiencia más cercana a colaborar con un SRE humano mientras aprovechas la IA para adaptarse, explicar y ejecutar en varios idiomas.",
+        "Reproduce la familiaridad de colaborar con un ser humano y se apoya en la IA para adaptarse, explicar y ejecutar en varios idiomas.",
       bullets: [
         "Expresa objetivos en lenguaje natural; el asistente los traduce en acciones SSH/SFTP seguras que puedes revisar.",
         "Una base de conocimiento integrada destaca guías internas, buenas prácticas y pistas contextuales en inglés, español y alemán.",
