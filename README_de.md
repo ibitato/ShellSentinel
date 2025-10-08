@@ -5,6 +5,8 @@ Verfügbar in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](
 ## Überblick
 Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Die Anwendung hält eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufrecht und setzt Anweisungen in natürlicher Sprache in sichere und nachvollziehbare Aktionen um.
 
+Öffentliches Repository: <https://github.com/david-lopez-b/Smart-AI-Sys-Admin>
+
 Früher unter dem Namen Almost Human Sys Admin veröffentlicht. Offizielle Website: <https://www.shellsentinel.net>.
 
 Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_admin`, damit bestehende Integrationen weiterhin funktionieren.
@@ -142,8 +144,9 @@ def register(registry: PluginRegistry) -> None:
 - `AGENTS.md`: Leitfaden für menschliche Mitwirkende und KI-Agenten.
 
 ## Lizenz
-- Kostenfrei für Bildung, Studierende und Teams bis zu 5 Personen.
-- Für Installationen mit mehr als 5 Arbeitsplätzen/Benutzern ist eine kommerzielle Lizenz mit dem Maintainer zu vereinbaren.
-- Vollständige Details siehe `LICENSE` (Shell Sentinel Community License 1.0).
+- Shell Sentinel wird als **Source-Available-Software** bereitgestellt: Das GitHub-Repository erlaubt die Einsicht in den Code, aber keine Modifikationen und keinen Vertrieb veränderter Fassungen.
+- Die Nutzung ist ausschließlich zu persönlichen, Bildungs- oder internen Evaluationszwecken ohne direkten oder indirekten kommerziellen Vorteil gestattet. Jede kommerzielle Nutzung erfordert eine gesonderte Vereinbarung mit dem Maintainer.
+- Modifikation, Anpassung oder die Erstellung abgeleiteter Werke ist ohne vorherige schriftliche Zustimmung untersagt.
+- Einzelheiten stehen in der `LICENSE` (Shell Sentinel Source-Available License 1.0).
 
-Bei Fragen zu kommerziellen Lizenzen oder erweitertem Support bitte ein GitHub-Issue eröffnen oder den Maintainer direkt kontaktieren.
+Für kommerzielle Lizenzen, Sondergenehmigungen oder erweiterten Support bitte ein GitHub-Issue eröffnen oder den Maintainer direkt kontaktieren.

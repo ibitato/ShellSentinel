@@ -252,6 +252,8 @@ window.TRANSLATIONS = {
       secondaryCta: "Read installation guide",
       note:
         "Want early access to binaries? Subscribe to the product bulletin (coming soon).",
+      license:
+        "Shell Sentinel ships under a source-available licence: non-commercial use only, with modifications and derivative works prohibited unless you obtain written permission.",
     },
     footer: {
       tagline:
@@ -522,6 +524,8 @@ window.TRANSLATIONS = {
       secondaryCta: "Ver guía de instalación",
       note:
         "¿Quieres acceso temprano a binarios? Suscríbete al boletín del producto (próximamente).",
+      license:
+        "Shell Sentinel se distribuye con una licencia de código disponible: solo se permite uso no comercial y queda prohibido modificar o crear derivados sin permiso escrito.",
     },
     footer: {
       tagline:
@@ -792,6 +796,8 @@ window.TRANSLATIONS = {
       secondaryCta: "Installationsleitfaden lesen",
       note:
         "Interesse an frühen Binaries? Melde dich für den Produkt-Newsletter an (bald verfügbar).",
+      license:
+        "Shell Sentinel steht unter einer Source-Available-Lizenz: ausschließlich nicht-kommerzielle Nutzung; Modifikationen oder Ableitungen sind nur mit schriftlicher Genehmigung erlaubt.",
     },
     footer: {
       tagline:

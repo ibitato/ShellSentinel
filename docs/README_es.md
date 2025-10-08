@@ -98,8 +98,9 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
 
 ## Licencia
-- Uso gratuito para educación, estudiantes y equipos de hasta 5 personas.
-- Para entornos con más de 5 puestos/usuarios, se requiere una licencia comercial acordada con el desarrollador.
-- Consulta el archivo `LICENSE` (Shell Sentinel Community License 1.0) para detalles completos, definiciones y limitaciones.
+- Shell Sentinel es software de **código disponible (source-available)**: el repositorio público permite auditar el código pero no autoriza modificarlo ni redistribuir versiones alteradas.
+- Uso gratuito únicamente para fines personales, educativos o de evaluación interna sin ánimo de lucro. Cualquier uso comercial requiere una licencia negociada con el mantenedor.
+- Se prohíbe la modificación, adaptación o creación de trabajos derivados sin autorización expresa y por escrito.
+- Consulta el archivo `LICENSE` (Shell Sentinel Source-Available License 1.0) para los términos completos, definiciones y limitaciones.
 
-Para consultas sobre licencias comerciales o soporte extendido, abre un issue en GitHub o contacta al mantenedor.
+Para licencias comerciales, permisos especiales o soporte extendido, abre un issue en GitHub o contacta al mantenedor.

@@ -1,43 +1,49 @@
-SPDX-License-Identifier: LicenseRef-ShellSentinel-Community-1.0
+SPDX-License-Identifier: LicenseRef-ShellSentinel-SA-1.0
 
-Shell Sentinel Community License 1.0
+Shell Sentinel Source-Available License 1.0
 
 Copyright (c) 2025 The Maintainers
 
 1. Definitions
-   - "Software" means the source code, object code, and associated files in this repository.
+   - "Software" means the source code, object code, documentation, configuration files and other materials contained in this repository.
    - "You" means the individual or legal entity exercising permissions granted by this License.
-   - "Seat" means a natural person who uses the Software or benefits from its operation within an organization.
+   - "Non-Commercial Use" means any use that is solely for personal purposes, academic study, experimentation, evaluation or other activities that do not generate direct or indirect commercial advantage, revenue or consideration.
+   - "Commercial Use" includes, without limitation, using the Software to provide a paid or revenue-generating product or service, or within an organization to support commercial operations.
 
-2. Grant of License (Free Use)
-   Subject to the terms below, You are granted a non-exclusive, worldwide, non-transferable, royalty-free license to use, copy, modify, and distribute the Software solely for the following purposes:
-   (a) Educational and Student Use: Use by educational institutions for teaching, learning, or non-commercial research; and use by individual students.
-   (b) Small Team Use: Use by organizations or teams of up to five (5) Seats in total.
+2. License Grant
+   Subject to the terms of this License, You are granted a non-exclusive, worldwide, non-transferable, royalty-free right to:
+   (a) download and install the Software from its official public repository;
+   (b) run the Software in its unmodified form for Non-Commercial Use; and
+   (c) redistribute verbatim, unmodified copies of the Software, provided that each copy includes this License in full and any copyright, trademark or attribution notices remain intact.
 
-3. Commercial or Larger-Team Use
-   If Your intended use involves more than five (5) Seats, or otherwise falls outside Section 2, You must obtain a separate commercial license negotiated with the developer/maintainer of the Software. Open an issue in the repository to initiate a licensing discussion.
+3. Restrictions
+   The following actions are expressly prohibited unless You obtain prior written permission from the Maintainers:
+   (a) modifying, adapting, translating, reverse-engineering or creating derivative works based on the Software or any portion of it;
+   (b) using the Software, directly or indirectly, for Commercial Use or for the benefit of any third party in exchange for compensation;
+   (c) redistributing modified versions of the Software or distributing tooling designed to circumvent these restrictions;
+   (d) removing or altering any notices contained within the Software regarding authorship, copyright, trademarks or licensing; and
+   (e) portraying the Software as "open source" or "free software" as defined by the Open Source Initiative (OSI) or the Free Software Foundation (FSF).
 
-4. Redistribution and Modifications
-   - You may modify the Software and distribute original or modified versions under this same License for the permitted uses in Section 2.
-   - Any distribution must include (i) this License, and (ii) a prominent notice of any changes made.
-   - You may not remove or alter copyright, patent, trademark, or attribution notices.
+4. Contributions
+   Any contributions You submit to the Maintainers (including pull requests, patches or other improvements) are provided under the terms designated by the Maintainers at the time of acceptance. The Maintainers may decline or relicense contributions at their sole discretion.
 
-5. Prohibited Uses
-   - Use by or for organizations exceeding the Seat limit in Section 2(b) without a commercial license.
-   - Offering the Software as a managed service to third parties beyond the scope of Section 2.
-   - Any use that violates applicable laws or regulations.
+5. Termination
+   This License terminates automatically if You breach any of its terms. Upon termination You must cease all use and distribution of the Software. Sections 6, 7 and 9 survive termination.
 
 6. No Warranty
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+   THE SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGEMENT OR THAT THE SOFTWARE WILL BE ERROR-FREE OR SECURE.
 
 7. Limitation of Liability
-   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-8. Termination
-   This License terminates automatically if You breach any of its terms. Upon termination, You must cease use and distribution of the Software, but Sections 6 and 7 survive.
+8. Compliance With Laws
+   You are solely responsible for compliance with all applicable laws, regulations and policies related to Your use of the Software.
 
 9. Trademarks
-   This License does not grant permission to use the "Shell Sentinel" name, logos, or trademarks, except for factual references to the Software.
+   This License does not grant permission to use the "Shell Sentinel" name, logos or trademarks, except for factual references to the Software. Any goodwill derived from permitted uses inures to the Maintainers.
+
+10. Updates to This License
+   The Maintainers may publish revised versions of this License from time to time. Continued use of the Software after publication of a revised license constitutes acceptance of the updated terms.
 
 10. Contact
    For commercial licensing, support, or questions, please open an issue in the repository to contact the maintainer.

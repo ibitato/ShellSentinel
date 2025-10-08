@@ -5,6 +5,8 @@ Available in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](R
 ## Overview
 Shell Sentinel is a terminal-based, AI-assisted system administrator. It keeps a persistent SSH/SFTP session with a remote server and translates natural-language instructions into safe, auditable actions.
 
+Public repository: <https://github.com/david-lopez-b/Smart-AI-Sys-Admin>
+
 Formerly released as Almost Human Sys Admin. Official site: <https://www.shellsentinel.net>.
 
 Compatibility note: the Python package and entry point remain `smart_ai_sys_admin` so existing integrations do not break.
@@ -142,8 +144,9 @@ def register(registry: PluginRegistry) -> None:
 - `AGENTS.md`: contribution guide for human collaborators and AI agents.
 
 ## Licence
-- Free for education, students and teams up to 5 people.
-- Larger deployments (more than 5 seats/users) require a commercial licence agreed with the maintainer.
-- See `LICENSE` (Shell Sentinel Community License 1.0) for full details, definitions and limitations.
+- Shell Sentinel is released as **source-available software**: the GitHub repository allows code inspection but does not authorise modifying the codebase or redistributing altered versions.
+- Free of charge strictly for personal, educational or internal evaluation purposes with no direct or indirect commercial gain. Any commercial use requires a separate agreement with the maintainer.
+- Modification, adaptation or creation of derivative works is expressly forbidden without prior written consent.
+- Refer to `LICENSE` (Shell Sentinel Source-Available License 1.0) for complete terms, definitions and limitations.
 
-For commercial licence inquiries or extended support, open a GitHub issue or contact the maintainer.
+For commercial licences, special permissions or extended support, open a GitHub issue or contact the maintainer directly.
