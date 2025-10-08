@@ -77,6 +77,7 @@ Hinweis zur Kompatibilität: Paketname und Einstiegspunkt bleiben `smart_ai_sys_
 - Anmeldeinformationen stammen aus der Umgebung (`AWS_*`, `OPENAI_API_KEY` usw.). Du kannst auch `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` oder `SMART_AI_SYS_ADMIN_CONFIG_DIR` verwenden, um Dateipfade zu überschreiben.
 - In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional).
 - `remote_ssh_command` verwendet standardmäßig **900 Sekunden (15 Minuten)** laut `conf/agent.conf`. Falls längere Befehle erwartet werden, den Agenten bitten, `timeout_seconds` entsprechend zu setzen.
+- Um übermäßige Ausgaben zu vermeiden, begrenzt `remote_command.max_output_chars`, wie viele Zeichen an den Agenten weitergegeben werden. Erhöhe den Wert für Audit-Anwendungsfälle oder senke ihn bei gemeinsam genutzten Terminals.
 - Für Model Context Protocol (MCP) Server deklarierst du jeden Transport (`stdio`, `sse`, `streamable_http`) im Abschnitt `mcp`. Die Agentenverbindung bleibt während der Sitzung aktiv und stellt die Tools bereit.
   - Beispiel: Transport `firecrawl-stdio` startet `npx -y firecrawl-mcp`. Über `env_passthrough` erbt der Agent Variablen wie `FIRECRAWL_API_KEY`. Werte vor dem Start der TUI exportieren.
 - Beim Start erscheint ein retro-inspirierter Begrüßungsbildschirm (Orange), der sich nach 5 Sekunden oder einem Tastendruck schließt.

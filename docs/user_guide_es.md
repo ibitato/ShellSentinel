@@ -64,7 +64,7 @@ El agente reutiliza la conexión SSH/SFTP abierta para ejecutar comandos y trans
 ## Configuración adicional
 - `conf/app_config.json` define estilos, textos y atajos mediante claves como `{{ui.output_panel.title}}`, resueltas según el locale.
 - Las traducciones residen en `conf/locales/<idioma>/strings.json`. Al añadir nuevos textos, usa el helper `_('clave')` en el código y crea la entrada en cada idioma.
-- `conf/agent.conf` controla el proveedor LLM, opciones de herramientas y timeouts. Copia `conf/agent.conf.example` antes de modificarlo y, si eliges `lmstudio`, recuerda iniciar el servidor local con `lms server start` y ajustar `base_url`/`api_key` según tu entorno. Para `cerebras`, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y personaliza `client_args`/`params`; la integración usa el SDK oficial con streaming SSE.
+- `conf/agent.conf` controla el proveedor LLM, opciones de herramientas y timeouts. Copia `conf/agent.conf.example` antes de modificarlo y, si eliges `lmstudio`, recuerda iniciar el servidor local con `lms server start` y ajustar `base_url`/`api_key` según tu entorno. Para `cerebras`, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y personaliza `client_args`/`params`; la integración usa el SDK oficial con streaming SSE. Ajusta `remote_command.max_output_chars` para limitar la cantidad de salida que recibirá el agente.
 
 ## Solución de problemas
 - **No hay colores o la interfaz se ve mal**: revisa la variable `TERM` y la advertencia mostrada al inicio.
