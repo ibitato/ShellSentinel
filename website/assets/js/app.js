@@ -68,6 +68,52 @@
     return card;
   }
 
+  const lightbox = document.querySelector('.lightbox');
+  const lightboxImage = lightbox && lightbox.querySelector('[data-element="lightbox-image"]');
+  const lightboxCaption = lightbox && lightbox.querySelector('[data-element="lightbox-caption"]');
+  const lightboxClose = lightbox && lightbox.querySelector('.lightbox-close');
+
+  function openLightbox(item) {
+    if (!lightbox || !lightboxImage || !lightboxCaption) return;
+    lightboxImage.src = item.src || '';
+    lightboxImage.alt = item.alt || '';
+    lightboxCaption.textContent = item.caption || '';
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lightboxClose && lightboxClose.focus();
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    if (lightboxImage) {
+      lightboxImage.src = '';
+      lightboxImage.alt = '';
+    }
+    if (lightboxCaption) {
+      lightboxCaption.textContent = '';
+    }
+  }
+
+  if (lightbox) {
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+  }
+
+  if (lightboxClose) {
+    lightboxClose.addEventListener('click', closeLightbox);
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeLightbox();
+    }
+  });
+
   function buildGalleryItem(item) {
     const figure = document.createElement('figure');
     figure.className = 'gallery-item';
@@ -86,6 +132,8 @@
       caption.textContent = item.caption;
       figure.appendChild(caption);
     }
+
+    figure.addEventListener('click', () => openLightbox(item));
 
     return figure;
   }
