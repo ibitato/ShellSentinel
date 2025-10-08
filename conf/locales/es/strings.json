@@ -159,6 +159,7 @@
     "invoke": {
       "failure": "❌ El agente falló al procesar la instrucción: {error}"
     },
+    "language_instruction": "Responde siempre en español. Ajusta todos los mensajes al locale activo `{locale}` y solo cambia de idioma si la persona operadora lo solicita explícitamente.",
     "tools": {
       "ssh_unavailable": "❌ No hay una conexión SSH disponible. Usa `/connect`.",
       "ssh_inactive": "❌ No existe una sesión SSH activa. Usa `/connect`.",

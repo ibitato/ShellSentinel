@@ -159,6 +159,7 @@
     "invoke": {
       "failure": "❌ The agent failed to process the instruction: {error}"
     },
+    "language_instruction": "Always respond in English. Match the active application locale `{locale}` and keep every user-facing message in English unless the operator explicitly asks for another language.",
     "tools": {
       "ssh_unavailable": "❌ No SSH connection is available. Use `/connect` first.",
       "ssh_inactive": "❌ There is no active SSH session. Use `/connect` first.",

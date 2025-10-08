@@ -10,6 +10,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Literal
 
+from ..localization import get_localizer
+
 ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
@@ -178,13 +180,35 @@ def _load_system_prompt(base_dir: Path, relative_path: str) -> tuple[str, Path]:
             raise AgentConfigError(
                 f"No se pudo leer el system prompt en '{candidate}': {exc}"
             ) from exc
-        return content, candidate
+        return _prepend_language_directive(content), candidate
 
     searched = ", ".join(str(path) for path in checked) or relative_path
     raise AgentConfigError(
         "No se encontró el system prompt en las rutas candidatas: "
         f"{searched}."
     )
+
+
+def _language_directive() -> str:
+    localizer = get_localizer()
+    locale_code = getattr(localizer, "active_locale", "en")
+    try:
+        directive = localizer.get("agent.language_instruction", locale=locale_code)
+    except Exception:  # pragma: no cover - uso defensivo
+        directive = (
+            "Always respond in English. Match the active application locale "
+            f"`{locale_code}` and keep every user-facing message in English unless the operator explicitly requests another language."
+        )
+    return directive.strip()
+
+
+def _prepend_language_directive(content: str) -> str:
+    directive = _language_directive()
+    if not directive:
+        return content
+    if directive in content:
+        return content
+    return f"{directive}\n\n{content}" if content else directive
 
 
 def _mapping_proxy(payload: Mapping[str, Any] | None) -> Mapping[str, Any]:

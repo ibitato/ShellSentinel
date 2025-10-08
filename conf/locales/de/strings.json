@@ -159,6 +159,7 @@
     "invoke": {
       "failure": "❌ Der Agent konnte die Anweisung nicht verarbeiten: {error}"
     },
+    "language_instruction": "Antworte ausschließlich auf Deutsch. Richte alle Ausgaben am aktiven Locale `{locale}` aus und wechsle nur auf Wunsch der Bedienperson die Sprache.",
     "tools": {
       "ssh_unavailable": "❌ Es ist keine SSH-Verbindung verfügbar. Verwende zuerst `/connect`.",
       "ssh_inactive": "❌ Es besteht keine aktive SSH-Sitzung. Verwende zuerst `/connect`.",
