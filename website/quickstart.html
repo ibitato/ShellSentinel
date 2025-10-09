@@ -39,6 +39,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="preload" href="assets/css/styles.css" as="style" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
@@ -61,6 +62,38 @@
             "availableLanguage": ["en", "es", "de"]
           }
         }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "Shell Sentinel quick start",
+        "description": "Get the environment ready, enable your preferred knowledge sources and manage servers through conversation.",
+        "image": "https://www.shellsentinel.net/assets/img/shell-sentinel-hero.png",
+        "totalTime": "PT10M",
+        "step": [
+          {
+            "@type": "HowToStep",
+            "name": "Set up the workspace",
+            "text": "Create a virtual environment (`python -m venv .venv`), activate it and install dependencies with `make install`."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Tailor the configuration",
+            "text": "Copy conf/agent.conf.example to conf/agent.conf, choose the provider stack, enable tools and align locales in conf/locales/."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Launch the assistant",
+            "text": "Run make run to open the TUI, display the welcome screen and load the footer with current provider and model details."
+          },
+          {
+            "@type": "HowToStep",
+            "name": "Start the dialogue",
+            "text": "Use /connect to open the session, ask in natural language (for example, \"Check disk space on /var\") and iterate with /status or /help."
+          }
+        ]
       }
     </script>
   </head>
@@ -166,7 +199,7 @@
       </div>
     </footer>
 
-    <script src="assets/js/translations.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/translations.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
   </body>
 </html>

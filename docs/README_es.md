@@ -66,6 +66,8 @@ make run
 - Cada página pública debe declarar un `<link rel="canonical">` apuntando a su URL final (HTTPS en `www.shellsentinel.net`). Esto aplica tanto a las páginas principales (`website/*.html`) como a los manuales en `website/manuals/`.
 - Cuando exista contenido multilingüe (EN/ES/DE), añade los enlaces `rel="alternate"` con `hreflang` para cada idioma y un `hreflang="x-default"` apuntando a la versión inglesa. Mantén la coherencia entre las rutas de `sitemap.xml` y esos enlaces.
 - Antes de publicar nuevas páginas o traducciones, valida `website/sitemap.xml` y las páginas afectadas con una herramienta tipo URL Inspection/Search Console para detectar errores de indexación. Si usas utilidades locales, como `xmllint` o scripts internos, documenta los hallazgos en el PR.
+- Después de desplegar la web estática, inspecciona una muestra de URLs en Google Search Console y Bing Webmaster Tools (sección Coverage/URL Inspection) y deja constancia de cualquier warning en el changelog o PR.
+- Mantén a mano un snippet de verificación local (como el comando `python3 - <<'PY' ...` usado en este repo, apoyado en `xml.etree` y `BeautifulSoup`) para comprobar duplicados, rutas huérfanas y `hreflang` antes de enviar cambios a producción.
 
 ### Configuración del agente IA (Strands Agents)
 - Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI, LM Studio, Cerebras u Ollama/local.

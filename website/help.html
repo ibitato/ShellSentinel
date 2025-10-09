@@ -39,6 +39,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="preload" href="assets/css/styles.css" as="style" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
@@ -61,6 +62,46 @@
             "availableLanguage": ["en", "es", "de"]
           }
         }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is this different from traditional automation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Instead of scripting every step, you describe intent. The assistant reasons with you, shows suggested commands and seeks approval before execution."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the assistant stay grounded in reality?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It reuses your live SSH session, consults the local datetime tool and logs every action so you can verify outputs instantly."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can it incorporate my own knowledge base?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Keep documentation in your preferred knowledge base, expose it via MCP or plugins, and reference it during conversations for guided responses."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which languages can I speak to it?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The TUI ships with English, Spanish and German locales. Add more by extending conf/locales/ and updating your configuration."
+            }
+          }
+        ]
       }
     </script>
   </head>
@@ -175,7 +216,7 @@
       </div>
     </footer>
 
-    <script src="assets/js/translations.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/translations.js" defer></script>
+    <script src="assets/js/app.js" defer></script>
   </body>
 </html>
