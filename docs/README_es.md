@@ -62,6 +62,11 @@ make run
   ```
 - El fichero `conf/app_config.json` contiene referencias `{{clave.de.traduccion}}` que se resuelven en tiempo de carga usando el locale activo; no elimines las llaves dobles al personalizar valores.
 
+### Convenciones SEO de la web estática
+- Cada página pública debe declarar un `<link rel="canonical">` apuntando a su URL final (HTTPS en `www.shellsentinel.net`). Esto aplica tanto a las páginas principales (`website/*.html`) como a los manuales en `website/manuals/`.
+- Cuando exista contenido multilingüe (EN/ES/DE), añade los enlaces `rel="alternate"` con `hreflang` para cada idioma y un `hreflang="x-default"` apuntando a la versión inglesa. Mantén la coherencia entre las rutas de `sitemap.xml` y esos enlaces.
+- Antes de publicar nuevas páginas o traducciones, valida `website/sitemap.xml` y las páginas afectadas con una herramienta tipo URL Inspection/Search Console para detectar errores de indexación. Si usas utilidades locales, como `xmllint` o scripts internos, documenta los hallazgos en el PR.
+
 ### Configuración del agente IA (Strands Agents)
 - Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI, LM Studio, Cerebras u Ollama/local.
 - Si trabajas con LM Studio, inicia el servidor con `lms server start` y personaliza `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`, `client_args`) para alinearlo con tu entorno.
