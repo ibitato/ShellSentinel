@@ -28,8 +28,9 @@
 - El banner de compatibilidad de terminal se genera en `_warn_if_term_incompatible`; si cambias la lista de terminales válidos, modifícalo en config.
 
 ## Flujo de trabajo de desarrollo
-- Usa `python3 -m venv .venv && make install` para montar el entorno; el proyecto instala en editable (`pip install -e .`).
-- Formato y lint obligatorios antes de PR: `make format` (Black) y `make lint` (Ruff); `make test` ejecuta pytest (hay placeholders en `tests/`).
+- Usa `python3.12 -m venv .venv && make install` para montar el entorno (`pip-sync` + editable).
+- Dependencias: edita `pyproject.toml`, regenera con `make lock` y commitea los `requirements*.txt`. Ver `docs/dependencies.md`.
+- Formato y lint obligatorios antes de PR: `make format` (Black) y `make lint` (Ruff); `make test` ejecuta pytest (104 casos, CI en Python 3.12).
 - Lanza la TUI con `make run` o `python -m smart_ai_sys_admin`; revisa `logs/app.log` cuando depures el agente.
 
 ## Extensiones habituales

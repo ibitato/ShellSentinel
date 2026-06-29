@@ -116,9 +116,7 @@ class SmartAISysAdminApp(App[None]):
         tokens = trimmed.split()
         if tokens and tokens[0].lower() in EXIT_ALIASES:
             if len(tokens) > 1:
-                self._conversation.add_agent_markdown(
-                    _("ui.app.exit.no_args", command=tokens[0])
-                )
+                self._conversation.add_agent_markdown(_("ui.app.exit.no_args", command=tokens[0]))
                 self._input.focus_editor()
                 return
             self._handle_exit_request()
@@ -236,10 +234,7 @@ class SmartAISysAdminApp(App[None]):
 
     def _invoke_agent(self, prompt: str) -> str:
         if not self._agent_runtime.ready:
-            return (
-                self._agent_runtime.error_message
-                or _("ui.app.agent_unavailable")
-            )
+            return self._agent_runtime.error_message or _("ui.app.agent_unavailable")
         self._app_logger.debug("Prompt enviado al agente: %.120s", prompt)
         return self._agent_runtime.invoke(prompt)
 
@@ -250,5 +245,6 @@ class SmartAISysAdminApp(App[None]):
 def run_app(config: AppConfig = CONFIG) -> None:
     """Ejecuta la aplicación TUI con la configuración suministrada."""
     SmartAISysAdminApp(config=config).run()
+
 
 __all__ = ["SmartAISysAdminApp", "run_app"]

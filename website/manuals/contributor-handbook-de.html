@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beitragsleitfaden · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Praktische Zusammenfassung der Beitragsrichtlinien, mehrsprachigen Dokumentation und Website-Pflege für Shell Sentinel."
+    />
+    <link rel="canonical" href="https://www.shellsentinel.net/manuals/contributor-handbook-de.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/contributor-handbook-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/contributor-handbook-de.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="../assets/css/styles.css" as="style" />
+    <link rel="preload" href="../assets/css/manuals.css" as="style" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../docs.html">&larr; Zurück zur Dokumentation</a>
+          <span>/ Beitragsleitfaden (DE)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Beitragsleitfaden — Shell Sentinel</h1>
+
+        <p>
+          Diese Zusammenfassung fasst die internen Richtlinien für die Zusammenarbeit an Shell Sentinel
+          zusammen: Projektstruktur, Dokumentationsstandards und Website-Pflege. Jeder Beitrag sollte
+          diesen Leitlinien folgen, um die Produktkohärenz zu wahren.
+        </p>
+
+        <h2>Allgemeine Prinzipien</h2>
+        <ul>
+          <li>Terminalorientierte Anwendung mit persistenten SSH/SFTP-Sitzungen und einem konversationellen KI-Assistenten.</li>
+          <li>Python-3.12-Ökosystem, Textual-8.2.7-TUI, Strands Agents ≥1.45 und MCP-Tools wie Firecrawl.</li>
+          <li>Abhängigkeiten über <code>pyproject.toml</code> und pip-tools-Lockfiles (<code>make lock</code>, <code>make install</code>).</li>
+          <li>Tägliche Arbeit mit <code>make install</code>, <code>make format</code>, <code>make lint</code>, <code>make test</code> und <code>make run</code>.</li>
+          <li>GitHub-Actions-CI (Lint + Tests auf Python 3.12) bei jedem Pull Request über <code>.github/workflows/ci.yml</code>.</li>
+        </ul>
+
+        <h2>Konfiguration und Inhalte</h2>
+        <ul>
+          <li>Alle Konfiguration liegt in <code>conf/</code> (keine fest verdrahteten Werte im Code).</li>
+          <li>Neue Strings in <code>conf/locales/</code> hinzufügen und mit <code>_("schlüssel")</code> referenzieren.</li>
+          <li>Benutzerhandbücher in EN/ES/DE pflegen, sobald sich ein Ablauf ändert.</li>
+          <li>Eigene Provider in der technischen Anleitung dokumentieren und von der Website verlinken.</li>
+        </ul>
+
+        <h2>Plugins und Erweiterbarkeit</h2>
+        <ul>
+          <li>Plugins werden aus <code>plugins/</code> geladen; jedes muss Befehle, Übersetzungen und lokale Dokumentation registrieren.</li>
+          <li>Plugin-spezifische Dokumentation nicht mit allgemeinen Handbüchern vermischen.</li>
+          <li>System-Prompts respektieren und keine parallelen SSH/SFTP-Verbindungen außerhalb der offiziellen Tools anlegen.</li>
+        </ul>
+
+        <h2>Richtlinie für Web-Dokumentation</h2>
+        <ul>
+          <li>Die Website unter <code>website/</code> ist Teil des Produkts und muss jede funktionale oder narrative Änderung widerspiegeln.</li>
+          <li>Bei Änderungen an Handbüchern, Befehlen oder Providern Inhalte der Website synchronisieren (Abschnitte, Karten, Links und Übersetzungen).</li>
+          <li>Online-Handbücher nutzen HTML-Seiten in <code>website/manuals/</code>; relevante Änderungen aus <code>docs/</code> spiegeln.</li>
+        </ul>
+
+        <h2>Empfohlener Workflow</h2>
+        <ol>
+          <li>Virtualenv aktivieren (<code>python3.12 -m venv .venv</code>, dann <code>source .venv/bin/activate</code>).</li>
+          <li>Abhängigkeiten installieren (<code>make install</code>).</li>
+          <li>Nach Änderungen: <code>make format</code>, <code>make lint</code>, <code>make test</code> (Pflicht vor dem Öffnen eines PR).</li>
+          <li>TUI mit <code>make run</code> und Website mit <code>make website-serve</code> validieren.</li>
+        </ol>
+
+        <p>
+          Weitere Details im internen Richtlinienportal. Nach jedem Beitrag prüfen, dass Website,
+          Handbücher und Repository konsistent bleiben.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2025 Shell Sentinel. Diesen Leitfaden aktualisieren, wenn sich interne Richtlinien ändern.
+      </footer>
+    </div>
+  </body>
+</html>

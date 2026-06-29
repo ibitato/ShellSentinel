@@ -1,0 +1,64 @@
+{
+  "terminal": {
+    "allowed_terms": ["xterm", "xterm-256color"],
+    "warning_message": "Terminal warning",
+    "warning_icon": "!",
+    "unknown_label": "Unknown",
+    "detected_label": "Detected"
+  },
+  "ui": {
+    "history_limit": 50,
+    "output_panel": {
+      "title": "Output",
+      "border_style": "#FF8C00",
+      "text_style": "#FFB347",
+      "background": "#000000",
+      "initial_markdown": "Welcome",
+      "placeholder_response_markdown": "No response"
+    },
+    "user_panel": {
+      "title": "User",
+      "border_style": "#00FF7F",
+      "text_style": "#7CFC00"
+    },
+    "connection_panel": {
+      "title": "Connection",
+      "border_style": "#FF8C00",
+      "text_style": "#FFB347",
+      "background": "#000000"
+    },
+    "input_widget": {
+      "placeholder": "Type here",
+      "background": "#001900",
+      "text_style": "#7CFC00",
+      "submit_binding": "ctrl+s",
+      "min_lines": 3,
+      "max_lines": 9,
+      "padding": "1 2"
+    },
+    "dialogs": {
+      "exit": {
+        "title": "Exit",
+        "message": "Leave?",
+        "confirm_label": "Yes",
+        "cancel_label": "No",
+        "prompt_markdown": "Confirm exit"
+      }
+    }
+  },
+  "shortcuts": {
+    "exit": {
+      "binding": "ctrl+c",
+      "description": "Exit"
+    }
+  },
+  "logging": {
+    "level": "DEBUG",
+    "directory": "logs",
+    "filename": "app.log",
+    "format": "%(message)s",
+    "when": "midnight",
+    "interval": 1,
+    "backup_count": 1
+  }
+}

@@ -54,9 +54,7 @@ class SSHConnectionManager:
         if not password and not key_path:
             raise ConnectionError(_("connection.errors.missing_secret"))
         if port <= 0 or port > 65535:
-            raise ConnectionError(
-                _("connection.errors.invalid_port", port=port)
-            )
+            raise ConnectionError(_("connection.errors.invalid_port", port=port))
 
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -117,9 +115,7 @@ class SSHConnectionManager:
             username=username,
             auth_method=auth_method,
         )
-        self._logger.info(
-            "Conexión abierta con %s@%s:%s (%s)", username, host, port, auth_method
-        )
+        self._logger.info("Conexión abierta con %s@%s:%s (%s)", username, host, port, auth_method)
         return self._details
 
     def disconnect(self) -> None:

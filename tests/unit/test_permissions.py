@@ -48,3 +48,23 @@ def test_permission_manager_restore_returns_previous_values(monkeypatch: pytest.
         assert os.environ.get(key) is None
     assert manager.active is False
 
+
+def test_permission_manager_activate_is_idempotent():
+    manager = ToolPermissionManager()
+    manager.activate()
+    manager.activate()
+    assert manager.active is True
+
+
+def test_permission_manager_restore_without_activate_is_noop():
+    manager = ToolPermissionManager()
+    manager.restore()
+    assert manager.active is False
+
+
+def test_permission_manager_custom_flags():
+    manager = ToolPermissionManager({"CUSTOM_FLAG": "1"})
+    manager.activate()
+    assert os.environ.get("CUSTOM_FLAG") == "1"
+    manager.restore()
+    assert os.environ.get("CUSTOM_FLAG") is None

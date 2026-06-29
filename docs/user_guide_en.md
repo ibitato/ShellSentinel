@@ -5,13 +5,13 @@ Shell Sentinel is a terminal application that keeps a persistent SSH/SFTP sessio
 
 ## Requirements
 - Color-capable terminal (preferably `xterm` or `xterm-256color`).
-- Python 3.10 or newer.
+- Python 3.12.
 - Access to a server exposing SSH/SFTP.
 
 ## Installation
 1. **Create a virtual environment**:
    ```bash
-   python3 -m venv .venv
+   python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 2. **Install dependencies**:

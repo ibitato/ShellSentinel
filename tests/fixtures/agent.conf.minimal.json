@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "provider": "openai",
+  "agent": {
+    "streaming": true,
+    "conversation": {
+      "strategy": "sliding_window",
+      "window_size": 10,
+      "truncate_tool_results": true
+    },
+    "trace_attributes": {
+      "app": "Shell Sentinel Test"
+    }
+  },
+  "providers": {
+    "openai": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "gpt-test",
+      "show_thinking": false,
+      "client_args": {
+        "api_key_env": "OPENAI_API_KEY"
+      },
+      "params": {
+        "temperature": 0.5,
+        "max_tokens": 512
+      }
+    },
+    "bedrock": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "test-model",
+      "region_name": "us-east-1",
+      "params": {}
+    },
+    "local": {
+      "system_prompt": "system_prompts/test.md",
+      "host": "http://localhost:11434",
+      "model_id": "llama-test",
+      "params": {}
+    },
+    "lmstudio": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "local-model",
+      "base_url": "http://localhost:1234/v1",
+      "api_key": "test-key",
+      "client_args": {},
+      "params": {}
+    },
+    "cerebras": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "cerebras-test",
+      "api_key_env": "CEREBRAS_API_KEY",
+      "params": {}
+    }
+  },
+  "tools": {
+    "default": ["shell"],
+    "remote_command": {
+      "name": "remote_ssh_command",
+      "timeout_seconds": 60,
+      "max_output_chars": 5000
+    },
+    "load_directory": false,
+    "consent": {
+      "bypass": true
+    }
+  },
+  "mcp": {
+    "enabled": false,
+    "load_server_tools": true,
+    "transports": []
+  }
+}

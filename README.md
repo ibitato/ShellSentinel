@@ -10,13 +10,13 @@ Repositorio público: <https://github.com/ibitato/ShellSentinel>
 Sitio oficial: <https://www.shellsentinel.net>.
 
 ## Requisitos
-- Python 3.10 o superior
-- Entorno virtual local (recomendado `.venv`)
+- Python 3.12
+- Entorno virtual local (recomendado `.venv`; ver también `.python-version`)
 
 ## Pasos iniciales
-1. Crear el entorno virtual:
+1. Crear el entorno virtual (Python 3.12):
    ```bash
-   python3 -m venv .venv
+   python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 2. Instalar dependencias de desarrollo y de ejecución:
@@ -27,6 +27,7 @@ Sitio oficial: <https://www.shellsentinel.net>.
    ```bash
    make format
    make lint
+   make test
    ```
 
 ## Uso de la CLI
@@ -144,11 +145,12 @@ def register(registry: PluginRegistry) -> None:
 ```
 
 ## Estructura del proyecto
-- `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).
-- `requirements-dev.txt`: dependencias de desarrollo (`-r requirements.txt`, linting y tests).
+- `pyproject.toml`: metadatos del paquete y **definición canónica** de dependencias (runtime y `dev`).
+- `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`); no editar a mano.
+- `docs/dependencies.md` (y `docs/dependencies_en.md`, `docs/dependencies_de.md`): flujo de instalación, lock y CI.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
-- `tests/`: espacio reservado para pruebas automatizadas.
-- `Makefile`: tareas para automatizar instalación, formateo, lint y ejecución.
+- `tests/`: suite de pruebas automatizadas (unitarias e integración).
+- `Makefile`: tareas para instalación, lock, formateo, lint y ejecución.
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
 
 ## Licencia

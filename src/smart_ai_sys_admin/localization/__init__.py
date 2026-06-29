@@ -45,9 +45,7 @@ class Localizer:
             try:
                 return raw.format(**kwargs)
             except Exception:  # pragma: no cover - defensivo
-                _LOGGER.warning(
-                    "No se pudo formatear la clave '%s' con argumentos %s", key, kwargs
-                )
+                _LOGGER.warning("No se pudo formatear la clave '%s' con argumentos %s", key, kwargs)
                 return raw
         return raw
 
@@ -162,8 +160,10 @@ def localize_placeholders(payload: Any) -> Any:
         return {key: localize_placeholders(value) for key, value in payload.items()}
     if isinstance(payload, list):
         return [localize_placeholders(item) for item in payload]
-    if isinstance(payload, str) and payload.startswith(_PLACEHOLDER_PREFIX) and payload.endswith(
-        _PLACEHOLDER_SUFFIX
+    if (
+        isinstance(payload, str)
+        and payload.startswith(_PLACEHOLDER_PREFIX)
+        and payload.endswith(_PLACEHOLDER_SUFFIX)
     ):
         key = payload[len(_PLACEHOLDER_PREFIX) : -len(_PLACEHOLDER_SUFFIX)].strip()
         try:

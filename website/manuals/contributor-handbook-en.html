@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contributor handbook · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Practical summary of contribution policies, multilingual documentation and website maintenance for Shell Sentinel."
+    />
+    <link rel="canonical" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/contributor-handbook-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/contributor-handbook-de.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="../assets/css/styles.css" as="style" />
+    <link rel="preload" href="../assets/css/manuals.css" as="style" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../docs.html">&larr; Back to documentation</a>
+          <span>/ Contributor handbook (EN)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Contributor handbook — Shell Sentinel</h1>
+
+        <p>
+          This summary captures the internal policies that govern collaboration on Shell Sentinel:
+          project structure, documentation standards and website maintenance. Every contribution
+          should follow these guidelines to protect product coherence.
+        </p>
+
+        <h2>General principles</h2>
+        <ul>
+          <li>Terminal-oriented application with persistent SSH/SFTP sessions and a conversational AI assistant.</li>
+          <li>Python 3.12 ecosystem, Textual 8.2.7 TUI, Strands Agents ≥1.45 and MCP tools such as Firecrawl.</li>
+          <li>Dependencies managed via <code>pyproject.toml</code> and pip-tools lockfiles (<code>make lock</code>, <code>make install</code>).</li>
+          <li>Daily work relies on <code>make install</code>, <code>make format</code>, <code>make lint</code>, <code>make test</code> and <code>make run</code>.</li>
+          <li>GitHub Actions CI (lint + tests on Python 3.12) runs on every pull request via <code>.github/workflows/ci.yml</code>.</li>
+        </ul>
+
+        <h2>Configuration and content</h2>
+        <ul>
+          <li>All configuration lives in <code>conf/</code> (avoid hardcoding values in code).</li>
+          <li>New strings must be added in <code>conf/locales/</code> and referenced with <code>_("key")</code>.</li>
+          <li>User manuals must stay in EN/ES/DE whenever a flow changes.</li>
+          <li>Document custom providers in the technical guide and link them from the website.</li>
+        </ul>
+
+        <h2>Plugins and extensibility</h2>
+        <ul>
+          <li>Plugins load from <code>plugins/</code>; each must register commands, translations and local documentation.</li>
+          <li>Do not mix plugin-specific documentation with general manuals.</li>
+          <li>Respect system prompts and avoid duplicating SSH/SFTP connections outside the official tools.</li>
+        </ul>
+
+        <h2>Website documentation policy</h2>
+        <ul>
+          <li>The site in <code>website/</code> is part of the product and must reflect every functional or narrative change.</li>
+          <li>When manuals, commands or providers change, sync site content (sections, cards, links and translations).</li>
+          <li>Online manuals use HTML pages in <code>website/manuals/</code>; mirror relevant changes from <code>docs/</code>.</li>
+        </ul>
+
+        <h2>Recommended workflow</h2>
+        <ol>
+          <li>Activate virtualenv (<code>python3.12 -m venv .venv</code>, then <code>source .venv/bin/activate</code>).</li>
+          <li>Install dependencies (<code>make install</code>).</li>
+          <li>After changes: <code>make format</code>, <code>make lint</code>, <code>make test</code> (required before opening a PR).</li>
+          <li>Validate the TUI with <code>make run</code> and the website with <code>make website-serve</code>.</li>
+        </ol>
+
+        <p>
+          Consult the internal policy portal for more detail. After each contribution, verify that
+          the website, manuals and repository remain aligned.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2025 Shell Sentinel. Update this handbook when internal policies change.
+      </footer>
+    </div>
+  </body>
+</html>

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Mapping
+from collections.abc import Mapping
 
 __all__ = ["DEFAULT_PERMISSION_ENV_FLAGS", "ToolPermissionManager"]
 
@@ -55,9 +55,7 @@ class ToolPermissionManager:
         for key, value in self._env_flags.items():
             os.environ[key] = value
             if self._logger:
-                self._logger.debug(
-                    "Activando permisos totales para tools: %s=%s", key, value
-                )
+                self._logger.debug("Activando permisos totales para tools: %s=%s", key, value)
         self._active = True
 
     def restore(self) -> None:
@@ -83,4 +81,3 @@ class ToolPermissionManager:
         """Indica si los permisos están actualmente activados."""
 
         return self._active
-

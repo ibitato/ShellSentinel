@@ -143,9 +143,7 @@ class CerebrasModel(Model):
                     yield {"contentBlockStart": {"start": {}}}
                     text_block_started = True
                 yield {
-                    "contentBlockDelta": {
-                        "delta": {"reasoningContent": {"text": delta.reasoning}}
-                    }
+                    "contentBlockDelta": {"delta": {"reasoningContent": {"text": delta.reasoning}}}
                 }
 
             for tool_call in delta.tool_calls or []:
@@ -184,9 +182,7 @@ class CerebrasModel(Model):
             for call in calls:
                 yield {
                     "contentBlockDelta": {
-                        "delta": {
-                            "toolUse": {"input": call.function.arguments or ""}
-                        }
+                        "delta": {"toolUse": {"input": call.function.arguments or ""}}
                     }
                 }
             yield {"contentBlockStop": {}}

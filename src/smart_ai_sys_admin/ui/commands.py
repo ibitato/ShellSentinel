@@ -169,15 +169,11 @@ class SlashCommandProcessor:
     def _execute_plugin_command(
         self, command: PluginSlashCommand, args: list[str], alias: str
     ) -> str:
-        self._logger.info(
-            "Procesando comando de plugin %s con argumentos %s", command.name, args
-        )
+        self._logger.info("Procesando comando de plugin %s con argumentos %s", command.name, args)
         try:
             return command.handler(args)
         except Exception as exc:  # pragma: no cover - depende del plugin
-            self._logger.exception(
-                "Error interno procesando el comando plugin '%s'", command.name
-            )
+            self._logger.exception("Error interno procesando el comando plugin '%s'", command.name)
             return _(
                 "ui.commands.internal_error",
                 command=alias,
@@ -310,9 +306,11 @@ class SlashCommandProcessor:
         if plugin:
             if plugin.help_key:
                 return _(plugin.help_key, command=plugin.name)
-            description = _(
-                plugin.description_key, command=plugin.name
-            ) if plugin.description_key else plugin.name
+            description = (
+                _(plugin.description_key, command=plugin.name)
+                if plugin.description_key
+                else plugin.name
+            )
             usage = _(plugin.usage_key, command=plugin.name) if plugin.usage_key else plugin.name
             return f"{description}\n\n{usage}"
         return self._format_help(
@@ -336,9 +334,11 @@ class SlashCommandProcessor:
             return base
         lines = [base, "", _("ui.commands.plugins.header")]
         for command in sorted(self._plugin_commands, key=lambda c: c.name.lower()):
-            description = _(
-                command.description_key, command=command.name
-            ) if command.description_key else command.name
+            description = (
+                _(command.description_key, command=command.name)
+                if command.description_key
+                else command.name
+            )
             lines.append(f"- `{command.name}` {description}")
         return "\n".join(lines)
 
@@ -367,11 +367,15 @@ class SlashCommandProcessor:
                 user=user,
                 usage=usage,
             )
-        return _(
-            "ui.input.suggestions.connect.port_hint",
-            command=command_raw,
-            usage=usage,
-        ) if len(tokens) == 4 else None
+        return (
+            _(
+                "ui.input.suggestions.connect.port_hint",
+                command=command_raw,
+                usage=usage,
+            )
+            if len(tokens) == 4
+            else None
+        )
 
     def _suggest_disconnect(self, command_raw: str, tokens: list[str]) -> str | None:
         if len(tokens) > 1:
@@ -473,41 +477,25 @@ class SlashCommandProcessor:
             )
         lines: list[str] = [_("ui.commands.status.header")]
         connection_summary = self._connection_manager.status_summary()
-        lines.append(
-            f"- {_('ui.commands.status.connection')}: {connection_summary}"
-        )
+        lines.append(f"- {_('ui.commands.status.connection')}: {connection_summary}")
         if self._agent_runtime:
             summary = self._agent_runtime.agent_summary()
             yes_label = _("common.yes")
             no_label = _("common.no")
             ready_value = yes_label if summary.get("ready") else no_label
-            streaming_value = (
-                yes_label if summary.get("streaming") else no_label
-            )
+            streaming_value = yes_label if summary.get("streaming") else no_label
             if summary.get("provider"):
-                lines.append(
-                    f"- {_('ui.commands.status.provider')}: {summary['provider']}"
-                )
+                lines.append(f"- {_('ui.commands.status.provider')}: {summary['provider']}")
             if summary.get("model"):
-                lines.append(
-                    f"- {_('ui.commands.status.model')}: {summary['model']}"
-                )
-            lines.append(
-                f"- {_('ui.commands.status.agent_ready')}: {ready_value}"
-            )
-            lines.append(
-                f"- {_('ui.commands.status.streaming')}: {streaming_value}"
-            )
+                lines.append(f"- {_('ui.commands.status.model')}: {summary['model']}")
+            lines.append(f"- {_('ui.commands.status.agent_ready')}: {ready_value}")
+            lines.append(f"- {_('ui.commands.status.streaming')}: {streaming_value}")
             if summary.get("config_path"):
-                lines.append(
-                    f"- {_('ui.commands.status.config_path')}: `{summary['config_path']}`"
-                )
+                lines.append(f"- {_('ui.commands.status.config_path')}: `{summary['config_path']}`")
             if summary.get("status"):
                 lines.append(f"- {summary['status']}")
             if summary.get("error"):
-                lines.append(
-                    f"- {_('ui.commands.status.error')}: {summary['error']}"
-                )
+                lines.append(f"- {_('ui.commands.status.error')}: {summary['error']}")
         return "\n".join(lines)
 
     def _status_help(self) -> str:

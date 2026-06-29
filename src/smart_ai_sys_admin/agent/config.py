@@ -184,8 +184,7 @@ def _load_system_prompt(base_dir: Path, relative_path: str) -> tuple[str, Path]:
 
     searched = ", ".join(str(path) for path in checked) or relative_path
     raise AgentConfigError(
-        "No se encontró el system prompt en las rutas candidatas: "
-        f"{searched}."
+        "No se encontró el system prompt en las rutas candidatas: " f"{searched}."
     )
 
 
@@ -197,7 +196,8 @@ def _language_directive() -> str:
     except Exception:  # pragma: no cover - uso defensivo
         directive = (
             "Always respond in English. Match the active application locale "
-            f"`{locale_code}` and keep every user-facing message in English unless the operator explicitly requests another language."
+            f"`{locale_code}` and keep every user-facing message in English "
+            "unless the operator explicitly requests another language."
         )
     return directive.strip()
 
@@ -269,9 +269,7 @@ def _build_provider_configs(
         system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
         base_url = data.get("base_url")
         if not base_url:
-            raise AgentConfigError(
-                "La configuración de LM Studio requiere la clave 'base_url'."
-            )
+            raise AgentConfigError("La configuración de LM Studio requiere la clave 'base_url'.")
         providers["lmstudio"] = LMStudioProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
