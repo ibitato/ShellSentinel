@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated test suite (~104 cases) with `pytest`, `pytest-asyncio`, and coverage reporting.
 - GitHub Actions CI workflow (lint + tests on Python 3.12) and CodeQL analysis.
 - Reproducible dependency management with `pip-tools` (`make lock`, versioned lockfiles).
-- Dependency documentation in `docs/dependencies.md` (ES/EN/DE).
+- Dependency documentation in `docs/dependencies_{en,es,de}.md`.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, and issue/PR templates under `.github/`.
 - Web contributor handbooks (`contributor-handbook-en/es/de.html`) and synced user guides.
 - Agent summary (`agent_summary`) for the `/status` command.

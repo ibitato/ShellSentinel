@@ -23,7 +23,7 @@ Keep these **in sync across EN, ES, and DE** when behaviour or operator-facing f
 
 - `README_es.md`, `README_de.md`
 - `docs/user_guide_en.md`, `docs/user_guide_es.md`, `docs/user_guide_de.md`
-- `docs/dependencies_en.md`, `docs/dependencies.md`, `docs/dependencies_de.md`
+- `docs/dependencies_en.md`, `docs/dependencies_es.md`, `docs/dependencies_de.md`
 - `website/manuals/` locale variants and `website/assets/js/translations.js`
 - `conf/locales/en`, `conf/locales/es`, `conf/locales/de`
 

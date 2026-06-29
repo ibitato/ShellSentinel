@@ -100,7 +100,7 @@ make run
 ## Estructura del proyecto
 - `pyproject.toml`: metadatos y dependencias canónicas.
 - `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`).
-- `docs/dependencies.md`: gestión de dependencias e instalación reproducible.
+- `docs/dependencies_es.md`: gestión de dependencias e instalación reproducible.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
 - `tests/`: suite de pruebas automatizadas (unitarias e integración, ~104 casos).
 - `Makefile`: tareas para instalación, lock (`make lock`), sincronización (`make sync-deps`), formateo, lint y ejecución.

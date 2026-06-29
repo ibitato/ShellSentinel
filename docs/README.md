@@ -13,7 +13,7 @@ Product and operator documentation for Shell Sentinel. Official site: <https://w
 ## Dependencies (EN / ES / DE)
 
 - [English](dependencies_en.md)
-- [Spanish](dependencies.md)
+- [Spanish](dependencies_es.md)
 - [German](dependencies_de.md)
 
 ## Technical guides

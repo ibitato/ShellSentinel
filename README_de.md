@@ -136,7 +136,7 @@ def register(registry: PluginRegistry) -> None:
 ## Projektstruktur
 - `pyproject.toml`: Paketmetadaten und **kanonische** Abhängigkeitsdefinition (Runtime und `dev`).
 - `requirements.txt` / `requirements-dev.txt`: generierte Lockfiles (`make lock`); nicht von Hand bearbeiten.
-- `docs/dependencies_de.md` (sowie `docs/dependencies_en.md`, `docs/dependencies.md`): Abhängigkeitsverwaltung, Lockfiles und CI.
+- `docs/dependencies_de.md` (sowie `docs/dependencies_en.md`, `docs/dependencies_es.md`): Abhängigkeitsverwaltung, Lockfiles und CI.
 - `CHANGELOG.md`: Versionshistorie des Projekts.
 - `src/smart_ai_sys_admin/`: Hauptquellcode der Anwendung (TUI und Utilities).
 - `tests/`: automatisierte Testsuite (Unit- und Integrationstests).

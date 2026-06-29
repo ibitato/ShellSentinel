@@ -26,7 +26,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - **TUI framework:** [Textual 8.2.7](https://textual.textualize.io)
 - **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
 - **Local run:** `python -m smart_ai_sys_admin` or `make run`
-- **Dependencies:** `pyproject.toml` (source of truth), `requirements*.txt` lockfiles via `pip-tools` (`make lock`). Reproducible install with `make install` / `pip-sync`. See `docs/dependencies_en.md` (and `docs/dependencies.md`, `docs/dependencies_de.md`).
+- **Dependencies:** `pyproject.toml` (source of truth), `requirements*.txt` lockfiles via `pip-tools` (`make lock`). Reproducible install with `make install` / `pip-sync`. See `docs/dependencies_en.md`, `docs/dependencies_es.md`, and `docs/dependencies_de.md`.
 - **Code layout:** `src/`-based distribution
 
 ## Development tooling
