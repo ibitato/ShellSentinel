@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visión del proyecto · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Visión general de Shell Sentinel: objetivos, stack técnico, flujo de trabajo y responsabilidades."
+    />
+    <link rel="canonical" href="https://www.shellsentinel.net/manuals/project-overview-es.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/project-overview-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/project-overview-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/project-overview-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/project-overview-de.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="../assets/css/styles.css" as="style" />
+    <link rel="preload" href="../assets/css/manuals.css" as="style" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../docs.html">&larr; Volver a la documentación</a>
+          <span>/ Visión del proyecto (ES)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Visión del proyecto — Shell Sentinel</h1>
+
+        <h2>Misión</h2>
+        <p>
+          Ofrecer un copiloto de IA nativo en terminal que mantiene sesiones SSH/SFTP persistentes,
+          habla en lenguaje natural y acerca operaciones amigables a infraestructura crítica.
+        </p>
+
+        <h2>Stack técnico</h2>
+        <ul>
+          <li>Python 3.12, Textual 8.2.7 para la TUI, Strands Agents SDK ≥1.45 para razonamiento conversacional.</li>
+          <li>Instalación reproducible con <code>pyproject.toml</code> y lockfiles pip-tools (<code>make lock</code>, <code>make install</code>).</li>
+          <li>Herramientas personalizadas: <code>remote_ssh_command</code>, <code>remote_sftp_transfer</code>, <code>local_datetime</code>.</li>
+          <li>Herramientas MCP Firecrawl para investigación, scraping y extracción estructurada.</li>
+        </ul>
+
+        <h2>Responsabilidades clave</h2>
+        <ul>
+          <li>Centralizar la configuración en <code>conf/</code>; sin valores hardcodeados en código.</li>
+          <li>Actualizar traducciones, manuales y web estática cuando cambie el comportamiento.</li>
+          <li>Documentar proveedores personalizados y reglas de plugins; cada plugin con documentación concisa.</li>
+          <li>Respetar políticas de seguridad (sin secretos en claro, solo variables de entorno).</li>
+        </ul>
+
+        <h2>Flujo de trabajo</h2>
+        <ol>
+          <li>Crear entorno virtual con <code>python3.12 -m venv .venv</code> y activarlo.</li>
+          <li>Instalar dependencias con <code>make install</code>.</li>
+          <li>Antes de un PR: <code>make format</code>, <code>make lint</code>, <code>make test</code>.</li>
+          <li>Validar la TUI con <code>make run</code> y la web con <code>make website-serve</code>.</li>
+        </ol>
+
+        <p>
+          Para políticas completas consulta el manual de colaboración y la documentación de gobernanza.
+          La web estática forma parte del contrato de documentación del producto.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2025 Shell Sentinel. Actualiza esta visión cuando evolucione el stack o la misión.
+      </footer>
+    </div>
+  </body>
+</html>

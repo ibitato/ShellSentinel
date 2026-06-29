@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projektüberblick · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Überblick über Shell Sentinel: Ziele, technischer Stack, Workflow und Verantwortlichkeiten."
+    />
+    <link rel="canonical" href="https://www.shellsentinel.net/manuals/project-overview-de.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/project-overview-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/project-overview-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/project-overview-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/project-overview-de.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="../assets/css/styles.css" as="style" />
+    <link rel="preload" href="../assets/css/manuals.css" as="style" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../docs.html">&larr; Zurück zur Dokumentation</a>
+          <span>/ Projektüberblick (DE)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Projektüberblick — Shell Sentinel</h1>
+
+        <h2>Mission</h2>
+        <p>
+          Ein terminalnativer KI-Copilot, der persistente SSH/SFTP-Sitzungen hält, natürliche Sprache
+          versteht und menschenfreundliche Operationen auf kritischer Infrastruktur ermöglicht.
+        </p>
+
+        <h2>Technischer Stack</h2>
+        <ul>
+          <li>Python 3.12, Textual 8.2.7 für die TUI, Strands Agents SDK ≥1.45 für konversationelles Reasoning.</li>
+          <li>Reproduzierbare Installation mit <code>pyproject.toml</code> und pip-tools-Lockfiles (<code>make lock</code>, <code>make install</code>).</li>
+          <li>Eigene Tools: <code>remote_ssh_command</code>, <code>remote_sftp_transfer</code>, <code>local_datetime</code>.</li>
+          <li>Firecrawl-MCP-Tools für Recherche, Scraping und strukturierte Extraktion.</li>
+        </ul>
+
+        <h2>Kernverantwortlichkeiten</h2>
+        <ul>
+          <li>Konfiguration zentral in <code>conf/</code>; keine Hardcodes im Quellcode.</li>
+          <li>Übersetzungen, Handbücher und statische Website bei Verhaltensänderungen aktualisieren.</li>
+          <li>Eigene Provider und Plugin-Regeln dokumentieren; jedes Plugin mit kurzer Operator-Doku.</li>
+          <li>Sicherheitsrichtlinien einhalten (keine Klartext-Secrets, nur Umgebungsvariablen).</li>
+        </ul>
+
+        <h2>Workflow</h2>
+        <ol>
+          <li>Virtualenv mit <code>python3.12 -m venv .venv</code> erstellen und aktivieren.</li>
+          <li>Abhängigkeiten mit <code>make install</code> installieren.</li>
+          <li>Vor PRs: <code>make format</code>, <code>make lint</code>, <code>make test</code>.</li>
+          <li>TUI mit <code>make run</code> und Website mit <code>make website-serve</code> validieren.</li>
+        </ol>
+
+        <p>
+          Vollständige Richtlinien im Beitragsleitfaden und in der Governance-Dokumentation.
+          Die statische Website ist Teil des Produkt-Dokumentationsvertrags.
+        </p>
+      </main>
+      <footer class="manual-footer">
+        © 2025 Shell Sentinel. Diesen Überblick aktualisieren, wenn Vision oder Stack sich ändern.
+      </footer>
+    </div>
+  </body>
+</html>

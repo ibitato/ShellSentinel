@@ -50,7 +50,7 @@ El lockfile fija las versiones exactas de todo el árbol.
 
 ## CI
 
-GitHub Actions ejecuta lint y tests en **Python 3.12** usando `make install`.
+GitHub Actions ejecuta lint y tests en **Python 3.12** en cada pull request (`.github/workflows/ci.yml`, `make install PYTHON_BOOTSTRAP=python`).
 
 ## Alternativa sin lock (no recomendada)
 

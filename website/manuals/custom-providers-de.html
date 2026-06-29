@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Leitfaden benutzerdefinierte Provider · Shell Sentinel</title>
+    <meta
+      name="description"
+      content="Checkliste zur Integration benutzerdefinierter LLM-Provider mit dem Strands SDK in Shell Sentinel."
+    />
+    <link rel="canonical" href="https://www.shellsentinel.net/manuals/custom-providers-de.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/custom-providers-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/custom-providers-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/custom-providers-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/custom-providers-de.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="../assets/css/styles.css" as="style" />
+    <link rel="preload" href="../assets/css/manuals.css" as="style" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/manuals.css" />
+    <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="manual">
+    <div class="manual-wrapper">
+      <header class="manual-header">
+        <div class="breadcrumb">
+          <a href="../docs.html">&larr; Zurück zur Dokumentation</a>
+          <span>/ Benutzerdefinierte Provider (DE)</span>
+        </div>
+      </header>
+      <main class="manual-content">
+        <h1>Leitfaden — Benutzerdefinierte Modell-Provider</h1>
+
+        <h2>Umfang</h2>
+        <p>
+          Dieses Dokument fasst die Schritte und Kriterien für benutzerdefinierte Modell-Provider
+          mit dem Strands Agents SDK in Shell Sentinel zusammen. Es ergänzt die offizielle
+          Dokumentation als interne Checkliste.
+        </p>
+
+        <h2>Voraussetzungen</h2>
+        <ul>
+          <li>Kenntnis der Hierarchie <code>strands.models.Model</code> (z. B. <code>BedrockModel</code>).</li>
+          <li>Verständnis von <code>Messages</code>, <code>StreamEvent</code> und <code>ToolSpec</code>.</li>
+          <li>Python-Client für den proprietären LLM-Dienst.</li>
+          <li>Deklarative Konfiguration in <code>conf/</code> und Credentials über Umgebungsvariablen.</li>
+        </ul>
+
+        <h2>Implementierungsablauf</h2>
+        <ol>
+          <li><strong>Konfiguration definieren</strong>: typisierte <code>ModelConfig</code> mit <code>get_config</code>/<code>update_config</code>.</li>
+          <li><strong>Client initialisieren</strong>: Credentials sicher auflösen, Remote-Client instanziieren, Logging registrieren.</li>
+          <li><strong><code>stream(...)</code> implementieren</strong>: Eingaben konvertieren, <code>StreamEvent</code> anpassen, Fehler behandeln; bei sync SDK <code>asyncio.to_thread</code> nutzen.</li>
+          <li><strong>Tools unterstützen</strong>: <code>stream</code> in <code>structured_output(...)</code> mit Pydantic-<code>ToolSpec</code>.</li>
+          <li><strong>Provider registrieren</strong> in <code>smart_ai_sys_admin.agent</code> und <code>conf/agent.conf</code>.</li>
+        </ol>
+
+        <h2>Zusätzliche Hinweise</h2>
+        <ul>
+          <li><code>DEBUG</code>-Logging für Troubleshooting.</li>
+          <li>Neue Parameter in Benutzerhandbüchern dokumentieren, wenn Operatoren betroffen sind.</li>
+          <li>Keine Tokens oder Endpoints hardcoden.</li>
+          <li>Smoke-Tests vor TUI-Integration.</li>
+        </ul>
+
+        <h2>Praxisbeispiel: LM Studio</h2>
+        <ul>
+          <li>OpenAI-kompatibler lokaler Server (<code>/v1/*</code>); <code>base_url</code>, <code>api_key</code>, <code>model_id</code> konfigurieren.</li>
+          <li>Start mit <code>lms server start</code>; <code>client_args</code> für Timeouts.</li>
+          <li>Native REST-API (<code>/api/v0/*</code>) für Metriken und <code>max_context_length</code>.</li>
+        </ul>
+
+        <h2>Praxisbeispiel: Cerebras</h2>
+        <ul>
+          <li><code>cerebras_cloud_sdk</code> mit SSE-Streaming integrieren.</li>
+          <li><code>providers.cerebras</code> mit <code>model_id</code>, <code>params</code>, <code>client_args</code>, <code>api_key_env</code>.</li>
+          <li><code>ChatChunkResponse</code> in native Events mit <code>metadata</code> für Nutzung und Zeiten.</li>
+        </ul>
+
+        <h2>Externe Referenzen</h2>
+        <ul>
+          <li>
+            <a href="https://strandsagents.com/latest/documentation/docs/user-guide/concepts/model-providers/custom_model_provider/" rel="noopener" target="_blank">Strands Agents Dokumentation</a>
+          </li>
+          <li>
+            <a href="https://github.com/strands-agents/sdk-python/blob/main/src/strands/models/bedrock.py" rel="noopener" target="_blank">BedrockModel-Beispiel</a>
+          </li>
+        </ul>
+      </main>
+      <footer class="manual-footer">
+        © 2025 Shell Sentinel. Diesen Leitfaden aktualisieren, wenn ein neuer Provider integriert wird.
+      </footer>
+    </div>
+  </body>
+</html>

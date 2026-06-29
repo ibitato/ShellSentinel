@@ -119,23 +119,11 @@ def register(registry: PluginRegistry) -> None:
             }
         },
     )
-    registry.register_translations(
-        "en",
-        {
-            "plugins": {
-                "credentials": {
-                    "description": "Fetch credentials from the internal API",
-                    "usage": "Usage: `{command} <server>`",
-                    "help": "`{command}` queries the corporate API and prints credentials in the chat.",
-                }
-            }
-        },
-    )
 
     registry.register_command(
         PluginSlashCommand(
-            name="/credentials",
-            aliases=("/credenciales",),
+            name="/credenciales",
+            aliases=("/credentials",),
             handler=_buscar_credenciales,
             description_key="plugins.credentials.description",
             usage_key="plugins.credentials.usage",

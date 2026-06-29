@@ -4,8 +4,8 @@
 
 | Tier | Languages | Update when |
 |------|-----------|-------------|
-| **Project & collaboration** | English only | CI, CONTRIBUTING, AGENTS, CHANGELOG, SECURITY, `docs/README.md`, new config keys for contributors |
-| **Product & operations** | English, Spanish, German | User-visible behaviour, install steps, manuals, website copy, `conf/locales/*` |
+| **Project & collaboration** | English only | CI, CONTRIBUTING, AGENTS, CHANGELOG, SECURITY, `docs/README.md`, `docs/website_seo.md`, new config keys for contributors |
+| **Product & operations** | English, Spanish, German | User-visible behaviour, install steps, manuals (`user-guide-*`, `plugin-development-*`, `custom-providers-*`, `project-overview-*`, `contributor-handbook-*`), `translations.js`, `conf/locales/*` |
 
 Canonical English README: `README.md`. Translations: `README_es.md`, `README_de.md`.
 

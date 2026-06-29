@@ -171,7 +171,14 @@ window.TRANSLATIONS = {
           cta: "Read online",
         },
         {
-          title: "Product overview",
+          title: "Custom providers",
+          summary:
+            "Checklist for integrating custom LLM providers with the Strands SDK inside Shell Sentinel.",
+          href: "manuals/custom-providers-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Project overview",
           summary:
             "Architecture, technology stack and operational responsibilities behind Shell Sentinel.",
           href: "manuals/project-overview-en.html",
@@ -180,7 +187,7 @@ window.TRANSLATIONS = {
         {
           title: "Contributor handbook",
           summary:
-            "Internal policies on multilingual documentation, website publishing and product quality control.",
+            "Onboarding for contributors: documentation policy, website publishing and quality control.",
           href: "manuals/contributor-handbook-en.html",
           cta: "Read online",
         },
@@ -460,9 +467,16 @@ window.TRANSLATIONS = {
           cta: "Leer en línea",
         },
         {
+          title: "Visión del proyecto",
+          summary:
+            "Arquitectura, stack tecnológico y responsabilidades operativas de Shell Sentinel.",
+          href: "manuals/project-overview-es.html",
+          cta: "Leer en línea",
+        },
+        {
           title: "Manual de colaboración",
           summary:
-            "Políticas internas sobre documentación multilingüe, publicación web y control de calidad del producto.",
+            "Onboarding para colaboradores: política de documentación, publicación web y calidad del producto.",
           href: "manuals/contributor-handbook-es.html",
           cta: "Leer en línea",
         },
@@ -735,9 +749,23 @@ window.TRANSLATIONS = {
           cta: "Online lesen",
         },
         {
+          title: "Benutzerdefinierte Provider",
+          summary:
+            "Checkliste zur Integration eigener LLM-Provider mit dem Strands SDK in Shell Sentinel.",
+          href: "manuals/custom-providers-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Projektüberblick",
+          summary:
+            "Architektur, technischer Stack und operative Verantwortlichkeiten von Shell Sentinel.",
+          href: "manuals/project-overview-de.html",
+          cta: "Online lesen",
+        },
+        {
           title: "Beitragsleitfaden",
           summary:
-            "Interne Richtlinien zu mehrsprachiger Dokumentation, Web-Veröffentlichung und Produktqualität.",
+            "Onboarding für Mitwirkende: Dokumentationsrichtlinien, Web-Veröffentlichung und Produktqualität.",
           href: "manuals/contributor-handbook-de.html",
           cta: "Online lesen",
         },

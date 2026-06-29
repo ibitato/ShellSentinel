@@ -1,115 +1,12 @@
-# Shell Sentinel
+# Índice en español
 
-Índice en inglés (metadocumentación): [README.md](README.md).
+La documentación de producto en español está en:
 
-Shell Sentinel es un administrador de sistemas asistido por IA en terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y traduce instrucciones en lenguaje natural en acciones seguras y auditables.
+- [README_es.md](../README_es.md) — visión general e instalación
+- [user_guide_es.md](user_guide_es.md) — guía de usuario
+- [dependencies_es.md](dependencies_es.md) — dependencias
+- [custom_model_providers_es.md](custom_model_providers_es.md) — proveedores personalizados
 
-Sitio oficial: <https://www.shellsentinel.net>.
+Convenciones SEO de la web estática (inglés, mantenimiento del proyecto): [website_seo.md](website_seo.md).
 
-Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
-
-## Requisitos
-- Python 3.12
-- Entorno virtual local (recomendado `.venv`)
-
-## Pasos iniciales
-1. Crear el entorno virtual:
-   ```bash
-   python3.12 -m venv .venv
-   source .venv/bin/activate
-   ```
-2. Instalar dependencias de desarrollo y de ejecución:
-   ```bash
-   make install
-   ```
-3. Ejecutar las comprobaciones básicas:
-   ```bash
-   make format
-   make lint
-   make test
-   ```
-
-## Uso de la CLI
-- Lanza la interfaz TUI con:
-```bash
-make run
-```
-- La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH y el proveedor/modelo LLM activo.
-- Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
-- Comandos disponibles (puedes usar los alias en inglés, español o alemán):
-  - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente (puerto opcional, por defecto 22).
-  - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
-  - `/help` (`/ayuda`, `/hilfe`) muestra un resumen en Markdown de los comandos disponibles.
-  - `/status` (`/estado`) muestra el estado del agente y de la conexión.
-  - `/exit` (`/salir`, `/beenden`, `/quit`) abre un diálogo de confirmación para cerrar la aplicación.
-- El sistema mostrará las respuestas en formato Markdown y en un esquema de color retro naranja/verde.
-- Se recomienda un terminal `xterm` o `xterm-256color` para aprovechar la paleta.
-
-## Configuración
-- Todos los parámetros visuales y de interacción (colores, atajos, mensajes, límites de historial) se gestionan desde `conf/app_config.json`.
-- Puedes sobreescribir la ruta mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` (ruta directa al fichero) o `SMART_AI_SYS_ADMIN_CONFIG_DIR` (directorio que contiene `app_config.json`).
-- Evita modificar valores en código fuente; ajusta el fichero de configuración y reinicia la app para aplicar los cambios.
-- Nuevos parámetros destacados en `conf/app_config.json`:
-  - `ui.connection_panel`: estilos del panel inferior que muestra el estado de la conexión y el resumen del proveedor.
-- `logging`: nivel (por defecto `DEBUG`), directorio (`logs/`), nombre de fichero y política de rotación (3 días) del sistema de logging basado en `TimedRotatingFileHandler`.
-  - Los loggers de dependencias verbosas (`markdown_it`, `botocore.parsers`, `paramiko.transport`, etc.) se reducen automáticamente a `INFO` cuando se usa `DEBUG` para evitar ruido excesivo.
-    - `log_to_console`: cuando es `true`, duplica los registros en stdout (por defecto `false` para no interferir con la TUI).
-
-### Internacionalización
-- La interfaz soporta inglés (por defecto), alemán y español. El idioma se detecta a partir de la variable `SMART_AI_SYS_ADMIN_LOCALE` o, en su defecto, del locale del sistema.
-- Los textos traducibles viven en `conf/locales/<idioma>/strings.json`. Para añadir un nuevo idioma, crea el directorio correspondiente, copia uno de los ficheros existentes como plantilla y traduce las claves respetando los marcadores `{placeholder}`.
-- Puedes forzar el idioma ejecutando, por ejemplo:
-  ```bash
-  export SMART_AI_SYS_ADMIN_LOCALE=de
-  make run
-  ```
-- El fichero `conf/app_config.json` contiene referencias `{{clave.de.traduccion}}` que se resuelven en tiempo de carga usando el locale activo; no elimines las llaves dobles al personalizar valores.
-
-### Convenciones SEO de la web estática
-- Cada página pública debe declarar un `<link rel="canonical">` apuntando a su URL final (HTTPS en `www.shellsentinel.net`). Esto aplica tanto a las páginas principales (`website/*.html`) como a los manuales en `website/manuals/`.
-- Cuando exista contenido multilingüe (EN/ES/DE), añade los enlaces `rel="alternate"` con `hreflang` para cada idioma y un `hreflang="x-default"` apuntando a la versión inglesa. Mantén la coherencia entre las rutas de `sitemap.xml` y esos enlaces.
-- Antes de publicar nuevas páginas o traducciones, valida `website/sitemap.xml` y las páginas afectadas con una herramienta tipo URL Inspection/Search Console para detectar errores de indexación. Si usas utilidades locales, como `xmllint` o scripts internos, documenta los hallazgos en el PR.
-- Después de desplegar la web estática, inspecciona una muestra de URLs en Google Search Console y Bing Webmaster Tools (sección Coverage/URL Inspection) y deja constancia de cualquier warning en el changelog o PR.
-- Mantén a mano un snippet de verificación local (como el comando `python3 - <<'PY' ...` usado en este repo, apoyado en `xml.etree` y `BeautifulSoup`) para comprobar duplicados, rutas huérfanas y `hreflang` antes de enviar cambios a producción.
-
-### Configuración del agente IA (Strands Agents)
-- Copia `conf/agent.conf.example` a `conf/agent.conf` y ajusta el bloque `provider` para elegir entre Amazon Bedrock, OpenAI, LM Studio, Cerebras u Ollama/local.
-- Si trabajas con LM Studio, inicia el servidor con `lms server start` y personaliza `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`, `client_args`) para alinearlo con tu entorno.
-- Para Cerebras, exporta `CEREBRAS_API_KEY` (o usa `api_key_env`) y ajusta `providers.cerebras` (`model_id`, `params`, `client_args.timeout`, etc.); el proveedor consume el SDK oficial y expone streaming SSE.
-- Cada proveedor cuenta con su propio `system_prompt`, ubicado en `system_prompts/`. Puedes personalizar esos ficheros o apuntar a otros paths.
-- Copia el fichero de ejemplo y ajusta las credenciales vía variables de entorno (por ejemplo `export OPENAI_API_KEY="..."`). El archivo no almacena claves en texto plano.
-- Los modelos OpenAI y Bedrock admiten respuestas largas; por defecto `conf/agent.conf.example` fija `max_completion_tokens` (OpenAI) en **32 768** y `max_tokens` (Bedrock) en **8 192**. Ajusta estos límites según las cuotas de tu cuenta.
-- Las credenciales se obtienen de tu entorno (`AWS_*`, `OPENAI_API_KEY`, etc.). También puedes redefinir la ubicación del fichero con `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` o reutilizar `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
-- La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional).
-- `remote_ssh_command` emplea por defecto un timeout de **900 segundos (15 minutos)** definido en `conf/agent.conf`. Si el comando puede tardar más, indícalo en tu instrucción para que el agente añada `timeout_seconds` con el valor deseado.
-- Ajusta `remote_command.max_output_chars` para controlar cuántos caracteres se entregan al agente. Un valor alto facilita auditorías completas; uno más bajo protege sesiones compartidas de respuestas extensas.
-- Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
-  - Ejemplo: el transporte `firecrawl-stdio` lanza `npx -y firecrawl-mcp`. Configura `env_passthrough` para que el agente herede `FIRECRAWL_API_KEY` (u otras variables sensibles) y, antes de iniciar la TUI, expórtalas en tu entorno (`export FIRECRAWL_API_KEY="..."`).
-- Al iniciar la aplicación verás una pantalla de bienvenida retro en tonos naranja; se cierra sola tras 5 s o cuando presionas cualquier tecla.
-- Las sesiones `/conectar` mantienen vivo el canal SSH y SFTP en paralelo. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
-- Puedes administrar servidores GNU/Linux o Windows siempre que expongan SSH/SFTP. Ajusta los comandos remotos a la plataforma (por ejemplo, usa PowerShell/cmd para Windows) y valida rutas antes de transferir o modificar contenidos.
-
-### Sistema de plugins
-- Los plugins viven en `plugins/` y se cargan al iniciar la TUI. Puedes redefinir la ruta con `SMART_AI_SYS_ADMIN_PLUGINS_DIR` (acepta varios paths separados por `:`).
-- Cada módulo debe definir `register(registry)`. Desde ahí se llaman a `registry.register_command(PluginSlashCommand(...))` para añadir comandos y, opcionalmente, a `registry.register_translations(locale, payload)` para añadir cadenas localizadas.
-- El `handler` de un `PluginSlashCommand` recibe la lista de argumentos, devuelve Markdown y puede usar logging estándar (`logging.getLogger(__name__)`).
-- Las claves `description_key`, `usage_key` y `help_key` deben estar presentes en las traducciones que aportes. Si no las defines, se usará el nombre del comando como fallback.
-- Si el comando requiere autocompletado personalizado, proporciona un `suggestion(command, args)` que devuelva el texto sugerido. Si no, se usará `usage_key`.
-- Todos los comandos registrados aparecen en `/help`, heredan el historial del input y se registran en los logs igual que los comandos de serie.
-
-## Estructura del proyecto
-- `pyproject.toml`: metadatos y dependencias canónicas.
-- `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`).
-- `docs/dependencies_es.md`: gestión de dependencias e instalación reproducible.
-- `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
-- `tests/`: suite de pruebas automatizadas (unitarias e integración, ~104 casos).
-- `Makefile`: tareas para instalación, lock (`make lock`), sincronización (`make sync-deps`), formateo, lint y ejecución.
-- `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
-
-## Licencia
-- Shell Sentinel es software de **código disponible (source-available)**: el repositorio público permite auditar el código pero no autoriza modificarlo ni redistribuir versiones alteradas.
-- Uso gratuito únicamente para fines personales, educativos o de evaluación interna sin ánimo de lucro. Cualquier uso comercial requiere una licencia negociada con el mantenedor.
-- Se prohíbe la modificación, adaptación o creación de trabajos derivados sin autorización expresa y por escrito.
-- Consulta el archivo `LICENSE` (Shell Sentinel Source-Available License 1.0) para los términos completos, definiciones y limitaciones.
-
-Para licencias comerciales, permisos especiales o soporte extendido, abre un issue en GitHub o contacta al mantenedor.
+Índice general en inglés: [README.md](README.md).

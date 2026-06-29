@@ -6,8 +6,19 @@ Shell Sentinel splits documentation into two tiers. Follow this on every change:
 
 | Tier | Scope | Languages | Examples |
 |------|--------|-----------|----------|
-| **Project & collaboration** | Repo governance, contributor/agent guidance, changelog, security, GitHub templates | **English only** | `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md`, `.github/copilot-instructions.md`, `docs/README.md` |
-| **Product & operations** | End-user and operator flows, install/run guides, dependency how-tos, static website copy | **EN + ES + DE** (always in sync) | `README_es.md`, `README_de.md`, `docs/user_guide_*.md`, `docs/dependencies*.md`, `website/manuals/*`, `website/assets/js/translations.js`, `conf/locales/*` |
+| **Project & collaboration** | Repo governance, contributor/agent guidance, changelog, security, GitHub templates | **English only** | `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md`, `.github/copilot-instructions.md`, `docs/README.md`, `docs/website_seo.md` |
+| **Product & operations** | End-user and operator flows, install/run guides, dependency how-tos, static website copy | **EN + ES + DE** (always in sync) | `README_es.md`, `README_de.md`, `docs/user_guide_*.md`, `docs/dependencies_*.md`, `docs/custom_model_providers_*.md`, `website/manuals/*`, `website/assets/js/translations.js`, `conf/locales/*` |
+
+### Document map (edge cases)
+
+| Document | Tier | Languages | Notes |
+|----------|------|-----------|-------|
+| `CONTRIBUTING.md`, `AGENTS.md`, `CHANGELOG.md` | Project | EN | Canonical collaboration policy |
+| `contributor-handbook-*.html` | Product | EN/ES/DE | Public onboarding; English handbook + `CONTRIBUTING.md` remain canonical for policy |
+| `project-overview-*.html` | Product | EN/ES/DE | Mission, stack and operator workflow |
+| `custom-providers-*` / `custom_model_providers_*` | Product | EN/ES/DE | Technical operator guides |
+| `system_prompts/` | Runtime | ES | Provider prompts (not end-user docs) |
+| Code comments / docstrings | Source | ES | API identifiers stay in English |
 
 - **Code:** identifiers and public APIs in English; comments and docstrings in Spanish (existing convention).
 - **System prompts:** keep provider prompts in `system_prompts/` in Spanish unless a provider explicitly requires another language.
@@ -61,7 +72,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - Cerebras: official SDK; configure `providers.cerebras`, set `CEREBRAS_API_KEY` or `api_key_env`.
 - Enable `mcp` only when declared servers are available; startup fails otherwise.
 - New dependencies: edit `pyproject.toml`, run `make lock`, validate with `make test`. Do not hand-edit `requirements*.txt`.
-- Custom model providers: read `docs/custom_model_providers_es.md` before changing `smart_ai_sys_admin.agent` (add EN/DE when extending that guide).
+- Custom model providers: read `docs/custom_model_providers_en.md` (and `docs/custom_model_providers_es.md`, `docs/custom_model_providers_de.md`) before changing `smart_ai_sys_admin.agent`.
 - Static site `website/`: sync every product-facing change across EN/ES/DE.
 
 ## Recommended workflow

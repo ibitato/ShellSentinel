@@ -16,16 +16,20 @@ Product and operator documentation for Shell Sentinel. Official site: <https://w
 - [Spanish](dependencies_es.md)
 - [German](dependencies_de.md)
 
-## Technical guides
+## Custom model providers (EN / ES / DE)
 
-- [Custom model providers](custom_model_providers_es.md) — Spanish only today; add EN/DE when extended.
+- [English](custom_model_providers_en.md)
+- [Spanish](custom_model_providers_es.md)
+- [German](custom_model_providers_de.md)
 
-## Spanish operator index
+## Project maintenance (English only)
 
-Extended Spanish notes (including static-site SEO conventions) live in [README_es.md](README_es.md).
+- [Static website SEO conventions](website_seo.md)
 
-## Repository root
+## Product README translations
 
-- [README.md](../README.md) — product overview (English, canonical on GitHub)
-- [README_es.md](../README_es.md) · [README_de.md](../README_de.md) — translations
+- [Spanish](../README_es.md) · [German](../README_de.md) — translations of the canonical [README.md](../README.md)
+
+## Repository root (English collaboration docs)
+
 - [CHANGELOG.md](../CHANGELOG.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [AGENTS.md](../AGENTS.md)
