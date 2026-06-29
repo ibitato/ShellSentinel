@@ -137,6 +137,7 @@ def register(registry: PluginRegistry) -> None:
 - `pyproject.toml`: package metadata and **canonical** dependency definitions (runtime and `dev`).
 - `requirements.txt` / `requirements-dev.txt`: generated lockfiles (`make lock`); do not edit by hand.
 - `docs/dependencies_en.md`: dependency management and reproducible installs.
+- `CHANGELOG.md`: project version history.
 - `src/smart_ai_sys_admin/`: main application source code (TUI and utilities).
 - `tests/`: automated test suite (unit and integration).
 - `Makefile`: helper tasks for install, lock, format, lint, test, run and clean.

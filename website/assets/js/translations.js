@@ -257,8 +257,8 @@ window.TRANSLATIONS = {
       eyebrow: "Availability",
       title: "Download & onboarding",
       lead:
-        "Stable builds are published through GitHub Releases. Grab version 1.0.0 and keep the quick start guide close when setting up.",
-      primaryCta: "Download Shell Sentinel 1.0",
+        "Stable builds are published through GitHub Releases. Grab version 1.1.0 and keep the quick start guide close when setting up.",
+      primaryCta: "Download Shell Sentinel 1.1",
       secondaryCta: "Follow quick start guide",
       note:
         "Install from source by creating a virtual environment, running make install and launching make run.",
@@ -539,8 +539,8 @@ window.TRANSLATIONS = {
       eyebrow: "Disponibilidad",
       title: "Descarga y onboarding",
       lead:
-        "La versión estable 1.0.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
-      primaryCta: "Descargar Shell Sentinel 1.0",
+        "La versión estable 1.1.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
+      primaryCta: "Descargar Shell Sentinel 1.1",
       secondaryCta: "Seguir guía de inicio rápido",
       note:
         "Instala desde el código creando un entorno virtual, ejecutando make install y arrancando con make run.",
@@ -814,8 +814,8 @@ window.TRANSLATIONS = {
       eyebrow: "Verfügbarkeit",
       title: "Download & Onboarding",
       lead:
-        "Der stabile Release 1.0.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
-      primaryCta: "Shell Sentinel 1.0 herunterladen",
+        "Der stabile Release 1.1.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
+      primaryCta: "Shell Sentinel 1.1 herunterladen",
       secondaryCta: "Schnellstart öffnen",
       note:
         "Installation aus dem Quellcode: Virtuelle Umgebung erstellen, make install ausführen und mit make run starten.",

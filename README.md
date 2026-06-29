@@ -148,6 +148,7 @@ def register(registry: PluginRegistry) -> None:
 - `pyproject.toml`: metadatos del paquete y **definición canónica** de dependencias (runtime y `dev`).
 - `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`); no editar a mano.
 - `docs/dependencies.md` (y `docs/dependencies_en.md`, `docs/dependencies_de.md`): flujo de instalación, lock y CI.
+- `CHANGELOG.md`: historial de versiones del proyecto.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
 - `tests/`: suite de pruebas automatizadas (unitarias e integración).
 - `Makefile`: tareas para instalación, lock, formateo, lint y ejecución.

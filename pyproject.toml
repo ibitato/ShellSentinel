@@ -1,6 +1,6 @@
 [project]
 name = "smart-ai-sys-admin"
-version = "0.1.0"
+version = "1.1.0"
 description = "AI assisted terminal admin that maintains SSH/SFTP sessions"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
