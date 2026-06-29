@@ -129,7 +129,7 @@ window.TRANSLATIONS = {
         {
           title: "Set up the workspace",
           body:
-            "Create a virtual environment (`python -m venv .venv`), activate it and install dependencies with `make install`.",
+            "Create a virtual environment (`python3.12 -m venv .venv`), activate it and install dependencies with `make install`.",
         },
         {
           title: "Tailor the configuration",
@@ -148,7 +148,7 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Before committing changes, run `make format` and `make lint` to keep the repo clean.",
+        "Before committing changes, run `make format`, `make lint` and `make test` to keep the repo clean.",
     },
     docs: {
       eyebrow: "Manuals",
@@ -175,6 +175,13 @@ window.TRANSLATIONS = {
           summary:
             "Architecture, technology stack and operational responsibilities behind Shell Sentinel.",
           href: "manuals/project-overview-en.html",
+          cta: "Read online",
+        },
+        {
+          title: "Contributor handbook",
+          summary:
+            "Internal policies on multilingual documentation, website publishing and product quality control.",
+          href: "manuals/contributor-handbook-en.html",
           cta: "Read online",
         },
       ],
@@ -404,7 +411,7 @@ window.TRANSLATIONS = {
         {
           title: "Configura el workspace",
           body:
-            "Crea un entorno virtual (`python -m venv .venv`), actívalo e instala dependencias con `make install`.",
+            "Crea un entorno virtual (`python3.12 -m venv .venv`), actívalo e instala dependencias con `make install`.",
         },
         {
           title: "Ajusta la configuración",
@@ -423,7 +430,7 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Antes de subir cambios, ejecuta `make format` y `make lint` para mantener el repositorio limpio.",
+        "Antes de subir cambios, ejecuta `make format`, `make lint` y `make test` para mantener el repositorio limpio.",
     },
     docs: {
       eyebrow: "Manuales",
@@ -686,7 +693,7 @@ window.TRANSLATIONS = {
         {
           title: "Workspace einrichten",
           body:
-            "Erstelle ein Virtualenv (`python -m venv .venv`), aktiviere es und installiere Abhängigkeiten mit `make install`.",
+            "Erstelle ein Virtualenv (`python3.12 -m venv .venv`), aktiviere es und installiere Abhängigkeiten mit `make install`.",
         },
         {
           title: "Konfiguration verfeinern",
@@ -705,7 +712,7 @@ window.TRANSLATIONS = {
         },
       ],
       note:
-        "Vor Commits `make format` und `make lint` ausführen, damit das Repository sauber bleibt.",
+        "Vor Commits `make format`, `make lint` und `make test` ausführen, damit das Repository sauber bleibt.",
     },
     docs: {
       eyebrow: "Handbücher",
@@ -725,6 +732,13 @@ window.TRANSLATIONS = {
           summary:
             "Schritt-für-Schritt-Anleitung zur Erstellung, Lokalisierung und Verteilung eigener Plugins.",
           href: "manuals/plugin-development-de.html",
+          cta: "Online lesen",
+        },
+        {
+          title: "Beitragsleitfaden",
+          summary:
+            "Interne Richtlinien zu mehrsprachiger Dokumentation, Web-Veröffentlichung und Produktqualität.",
+          href: "manuals/contributor-handbook-de.html",
           cta: "Online lesen",
         },
       ],

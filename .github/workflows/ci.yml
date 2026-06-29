@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -18,7 +19,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: make install
+        run: make install PYTHON_BOOTSTRAP=python
 
       - name: Lint
         run: make lint

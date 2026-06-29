@@ -40,7 +40,8 @@
 
         <h2>Technical stack</h2>
         <ul>
-          <li>Python 3.10+, Textual for the TUI, Strands Agents SDK for conversational reasoning.</li>
+          <li>Python 3.12, Textual 8.2.7 for the TUI, Strands Agents SDK ≥1.45 for conversational reasoning.</li>
+          <li>Reproducible installs via <code>pyproject.toml</code> and pip-tools lockfiles (<code>make lock</code>, <code>make install</code>).</li>
           <li>Custom tools: <code>remote_ssh_command</code>, <code>remote_sftp_transfer</code>, <code>local_datetime</code>.</li>
           <li>Firecrawl MCP tools available for research, scraping and structured extraction.</li>
         </ul>
@@ -55,7 +56,7 @@
 
         <h2>Workflow</h2>
         <ol>
-          <li>Create/activate virtualenv.</li>
+          <li>Create virtualenv with <code>python3.12 -m venv .venv</code> and activate it.</li>
           <li>Install dependencies via <code>make install</code>.</li>
           <li>Before PRs, run <code>make format</code>, <code>make lint</code>, <code>make test</code>.</li>
           <li>Validate the TUI with <code>make run</code> and the website with <code>make website-serve</code>.</li>

@@ -9,7 +9,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - **Framework TUI:** [Textual 8.2.7](https://textual.textualize.io)
 - **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
 - **Ejecución local:** `python -m smart_ai_sys_admin` o `make run`
-- **Gestión de dependencias:** `pyproject.toml` (origen de verdad), lockfiles `requirements*.txt` generados con `pip-tools` (`make lock`). Instalación reproducible con `make install` / `pip-sync`. Ver `docs/dependencies.md`.
+- **Gestión de dependencias:** `pyproject.toml` (origen de verdad), lockfiles `requirements*.txt` generados con `pip-tools` (`make lock`). Instalación reproducible con `make install` / `pip-sync`. Ver `docs/dependencies.md` (y `docs/dependencies_en.md`, `docs/dependencies_de.md`).
 - **Estructura de código:** distribución basada en `src/`
 
 ## Herramientas de desarrollo
@@ -24,7 +24,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - Los atajos de teclado, estilos de color, mensajes, tamaños y límites del historial se leen exclusivamente desde los ficheros de `conf/`. Si se añaden nuevos parámetros (por ejemplo ajustes del footer de conexión), documentarlos en el README.
 - Los textos visibles se suministran mediante plantillas en `conf/locales/<idioma>/strings.json`. Usa la función `_('clave')` del módulo `smart_ai_sys_admin.localization` para cualquier cadena nueva y crea la traducción en todos los idiomas soportados (`en`, `de`, `es`). Las referencias `{{ruta.de.clave}}` dentro de `conf/app_config.json` se resuelven automáticamente y nunca deben reemplazarse por cadenas literales.
 - El idioma activo se detecta con la variable `SMART_AI_SYS_ADMIN_LOCALE` o, en su ausencia, con el locale del sistema (fallback a inglés). Si tu cambio requiere un idioma adicional, añade el directorio correspondiente en `conf/locales/`, documenta el soporte en los README y actualiza los manuales de usuario.
-- Mantén sincronizados los manuales de usuario (`docs/user_guide_*.md`) y los README multilingües con cualquier cambio funcional: cada nueva característica, comando o flujo debe reflejarse inmediatamente en español, inglés y alemán.
+- Mantén sincronizados los manuales de usuario (`docs/user_guide_*.md`), los README multilingües y la web estática (`website/manuals/`, `website/assets/js/translations.js`) con cualquier cambio funcional o de stack: cada nueva característica, comando o flujo debe reflejarse inmediatamente en español, inglés y alemán.
 - Es posible sobreescribir la ubicación del fichero principal mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` o `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - La configuración del agente Strands vive en `conf/agent.conf`. Parte de `conf/agent.conf.example` y respeta `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` (o `SMART_AI_SYS_ADMIN_CONFIG_DIR`). El fichero de ejemplo fija `max_completion_tokens` (OpenAI) en 32 768, `max_tokens` (Bedrock) en 8 192, `remote_command.timeout_seconds` en 900 y `remote_command.max_output_chars` en 120 000; ajusta esos límites según las cuotas y políticas de tu entorno.
 - El sistema de plugins carga cualquier módulo `.py` en `plugins/` (configurable con `SMART_AI_SYS_ADMIN_PLUGINS_DIR`). Cada plugin debe exponer `register(registry)`, registrar sus traducciones mediante `registry.register_translations(locale, payload)` y declarar comandos con `PluginSlashCommand`; los handlers devuelven Markdown y se integran en el logging estándar.

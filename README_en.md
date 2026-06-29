@@ -28,6 +28,7 @@ Official site: <https://www.shellsentinel.net>.
    ```bash
    make format
    make lint
+   make test
    ```
 
 ## CLI usage
@@ -135,7 +136,7 @@ def register(registry: PluginRegistry) -> None:
 ## Project structure
 - `pyproject.toml`: package metadata and **canonical** dependency definitions (runtime and `dev`).
 - `requirements.txt` / `requirements-dev.txt`: generated lockfiles (`make lock`); do not edit by hand.
-- `docs/dependencies.md`: install, lock, and CI workflow.
+- `docs/dependencies_en.md`: dependency management and reproducible installs.
 - `src/smart_ai_sys_admin/`: main application source code (TUI and utilities).
 - `tests/`: automated test suite (unit and integration).
 - `Makefile`: helper tasks for install, lock, format, lint, test, run and clean.

@@ -24,6 +24,7 @@ Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_a
    ```bash
    make format
    make lint
+   make test
    ```
 
 ## Uso de la CLI
@@ -99,8 +100,8 @@ make run
 - `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`).
 - `docs/dependencies.md`: gestión de dependencias e instalación reproducible.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
-- `tests/`: espacio reservado para pruebas automatizadas.
-- `Makefile`: tareas para automatizar instalación, formateo, lint y ejecución.
+- `tests/`: suite de pruebas automatizadas (unitarias e integración, ~104 casos).
+- `Makefile`: tareas para instalación, lock (`make lock`), sincronización (`make sync-deps`), formateo, lint y ejecución.
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
 
 ## Licencia

@@ -9,6 +9,10 @@
       content="Resumen práctico de las políticas de contribución, documentación multilingüe y mantenimiento de la web para Shell Sentinel."
     />
     <link rel="canonical" href="https://www.shellsentinel.net/manuals/contributor-handbook-es.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="en" href="https://www.shellsentinel.net/manuals/contributor-handbook-en.html" />
+    <link rel="alternate" hreflang="es" href="https://www.shellsentinel.net/manuals/contributor-handbook-es.html" />
+    <link rel="alternate" hreflang="de" href="https://www.shellsentinel.net/manuals/contributor-handbook-de.html" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,8 +45,10 @@
         <h2>Principios generales</h2>
         <ul>
           <li>Aplicación orientada a terminal con sesiones SSH/SFTP persistentes y un asistente IA conversacional.</li>
-          <li>Ecosistema en Python 3.10+, TUI con Textual, agentes Strands y herramientas MCP como Firecrawl.</li>
-          <li>El trabajo diario se apoya en `make install`, `make format`, `make lint`, `make test` y `make run`.</li>
+          <li>Ecosistema en Python 3.12, TUI con Textual 8.2.7, agentes Strands ≥1.45 y herramientas MCP como Firecrawl.</li>
+          <li>Dependencias gestionadas con <code>pyproject.toml</code> y lockfiles pip-tools (<code>make lock</code>, <code>make install</code>).</li>
+          <li>El trabajo diario se apoya en <code>make install</code>, <code>make format</code>, <code>make lint</code>, <code>make test</code> y <code>make run</code>.</li>
+          <li>CI en GitHub Actions (lint + tests en Python 3.12) en cada pull request vía <code>.github/workflows/ci.yml</code>.</li>
         </ul>
 
         <h2>Configuración y contenido</h2>
@@ -69,9 +75,9 @@
 
         <h2>Flujo recomendado</h2>
         <ol>
-          <li>Activar entorno virtual (<code>source .venv/bin/activate</code>).</li>
+          <li>Activar entorno virtual (<code>python3.12 -m venv .venv</code>, luego <code>source .venv/bin/activate</code>).</li>
           <li>Instalar dependencias (<code>make install</code>).</li>
-          <li>Tras cambios: <code>make format</code>, <code>make lint</code>, <code>make test</code> (si aplica).</li>
+          <li>Tras cambios: <code>make format</code>, <code>make lint</code>, <code>make test</code> (obligatorio antes de abrir PR).</li>
           <li>Validar la TUI con <code>make run</code> y la web con <code>make website-serve</code>.</li>
         </ol>
 

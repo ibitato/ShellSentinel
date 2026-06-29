@@ -1,3 +1,4 @@
+PYTHON_BOOTSTRAP ?= python3.12
 PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 BLACK := .venv/bin/black
@@ -24,7 +25,7 @@ help:
 	@echo "  make clean         - Elimina artefactos temporales"
 
 .venv/bin/activate:
-	python3.12 -m venv .venv
+	$(PYTHON_BOOTSTRAP) -m venv .venv
 
 .venv/bin/pip-compile: .venv/bin/activate
 	$(PIP) install --upgrade pip "pip-tools>=7.4.0"
