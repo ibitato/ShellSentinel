@@ -3,28 +3,49 @@ PIP := .venv/bin/pip
 BLACK := .venv/bin/black
 RUFF := .venv/bin/ruff
 PYTEST := .venv/bin/pytest
+PIP_COMPILE := .venv/bin/pip-compile
+PIP_SYNC := .venv/bin/pip-sync
 
 export PYTHONPATH := src
 
-.PHONY: help install format lint test run clean website-serve
+.PHONY: help install install-prod lock sync-deps format lint lint-fix test run clean website-serve
 
 help:
 	@echo "Comandos disponibles:"
-	@echo "  make install  - Instala dependencias de ejecución y desarrollo"
-	@echo "  make format   - Aplica formateo con Black"
-	@echo "  make lint     - Ejecuta linting con Ruff"
-	@echo "  make test     - Ejecuta la suite de pruebas"
-	@echo "  make run      - Ejecuta la CLI"
-	@echo "  make website-serve - Sirve la web estática en localhost:8000"
-	@echo "  make clean    - Elimina artefactos temporales"
-
-install: .venv/bin/activate
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements-dev.txt
-	$(PIP) install -e .
+	@echo "  make install       - Instala dependencias de desarrollo (lock) y el paquete editable"
+	@echo "  make install-prod  - Instala solo dependencias de ejecución (lock)"
+	@echo "  make lock          - Regenera requirements.txt y requirements-dev.txt desde pyproject.toml"
+	@echo "  make sync-deps     - Sincroniza el venv con requirements-dev.txt (pip-sync)"
+	@echo "  make format        - Aplica formateo con Black"
+	@echo "  make lint          - Ejecuta linting con Ruff"
+	@echo "  make test          - Ejecuta la suite de pruebas"
+	@echo "  make run           - Ejecuta la CLI"
+	@echo "  make website-serve - Sirve la web estática en localhost:8787"
+	@echo "  make clean         - Elimina artefactos temporales"
 
 .venv/bin/activate:
-	python3 -m venv .venv
+	python3.12 -m venv .venv
+
+.venv/bin/pip-compile: .venv/bin/activate
+	$(PIP) install --upgrade pip "pip-tools>=7.4.0"
+
+install: .venv/bin/pip-compile
+	$(PIP) install --upgrade pip
+	$(PIP_SYNC) requirements-dev.txt
+	$(PIP) install -e . --no-deps
+
+install-prod: .venv/bin/pip-compile
+	$(PIP) install --upgrade pip
+	$(PIP_SYNC) requirements.txt
+	$(PIP) install -e . --no-deps
+
+lock: .venv/bin/pip-compile
+	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras pyproject.toml -o requirements.txt
+	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras pyproject.toml --extra dev -o requirements-dev.txt
+
+sync-deps: .venv/bin/pip-compile
+	$(PIP_SYNC) requirements-dev.txt
+	$(PIP) install -e . --no-deps
 
 format: .venv/bin/activate
 	$(BLACK) src tests

@@ -7,13 +7,13 @@ Sitio oficial: <https://www.shellsentinel.net>.
 Nota de compatibilidad: por ahora el paquete y el comando siguen siendo `smart_ai_sys_admin` para no romper integraciones existentes.
 
 ## Requisitos
-- Python 3.10 o superior
+- Python 3.12
 - Entorno virtual local (recomendado `.venv`)
 
 ## Pasos iniciales
 1. Crear el entorno virtual:
    ```bash
-   python3 -m venv .venv
+   python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 2. Instalar dependencias de desarrollo y de ejecución:
@@ -95,8 +95,9 @@ make run
 - Todos los comandos registrados aparecen en `/help`, heredan el historial del input y se registran en los logs igual que los comandos de serie.
 
 ## Estructura del proyecto
-- `requirements.txt`: dependencias de ejecución (Textual, Strands Agents y herramientas comunitarias).
-- `requirements-dev.txt`: dependencias de desarrollo (`-r requirements.txt`, linting y tests).
+- `pyproject.toml`: metadatos y dependencias canónicas.
+- `requirements.txt` / `requirements-dev.txt`: lockfiles generados (`make lock`).
+- `docs/dependencies.md`: gestión de dependencias e instalación reproducible.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
 - `tests/`: espacio reservado para pruebas automatizadas.
 - `Makefile`: tareas para automatizar instalación, formateo, lint y ejecución.

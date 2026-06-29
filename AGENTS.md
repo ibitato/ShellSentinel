@@ -4,19 +4,19 @@
 Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y expone un agente de IA que traduce instrucciones en lenguaje natural a acciones administrativas sobre dicho servidor.
 
 ## Entorno técnico
-- **Lenguaje:** Python 3.10+
+- **Lenguaje:** Python 3.12
 - **Tipo de aplicación:** CLI interactiva
 - **Framework TUI:** [Textual 8.2.7](https://textual.textualize.io)
 - **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
 - **Ejecución local:** `python -m smart_ai_sys_admin` o `make run`
-- **Gestión de dependencias:** entorno virtual local `.venv`, listado en `requirements*.txt`
+- **Gestión de dependencias:** `pyproject.toml` (origen de verdad), lockfiles `requirements*.txt` generados con `pip-tools` (`make lock`). Instalación reproducible con `make install` / `pip-sync`. Ver `docs/dependencies.md`.
 - **Estructura de código:** distribución basada en `src/`
 
 ## Herramientas de desarrollo
 - **Formato:** `black`
 - **Linting:** `ruff`
-- **Pruebas:** `pytest` (reservado, aún sin casos)
-- **Tareas automatizadas:** `Makefile` (`install`, `format`, `lint`, `test`, `run`, `clean`)
+- **Pruebas:** `pytest` (suite en `tests/`, CI en Python 3.12)
+- **Tareas automatizadas:** `Makefile` (`install`, `install-prod`, `lock`, `sync-deps`, `format`, `lint`, `test`, `run`, `clean`)
 - **Herramientas MCP disponibles:** El entorno expone las herramientas de [Firecrawl](https://www.firecrawl.dev/) para buscar en la web, hacer *scraping* y extraer información estructurada. Úsalas para investigar errores de librerías de terceros o fundamentar decisiones con documentación externa.
 
 ## Configuración y constantes
@@ -41,7 +41,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 - El modelo de ejemplo `openai/gpt-oss-20b` reporta `max_context_length = 131072` (consulta `GET /api/v0/models/<model>`), por lo que se fijó `max_completion_tokens` en ese valor para aprovechar todo el contexto disponible.
 - Cerebras utiliza su SDK oficial. Configura `providers.cerebras` con `model_id`, `params` y `client_args` (sin credenciales en claro) y define `CEREBRAS_API_KEY` o `api_key_env`. El proveedor crea un cliente singleton reutilizable y convierte los eventos SSE en `StreamEvent` nativo.
 - El bloque `mcp` del agente solo debe habilitarse cuando los servidores declarados estén disponibles; la inicialización fallará en caso contrario.
-- Dependencias nuevas deben agregarse al `requirements.txt` (ejecución) y, si aplica, cascada en `requirements-dev.txt`.
+- Dependencias nuevas deben declararse en `pyproject.toml` (`[project.dependencies]` o `[project.optional-dependencies.dev]`), regenerar locks con `make lock` y validar con `make test`. No editar `requirements*.txt` manualmente.
 - Para desarrollar proveedores de modelo personalizados revisa `docs/custom_model_providers_es.md` antes de tocar el paquete `smart_ai_sys_admin.agent` o la configuración del agente.
 - Mantén la web estática en `website/` sincronizada con las novedades del producto: cada flujo, manual o cambio visual debe reflejarse en todas las traducciones y secciones de ayuda.
 
@@ -49,10 +49,11 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 1. Activar entorno virtual: `source .venv/bin/activate`
 2. Instalar dependencias: `make install`
 3. Antes de abrir PR:
-   - `make format`
-   - `make lint`
-   - `make test` (cuando existan pruebas)
-4. Ejecutar la TUI manualmente (`make run`) para validar cambios interactivos.
+ - `make format`
+ - `make lint`
+ - `make test`
+4. Tras cambiar dependencias en `pyproject.toml`, ejecuta `make lock` y commitea los `requirements*.txt` actualizados.
+5. Ejecutar la TUI manualmente (`make run`) para validar cambios interactivos.
 
 ## Convenciones
 - Colocar código fuente en `src/smart_ai_sys_admin/` y pruebas en `tests/`.

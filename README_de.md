@@ -11,13 +11,13 @@ Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Di
 Offizielle Website: <https://www.shellsentinel.net>.
 
 ## Voraussetzungen
-- Python 3.10 oder neuer
+- Python 3.12
 - Lokale virtuelle Umgebung (empfohlen `.venv`)
 
 ## Erste Schritte
 1. Virtuelle Umgebung erstellen:
    ```bash
-   python3 -m venv .venv
+   python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 2. Laufzeit- und Entwicklungsabhängigkeiten installieren:
@@ -133,11 +133,12 @@ def register(registry: PluginRegistry) -> None:
 - Ausführliche Schritt-für-Schritt-Anleitungen findest du in `docs/user_guide_de.md`, `docs/user_guide_en.md` und `docs/user_guide_es.md`. Halte alle Versionen synchron, wenn Funktionen geändert werden.
 
 ## Projektstruktur
-- `requirements.txt`: Laufzeitabhängigkeiten (Textual, Strands Agents, Community-Tools).
-- `requirements-dev.txt`: Entwicklungsabhängigkeiten (`-r requirements.txt`, Linting, Tests).
+- `pyproject.toml`: Paketmetadaten und **kanonische** Abhängigkeitsdefinition (Runtime und `dev`).
+- `requirements.txt` / `requirements-dev.txt`: generierte Lockfiles (`make lock`); nicht von Hand bearbeiten.
+- `docs/dependencies.md`: Installation, Lock und CI-Workflow.
 - `src/smart_ai_sys_admin/`: Hauptquellcode der Anwendung (TUI und Utilities).
-- `tests/`: Platzhalter für automatische Tests.
-- `Makefile`: Aufgaben zum Installieren, Formatieren, Linten, Testen, Ausführen und Bereinigen.
+- `tests/`: automatisierte Testsuite (Unit- und Integrationstests).
+- `Makefile`: Aufgaben zum Installieren, Locken, Formatieren, Linten, Testen, Ausführen und Bereinigen.
 - `AGENTS.md`: Leitfaden für menschliche Mitwirkende und KI-Agenten.
 
 ## Lizenz

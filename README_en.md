@@ -11,13 +11,13 @@ Public repository: <https://github.com/ibitato/ShellSentinel>
 Official site: <https://www.shellsentinel.net>.
 
 ## Requirements
-- Python 3.10 or newer
+- Python 3.12
 - Local virtual environment (recommended `.venv`)
 
 ## Getting started
 1. Create the virtual environment:
    ```bash
-   python3 -m venv .venv
+   python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 2. Install runtime and development dependencies:
@@ -133,11 +133,12 @@ def register(registry: PluginRegistry) -> None:
 - Practical guides are available in `docs/user_guide_en.md`, `docs/user_guide_es.md` and `docs/user_guide_de.md`. Keep them aligned with the latest features.
 
 ## Project structure
-- `requirements.txt`: runtime dependencies (Textual, Strands Agents, community tools).
-- `requirements-dev.txt`: development dependencies (`-r requirements.txt`, linting, tests).
+- `pyproject.toml`: package metadata and **canonical** dependency definitions (runtime and `dev`).
+- `requirements.txt` / `requirements-dev.txt`: generated lockfiles (`make lock`); do not edit by hand.
+- `docs/dependencies.md`: install, lock, and CI workflow.
 - `src/smart_ai_sys_admin/`: main application source code (TUI and utilities).
-- `tests/`: placeholder for automated tests.
-- `Makefile`: helper tasks for install, format, lint, test, run and clean.
+- `tests/`: automated test suite (unit and integration).
+- `Makefile`: helper tasks for install, lock, format, lint, test, run and clean.
 - `AGENTS.md`: contribution guide for human collaborators and AI agents.
 
 ## Licence

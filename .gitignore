@@ -1,5 +1,7 @@
 # Entorno virtual
 .venv/
+.venv-lock/
+.venv310/
 
 # Archivos de Python
 __pycache__/
