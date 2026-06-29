@@ -5,6 +5,21 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-29
+
+### Added
+
+- Custom model provider guides in English and German (`docs/custom_model_providers_{en,de}.md`, `custom-providers-{en,de}.html`).
+- Project overview manuals in Spanish and German (`project-overview-{es,de}.html`).
+- English SEO conventions for the static site (`docs/website_seo.md`).
+
+### Changed
+
+- Language policy codified: English canonical for project/collaboration docs; EN/ES/DE for product and operator documentation.
+- `README.md` is now the canonical English readme; `dependencies.md` renamed to `dependencies_es.md`.
+- Documentation index cards unified to five manuals per locale (EN/ES/DE) on the static site.
+- `CHANGELOG.md` and collaboration meta docs written in English.
+
 ## [1.1.0] - 2026-06-29
 
 ### Added
@@ -36,5 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release of Shell Sentinel: conversational TUI with persistent SSH/SFTP sessions, multilingual support (EN/ES/DE), and configurable LLM providers.
 - Static site under `website/` and initial user documentation.
 
+[1.1.1]: https://github.com/ibitato/ShellSentinel/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/ibitato/ShellSentinel/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/ibitato/ShellSentinel/releases/tag/1.0.0
