@@ -8,6 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+
 from smart_ai_sys_admin.agent.runtime import AgentRuntime
 from smart_ai_sys_admin.config import OutputPanelConfig
 from smart_ai_sys_admin.connection import ConnectionDetails, SSHConnectionManager

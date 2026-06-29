@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
+
 from smart_ai_sys_admin.config import load_config
 from smart_ai_sys_admin.plugins.types import PluginSlashCommand
 from smart_ai_sys_admin.ui.app import SmartAISysAdminApp

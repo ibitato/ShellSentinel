@@ -14,15 +14,18 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "black==24.4.2",
-  "ruff==0.5.4",
-  "pytest==8.3.2"
+  "black==26.5.1",
+  "ruff==0.15.20",
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+  "pytest-cov==7.1.0",
 ]
 
 [tool.black]
 line-length = 100
 target-version = ["py310"]
 include = "src|tests"
+extend-exclude = "\\.(md|json)$"
 
 [tool.ruff]
 line-length = 100
@@ -40,6 +43,7 @@ skip-magic-trailing-comma = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
 addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing"
 markers = [

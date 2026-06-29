@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from smart_ai_sys_admin.connection import (
     ConnectionAlreadyOpen,
     ConnectionDetails,

@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from smart_ai_sys_admin.config import load_config
 
 

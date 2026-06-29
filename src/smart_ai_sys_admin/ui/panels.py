@@ -280,6 +280,7 @@ class CommandInput(Static):
         self._navigating_history = False
         self._update_placeholder_hint()
 
+
 class ConnectionInfo(Static):
     """Muestra el estado de la conexión activa y el progreso del agente."""
 

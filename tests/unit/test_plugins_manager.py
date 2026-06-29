@@ -6,6 +6,7 @@ import os
 import textwrap
 
 import pytest
+
 from smart_ai_sys_admin.plugins.manager import PluginManager
 from smart_ai_sys_admin.plugins.registry import PluginRegistry
 from smart_ai_sys_admin.plugins.types import PluginSlashCommand
@@ -32,8 +33,7 @@ def test_plugin_manager_loads_register_function(tmp_path, monkeypatch: pytest.Mo
     plugin_dir.mkdir()
     plugin_file = plugin_dir / "sample.py"
     plugin_file.write_text(
-        textwrap.dedent(
-            """
+        textwrap.dedent("""
             from smart_ai_sys_admin.plugins.types import PluginSlashCommand
 
             def register(registry):
@@ -43,8 +43,7 @@ def test_plugin_manager_loads_register_function(tmp_path, monkeypatch: pytest.Mo
                         handler=lambda args: "sample-ok",
                     )
                 )
-            """
-        ),
+            """),
         encoding="utf-8",
     )
     monkeypatch.setenv("SMART_AI_SYS_ADMIN_PLUGINS_DIR", str(plugin_dir))

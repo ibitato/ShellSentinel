@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from smart_ai_sys_admin.agent.config import AgentConfigError, load_agent_config
 from smart_ai_sys_admin.agent.factory import AgentFactory
 

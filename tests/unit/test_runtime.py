@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from smart_ai_sys_admin.agent.config import MCPConfig, MCPTransportConfig
 from smart_ai_sys_admin.agent.runtime import AgentRuntime, MCPManager
 
@@ -105,9 +106,7 @@ def test_invoke_returns_rendered_result(
 
 def test_render_agent_result_strips_thinking(agent_runtime: AgentRuntime):
     agent_runtime._hide_thinking = True
-    rendered = agent_runtime._render_agent_result(
-        "text <think>secret</think> visible"
-    )
+    rendered = agent_runtime._render_agent_result("text <think>secret</think> visible")
     assert "secret" not in rendered
     assert "visible" in rendered
 

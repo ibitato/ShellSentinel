@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from smart_ai_sys_admin.localization import (
     _,
     detect_locale,
