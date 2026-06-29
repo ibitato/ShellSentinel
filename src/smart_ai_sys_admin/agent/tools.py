@@ -95,7 +95,11 @@ async def remote_ssh_command(
             return 0
         calculated = max_chars // 50
         if calculated <= 0:
-            calculated = max_chars if max_chars < DEFAULT_MAX_PREVIEW_CHARS else DEFAULT_MAX_PREVIEW_CHARS
+            calculated = (
+                max_chars
+                if max_chars < DEFAULT_MAX_PREVIEW_CHARS
+                else DEFAULT_MAX_PREVIEW_CHARS
+            )
         return min(DEFAULT_MAX_PREVIEW_CHARS, max(calculated, 200))
 
     if output:

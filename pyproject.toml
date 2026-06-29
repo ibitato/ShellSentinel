@@ -39,8 +39,18 @@ line-ending = "auto"
 skip-magic-trailing-comma = false
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "-q"
+addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing"
+markers = [
+  "integration: pruebas lentas o que requieren servicios externos",
+]
+
+[tool.coverage.run]
+omit = [
+  "plugins/*",
+  "*/credenciales.py",
+]
 
 [build-system]
 requires = ["setuptools>=61.0"]

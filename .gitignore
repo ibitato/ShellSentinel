@@ -28,5 +28,24 @@ logs/
 # Configuración sensible del agente
 conf/agent.conf
 
-# Plugins corporativos (no versionar)
+# Plugins locales (no versionar)
 plugins/
+
+# Artefactos de clientes / consultoría
+/masternou/
+/gmc/
+/valmur/
+/bitacora_*.pdf
+/informe_*.pdf
+/informe_*.md
+/informe_*.html
+
+# Binarios e instaladores ajenos al proyecto
+*.exe
+*.qacb
+*.qpaq
+
+# Claves de despliegue (nunca versionar)
+deploy_key_*
+*.pem
+*.key

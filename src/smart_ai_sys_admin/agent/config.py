@@ -197,7 +197,8 @@ def _language_directive() -> str:
     except Exception:  # pragma: no cover - uso defensivo
         directive = (
             "Always respond in English. Match the active application locale "
-            f"`{locale_code}` and keep every user-facing message in English unless the operator explicitly requests another language."
+            f"`{locale_code}` and keep every user-facing message in English "
+            "unless the operator explicitly requests another language."
         )
     return directive.strip()
 

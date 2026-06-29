@@ -138,6 +138,32 @@ class AgentRuntime:
     # Información de soporte para la interfaz
     # ------------------------------------------------------------------
 
+    def agent_summary(self) -> dict[str, Any]:
+        """Devuelve un resumen del estado del agente para comandos como `/status`."""
+
+        summary: dict[str, Any] = {
+            "ready": self.ready,
+            "streaming": False,
+            "provider": None,
+            "model": None,
+            "config_path": None,
+            "status": self._status_message,
+            "error": self._error_message,
+        }
+        if not self._config:
+            return summary
+
+        summary["streaming"] = self._config.options.streaming
+        summary["config_path"] = str(self._config.config_path)
+        try:
+            provider_cfg = self._config.provider_config()
+        except AgentConfigError:
+            return summary
+
+        summary["provider"] = self._format_provider_label(provider_cfg)
+        summary["model"] = getattr(provider_cfg, "model_id", None)
+        return summary
+
     def provider_footer_summary(self) -> str:
         """Devuelve la etiqueta localizada para mostrar proveedor y modelo activos."""
 
