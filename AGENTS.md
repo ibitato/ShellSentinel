@@ -1,66 +1,84 @@
 # AGENTS — Shell Sentinel
 
-## Objetivo del proyecto
-Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un servidor remoto y expone un agente de IA que traduce instrucciones en lenguaje natural a acciones administrativas sobre dicho servidor.
+## Documentation languages
 
-## Entorno técnico
-- **Lenguaje:** Python 3.12
-- **Tipo de aplicación:** CLI interactiva
-- **Framework TUI:** [Textual 8.2.7](https://textual.textualize.io)
+Shell Sentinel splits documentation into two tiers. Follow this on every change:
+
+| Tier | Scope | Languages | Examples |
+|------|--------|-----------|----------|
+| **Project & collaboration** | Repo governance, contributor/agent guidance, changelog, security, GitHub templates | **English only** | `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `AGENTS.md`, `.github/copilot-instructions.md`, `docs/README.md` |
+| **Product & operations** | End-user and operator flows, install/run guides, dependency how-tos, static website copy | **EN + ES + DE** (always in sync) | `README_es.md`, `README_de.md`, `docs/user_guide_*.md`, `docs/dependencies*.md`, `website/manuals/*`, `website/assets/js/translations.js`, `conf/locales/*` |
+
+- **Code:** identifiers and public APIs in English; comments and docstrings in Spanish (existing convention).
+- **System prompts:** keep provider prompts in `system_prompts/` in Spanish unless a provider explicitly requires another language.
+- **Plugins:** document inside the plugin directory; plugin UI strings must register translations for `en`, `es`, and `de`.
+
+When a feature touches operators or end users, update **all three** product locales before merging. When it touches process, tooling, or repo policy, update **English** project docs only.
+
+## Project goal
+
+Terminal application that keeps a persistent SSH/SFTP session against a remote server and exposes an AI agent that turns natural-language instructions into administrative actions on that server.
+
+## Technical environment
+
+- **Language:** Python 3.12
+- **Application type:** interactive CLI
+- **TUI framework:** [Textual 8.2.7](https://textual.textualize.io)
 - **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
-- **Ejecución local:** `python -m smart_ai_sys_admin` o `make run`
-- **Gestión de dependencias:** `pyproject.toml` (origen de verdad), lockfiles `requirements*.txt` generados con `pip-tools` (`make lock`). Instalación reproducible con `make install` / `pip-sync`. Ver `docs/dependencies.md` (y `docs/dependencies_en.md`, `docs/dependencies_de.md`).
-- **Estructura de código:** distribución basada en `src/`
+- **Local run:** `python -m smart_ai_sys_admin` or `make run`
+- **Dependencies:** `pyproject.toml` (source of truth), `requirements*.txt` lockfiles via `pip-tools` (`make lock`). Reproducible install with `make install` / `pip-sync`. See `docs/dependencies_en.md` (and `docs/dependencies.md`, `docs/dependencies_de.md`).
+- **Code layout:** `src/`-based distribution
 
-## Herramientas de desarrollo
-- **Formato:** `black`
+## Development tooling
+
+- **Formatting:** `black`
 - **Linting:** `ruff`
-- **Pruebas:** `pytest` (suite en `tests/`, CI en Python 3.12)
-- **Tareas automatizadas:** `Makefile` (`install`, `install-prod`, `lock`, `sync-deps`, `format`, `lint`, `test`, `run`, `clean`)
-- **Herramientas MCP disponibles:** El entorno expone las herramientas de [Firecrawl](https://www.firecrawl.dev/) para buscar en la web, hacer *scraping* y extraer información estructurada. Úsalas para investigar errores de librerías de terceros o fundamentar decisiones con documentación externa.
+- **Tests:** `pytest` (suite in `tests/`, CI on Python 3.12)
+- **Makefile targets:** `install`, `install-prod`, `lock`, `sync-deps`, `format`, `lint`, `test`, `run`, `clean`
+- **MCP tools:** [Firecrawl](https://www.firecrawl.dev/) for web search, scraping and structured extraction when debugging third-party libraries or validating external docs
 
-## Configuración y constantes
-- Toda variable o valor ajustable debe residir en el directorio `conf/` (por defecto `conf/app_config.json`). Está prohibido hardcodear parámetros en el código cuando puedan residir en la configuración.
-- Los atajos de teclado, estilos de color, mensajes, tamaños y límites del historial se leen exclusivamente desde los ficheros de `conf/`. Si se añaden nuevos parámetros (por ejemplo ajustes del footer de conexión), documentarlos en el README.
-- Los textos visibles se suministran mediante plantillas en `conf/locales/<idioma>/strings.json`. Usa la función `_('clave')` del módulo `smart_ai_sys_admin.localization` para cualquier cadena nueva y crea la traducción en todos los idiomas soportados (`en`, `de`, `es`). Las referencias `{{ruta.de.clave}}` dentro de `conf/app_config.json` se resuelven automáticamente y nunca deben reemplazarse por cadenas literales.
-- El idioma activo se detecta con la variable `SMART_AI_SYS_ADMIN_LOCALE` o, en su ausencia, con el locale del sistema (fallback a inglés). Si tu cambio requiere un idioma adicional, añade el directorio correspondiente en `conf/locales/`, documenta el soporte en los README y actualiza los manuales de usuario.
-- Mantén sincronizados los manuales de usuario (`docs/user_guide_*.md`), los README multilingües y la web estática (`website/manuals/`, `website/assets/js/translations.js`) con cualquier cambio funcional o de stack: cada nueva característica, comando o flujo debe reflejarse inmediatamente en español, inglés y alemán.
-- Es posible sobreescribir la ubicación del fichero principal mediante las variables de entorno `SMART_AI_SYS_ADMIN_CONFIG_FILE` o `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
-- La configuración del agente Strands vive en `conf/agent.conf`. Parte de `conf/agent.conf.example` y respeta `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` (o `SMART_AI_SYS_ADMIN_CONFIG_DIR`). El fichero de ejemplo fija `max_completion_tokens` (OpenAI) en 32 768, `max_tokens` (Bedrock) en 8 192, `remote_command.timeout_seconds` en 900 y `remote_command.max_output_chars` en 120 000; ajusta esos límites según las cuotas y políticas de tu entorno.
-- El sistema de plugins carga cualquier módulo `.py` en `plugins/` (configurable con `SMART_AI_SYS_ADMIN_PLUGINS_DIR`). Cada plugin debe exponer `register(registry)`, registrar sus traducciones mediante `registry.register_translations(locale, payload)` y declarar comandos con `PluginSlashCommand`; los handlers devuelven Markdown y se integran en el logging estándar.
-- Cuando desarrolles un plugin nuevo, documenta siempre su instalación y uso **dentro del propio directorio del plugin** (por ejemplo un `README` o `docs/` local) y evita añadirlo a la documentación general del proyecto.
-- La licencia es de código disponible y restringe la modificación o redistribución de versiones alteradas sin permiso explícito; evita proponer acciones que vayan en contra de esa política.
-- El agente debe considerar el tiempo de ejecución esperado: si el operario anticipa que un comando superará los 15 minutos por defecto, instruye al modelo para que incluya `timeout_seconds` en la tool `remote_ssh_command`. Ajusta también `remote_command.max_output_chars` cuando necesites recortes más agresivos o dumps completos (por ejemplo al revisar logs extensos).
-- La transferencia de archivos usa la tool `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)`. Empléala para subir (`upload`/`put`) o bajar (`download`/`get`) archivos reutilizando la sesión SFTP vigente.
-- Usa `local_datetime()` al inicio de cada turno para enriquecer las respuestas con la fecha y hora locales (no es necesario mostrarlas salvo que el operario lo requiera).
-- Tanto los comandos como las transferencias deben adaptarse al sistema operativo remoto (GNU/Linux, Unix o Windows con PowerShell/cmd). Verifica la plataforma antes de proponer acciones específicas.
-- El sistema de logging se inicializa desde `conf/app_config.json` con nivel por defecto `DEBUG`. Respeta este canal y usa los loggers `smart_ai_sys_admin.*` para observabilidad consistente.
-- Nunca persistas claves API en el JSON. Usa las variables `OPENAI_API_KEY`, `AWS_*`, etc. y añade instrucciones de export en la documentación cuando se introduzca un nuevo proveedor.
-- Los *system prompts* de cada proveedor residen en `system_prompts/`. Mantenerlos en español y actualizar referencias si se renombran.
-- LM Studio funciona mediante el modo compatible con OpenAI. Antes de usarlo, ejecuta `lms server start` en la máquina local y ajusta `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`) en `conf/agent.conf`.
-- El modelo de ejemplo `openai/gpt-oss-20b` reporta `max_context_length = 131072` (consulta `GET /api/v0/models/<model>`), por lo que se fijó `max_completion_tokens` en ese valor para aprovechar todo el contexto disponible.
-- Cerebras utiliza su SDK oficial. Configura `providers.cerebras` con `model_id`, `params` y `client_args` (sin credenciales en claro) y define `CEREBRAS_API_KEY` o `api_key_env`. El proveedor crea un cliente singleton reutilizable y convierte los eventos SSE en `StreamEvent` nativo.
-- El bloque `mcp` del agente solo debe habilitarse cuando los servidores declarados estén disponibles; la inicialización fallará en caso contrario.
-- Dependencias nuevas deben declararse en `pyproject.toml` (`[project.dependencies]` o `[project.optional-dependencies.dev]`), regenerar locks con `make lock` y validar con `make test`. No editar `requirements*.txt` manualmente.
-- Para desarrollar proveedores de modelo personalizados revisa `docs/custom_model_providers_es.md` antes de tocar el paquete `smart_ai_sys_admin.agent` o la configuración del agente.
-- Mantén la web estática en `website/` sincronizada con las novedades del producto: cada flujo, manual o cambio visual debe reflejarse en todas las traducciones y secciones de ayuda.
+## Configuration and content
 
-## Flujo de trabajo recomendado
-1. Activar entorno virtual: `source .venv/bin/activate`
-2. Instalar dependencias: `make install`
-3. Antes de abrir PR:
- - `make format`
- - `make lint`
- - `make test`
-4. Tras cambiar dependencias en `pyproject.toml`, ejecuta `make lock` y commitea los `requirements*.txt` actualizados.
-5. Ejecutar la TUI manualmente (`make run`) para validar cambios interactivos.
+- All adjustable values live under `conf/` (default `conf/app_config.json`). Do not hardcode parameters when they belong in configuration.
+- Shortcuts, colours, messages, sizes and history limits are read only from `conf/`. Document new options in the **English** `README.md` and sync **product** README translations (`README_es.md`, `README_de.md`) when behaviour visible to operators changes.
+- Visible UI strings use `conf/locales/<lang>/strings.json`. Use `_('key')` from `smart_ai_sys_admin.localization` for new strings and add translations for `en`, `de`, and `es`. `{{dotted.key}}` references inside `conf/app_config.json` are resolved automatically — never replace them with literals.
+- Active locale: `SMART_AI_SYS_ADMIN_LOCALE`, else system locale (fallback English). New locales require a `conf/locales/` directory plus product docs in all supported languages where applicable.
+- Keep **product** docs aligned on functional or stack changes: `docs/user_guide_{en,es,de}.md`, `README_es.md`, `README_de.md`, and `website/` (`manuals/`, `translations.js`).
+- Override config path with `SMART_AI_SYS_ADMIN_CONFIG_FILE` or `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
+- Strands agent config: `conf/agent.conf` from `conf/agent.conf.example`; respect `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE`. Example defaults: `max_completion_tokens` (OpenAI) 32 768, `max_tokens` (Bedrock) 8 192, `remote_command.timeout_seconds` 900, `remote_command.max_output_chars` 120 000.
+- Plugins load from `plugins/` (`SMART_AI_SYS_ADMIN_PLUGINS_DIR`). Each plugin exposes `register(registry)`, registers translations and `PluginSlashCommand` handlers returning Markdown.
+- New plugins: document install/usage **inside the plugin directory** only; do not add plugin-specific docs to general manuals.
+- Source-available licence: no modifying or redistributing altered versions without permission.
+- Long-running remote work: instruct the model to pass `timeout_seconds` to `remote_ssh_command` when expected runtime exceeds 15 minutes. Tune `remote_command.max_output_chars` for large log dumps.
+- File transfer: `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` on the active SFTP session.
+- Use `local_datetime()` at the start of each turn when local time context helps (show to the operator only if they ask).
+- Adapt commands and transfers to the remote OS (GNU/Linux, Unix, Windows PowerShell/cmd).
+- Logging from `conf/app_config.json`, default `DEBUG`; use `smart_ai_sys_admin.*` loggers.
+- Never store API keys in JSON; use `OPENAI_API_KEY`, `AWS_*`, etc. Document new providers in **product** guides (EN/ES/DE).
+- Provider system prompts in `system_prompts/` (Spanish). Update references on rename.
+- LM Studio: OpenAI-compatible mode; run `lms server start`, configure `providers.lmstudio` in `conf/agent.conf`.
+- Example model `openai/gpt-oss-20b`: `max_context_length = 131072`; `max_completion_tokens` set accordingly in config.
+- Cerebras: official SDK; configure `providers.cerebras`, set `CEREBRAS_API_KEY` or `api_key_env`.
+- Enable `mcp` only when declared servers are available; startup fails otherwise.
+- New dependencies: edit `pyproject.toml`, run `make lock`, validate with `make test`. Do not hand-edit `requirements*.txt`.
+- Custom model providers: read `docs/custom_model_providers_es.md` before changing `smart_ai_sys_admin.agent` (add EN/DE when extending that guide).
+- Static site `website/`: sync every product-facing change across EN/ES/DE.
 
-## Convenciones
-- Colocar código fuente en `src/smart_ai_sys_admin/` y pruebas en `tests/`.
-- Documentación y comentarios en español; identificadores y nombres de APIs en inglés.
-- Mantener estilos retro (verde para entrada, naranja para salida) mediante la configuración.
-- Preferir componentes de Textual para la TUI; si se incorporan nuevos widgets, documentar su uso en la configuración.
-- Evitar dependencias globales; todo deberá instalarse en el entorno virtual.
-- Mantener unidades de código pequeñas y cohesivas: separar responsabilidades en módulos/subpaquetes lógicos (por ejemplo `ui/`, `commands/`, `connection/`) y evitar archivos monolíticos.
-- El paquete `smart_ai_sys_admin/agent/` encapsula la integración con Strands (config, factoría, runtime y herramientas). Extiende ahí cualquier lógica relacionada con LLMs o MCP.
-- Las tools personalizadas `remote_ssh_command` y `remote_sftp_transfer` reutilizan `SSHConnectionManager`. No crear accesos SSH o SFTP paralelos.
+## Recommended workflow
+
+1. Activate virtualenv: `source .venv/bin/activate`
+2. Install: `make install`
+3. Before opening a PR: `make format`, `make lint`, `make test`
+4. After `pyproject.toml` dependency changes: `make lock` and commit updated `requirements*.txt`
+5. Validate TUI: `make run`; validate website: `make website-serve`
+
+## Conventions
+
+- Source under `src/smart_ai_sys_admin/`, tests under `tests/`
+- Comments and internal documentation in Spanish; identifiers and API names in English
+- Retro palette (green input, orange output) via configuration
+- Prefer Textual components; document new widgets in configuration
+- No global dependencies; everything in the project virtualenv
+- Small cohesive modules (`ui/`, `commands/`, `connection/`); avoid monoliths
+- `smart_ai_sys_admin/agent/` encapsulates Strands (config, factory, runtime, tools)
+- `remote_ssh_command` and `remote_sftp_transfer` reuse `SSHConnectionManager` — no parallel SSH/SFTP clients

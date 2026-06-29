@@ -1,39 +1,55 @@
 # GitHub Copilot Instructions
 
-## Resumen del dominio
-- Shell Sentinel es una TUI en Textual que mantiene una sesión SSH/SFTP persistente y la expone a un agente Strands para ejecutar instrucciones remotas.
-- El entrypoint `src/smart_ai_sys_admin/cli.py` prepara el logging y delega en `SmartAISysAdminApp` (`ui/app.py`).
-- El objetivo es traducir lenguaje natural en acciones de administración sobre un servidor ya conectado.
+## Documentation languages
 
-## Arquitectura y flujo
-- `SmartAISysAdminApp` crea tres widgets clave: `ConversationPanel`, `CommandInput` y `ConnectionInfo`, organizados en `ui/app.py` y `ui/panels.py`.
-- `CommandInput` emite eventos `Submitted`; si el texto comienza con slash se delega en `SlashCommandProcessor` (`ui/commands.py`), de lo contrario se invoca al agente Strands.
-- `SlashCommandProcessor` resuelve `/conectar`, `/desconectar`, `/ayuda` y aliases; cualquier otra orden se entrega intacta al agente.
-- La clase `SSHConnectionManager` (`connection.py`) encapsula Paramiko, mantiene estado de conexión y ejecuta comandos; no abras clientes Paramiko alternos.
+| Tier | Languages | Update when |
+|------|-----------|-------------|
+| **Project & collaboration** | English only | CI, CONTRIBUTING, AGENTS, CHANGELOG, SECURITY, `docs/README.md`, new config keys for contributors |
+| **Product & operations** | English, Spanish, German | User-visible behaviour, install steps, manuals, website copy, `conf/locales/*` |
 
-## Configuración centralizada
-- Toda la configuración visual, atajos y logging vive en `conf/app_config.json`, modelada con dataclasses en `config/__init__.py` y extensible vía `SMART_AI_SYS_ADMIN_CONFIG_FILE` o `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
-- Ajusta colores, bindings o límites modificando ese JSON; nunca hardcodees constantes en la UI.
-- El logging escribe en `logs/app.log` con `TimedRotatingFileHandler`; `log_to_console` duplica a stdout sin romper la TUI.
+Canonical English README: `README.md`. Translations: `README_es.md`, `README_de.md`.
 
-## Agente Strands y herramientas
-- `AgentRuntime` (`agent/runtime.py`) carga `conf/agent.conf`, construye el agente con `AgentFactory` y comparte `SSHConnectionManager` como `agent.ssh_manager`.
-- El fichero `conf/agent.conf` define proveedor (`bedrock`, `openai`, `local`), prompts (`system_prompts/*`), herramientas activas y MCP; respeta los nombres si añades otros providers.
-- La tool `remote_ssh_command` (`agent/tools.py`) reutiliza la sesión activa y respeta `timeout_seconds`; cambia el nombre desde config antes de instanciar el agente.
-- Activa MCP solo cuando los servidores remotos existen; errores en esa sección detienen el agente.
+## Domain summary
 
-## Patrones de UI y experiencia
-- `CommandInput` usa `ctrl+s` (desde config) para enviar y ofrece sugerencias contextualizadas en `_suggestion_for`; si añades comandos, actualiza esos mensajes y el help.
-- `ConversationPanel` guarda historial limitado (`history_limit` en config) y renderiza Markdown retro naranja/verde, así que usa Markdown en respuestas de agente y mensajes del sistema.
-- El banner de compatibilidad de terminal se genera en `_warn_if_term_incompatible`; si cambias la lista de terminales válidos, modifícalo en config.
+- Shell Sentinel is a Textual TUI that keeps a persistent SSH/SFTP session and exposes it to a Strands agent for remote administration.
+- Entrypoint `src/smart_ai_sys_admin/cli.py` sets up logging and delegates to `SmartAISysAdminApp` (`ui/app.py`).
+- Natural language is translated into actions on an already-connected server.
 
-## Flujo de trabajo de desarrollo
-- Usa `python3.12 -m venv .venv && make install` para montar el entorno (`pip-sync` + editable).
-- Dependencias: edita `pyproject.toml`, regenera con `make lock` y commitea los `requirements*.txt`. Ver `docs/dependencies.md`.
-- Formato y lint obligatorios antes de PR: `make format` (Black) y `make lint` (Ruff); `make test` ejecuta pytest (104 casos, CI en Python 3.12).
-- Lanza la TUI con `make run` o `python -m smart_ai_sys_admin`; revisa `logs/app.log` cuando depures el agente.
+## Architecture and flow
 
-## Extensiones habituales
-- Nuevos slash commands viven en `SlashCommandProcessor`; recuerda sincronizar `COMMAND_OVERVIEW`, `CONNECT_HELP`, sugerencias del input y tests futuros.
-- Herramientas adicionales para el agente deben registrarse en `agent/tools.resolve_tools` o habilitarse vía `tools.default` en `conf/agent.conf`.
-- Si incorporas nuevos parámetros de configuración, documenta el campo en `README.md` y `AGENTS.md` y mantén el estilo de documentación en español.
+- `SmartAISysAdminApp` composes `ConversationPanel`, `CommandInput`, and `ConnectionInfo` (`ui/app.py`, `ui/panels.py`).
+- `CommandInput` emits `Submitted`; slash-prefixed input goes to `SlashCommandProcessor` (`ui/commands.py`), otherwise the Strands agent runs.
+- `SlashCommandProcessor` handles `/connect`, `/disconnect`, `/help`, aliases; everything else goes to the agent unchanged.
+- `SSHConnectionManager` (`connection.py`) wraps Paramiko and holds connection state; do not open alternate Paramiko clients.
+
+## Centralised configuration
+
+- Visual settings, bindings and logging live in `conf/app_config.json`, modelled in `config/__init__.py`, overridable via `SMART_AI_SYS_ADMIN_CONFIG_FILE` or `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
+- Change colours, bindings or limits in that JSON — never hardcode UI constants.
+- Logging writes to `logs/app.log` with `TimedRotatingFileHandler`; `log_to_console` mirrors to stdout without breaking the TUI.
+
+## Strands agent and tools
+
+- `AgentRuntime` (`agent/runtime.py`) loads `conf/agent.conf`, builds the agent via `AgentFactory`, shares `SSHConnectionManager` as `agent.ssh_manager`.
+- `conf/agent.conf` defines provider (`bedrock`, `openai`, `local`, …), prompts (`system_prompts/*`), tools and MCP.
+- `remote_ssh_command` (`agent/tools.py`) reuses the active session and honours `timeout_seconds`.
+- Enable MCP only when remote servers exist; errors in that block stop the agent.
+
+## UI patterns
+
+- `CommandInput` sends on `ctrl+s` (from config) and suggests completions in `_suggestion_for`; update help and suggestions when adding commands.
+- `ConversationPanel` keeps bounded history (`history_limit`) and renders retro Markdown — return Markdown from agents and system messages.
+- Terminal compatibility banner in `_warn_if_term_incompatible`; adjust allowed terminals in config.
+
+## Development workflow
+
+- `python3.12 -m venv .venv && make install` (`pip-sync` + editable install).
+- Dependencies: edit `pyproject.toml`, `make lock`, commit `requirements*.txt`. See `docs/dependencies_en.md`.
+- Before PR: `make format`, `make lint`, `make test` (104 cases, CI on Python 3.12).
+- Run TUI: `make run` or `python -m smart_ai_sys_admin`; debug agent via `logs/app.log`.
+
+## Common extensions
+
+- New slash commands: `SlashCommandProcessor` — sync `COMMAND_OVERVIEW`, connect help, input suggestions and tests.
+- New agent tools: register in `agent/tools.resolve_tools` or enable via `tools.default` in `conf/agent.conf`.
+- New configuration fields: document in **English** `README.md` and `AGENTS.md`; sync **product** README translations and user guides (EN/ES/DE) when operators need the detail.

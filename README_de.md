@@ -1,7 +1,7 @@
 # Shell Sentinel
 ![Shell Sentinel TUI mit Retro-Look im Terminal](screenshots/shell-sentinel-tui-1280x640.png)
 
-Verfügbar in: [English](README_en.md) · [Deutsch](README_de.md) · [Español](README.md)
+Verfügbar in: [English](README.md) · [Deutsch](README_de.md) · [Español](README_es.md)
 
 ## Überblick
 Shell Sentinel ist ein terminalbasierter, KI-gestützter Systemadministrator. Die Anwendung hält eine persistente SSH/SFTP-Sitzung zu einem entfernten Server aufrecht und setzt Anweisungen in natürlicher Sprache in sichere und nachvollziehbare Aktionen um.
@@ -136,7 +136,7 @@ def register(registry: PluginRegistry) -> None:
 ## Projektstruktur
 - `pyproject.toml`: Paketmetadaten und **kanonische** Abhängigkeitsdefinition (Runtime und `dev`).
 - `requirements.txt` / `requirements-dev.txt`: generierte Lockfiles (`make lock`); nicht von Hand bearbeiten.
-- `docs/dependencies_de.md`: Abhängigkeitsverwaltung und reproduzierbare Installation.
+- `docs/dependencies_de.md` (sowie `docs/dependencies_en.md`, `docs/dependencies.md`): Abhängigkeitsverwaltung, Lockfiles und CI.
 - `CHANGELOG.md`: Versionshistorie des Projekts.
 - `src/smart_ai_sys_admin/`: Hauptquellcode der Anwendung (TUI und Utilities).
 - `tests/`: automatisierte Testsuite (Unit- und Integrationstests).
