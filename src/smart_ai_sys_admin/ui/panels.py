@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.text import Text
 from textual import events
 from textual.app import ComposeResult
-from textual.containers import Horizontal
+from textual.containers import Horizontal, Vertical
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widgets import RichLog, Static, TextArea
@@ -22,8 +22,15 @@ if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones estáticas.
     from ..config import ShortcutConfig
 
 
-class ConversationPanel(Static):
+class ConversationPanel(Vertical):
     """Panel encargado de renderizar la conversación en formato Markdown."""
+
+    DEFAULT_CSS = """
+    ConversationPanel {
+        height: 1fr;
+        width: 100%;
+    }
+    """
 
     def __init__(self, app_config: AppConfig) -> None:
         super().__init__(id="conversation-panel")
@@ -39,8 +46,6 @@ class ConversationPanel(Static):
 
     def on_mount(self) -> None:
         assert self._log is not None
-        self.styles.height = "1fr"
-        self.styles.width = "100%"
         if self._ui.output_panel.background:
             self._log.styles.background = self._ui.output_panel.background
         self._register_panel(self._build_agent_panel(self._ui.output_panel.initial_markdown))
@@ -103,8 +108,16 @@ class _HistoryAwareTextArea(TextArea):
         super().on_event(event)
 
 
-class CommandInput(Static):
+class CommandInput(Vertical):
     """Área de entrada multi-línea configurada para el usuario."""
+
+    DEFAULT_CSS = """
+    CommandInput {
+        width: 100%;
+        height: auto;
+        margin-top: 0;
+    }
+    """
 
     class Submitted(Message):
         """Evento emitido cuando se envía el formulario."""
@@ -144,9 +157,6 @@ class CommandInput(Static):
 
     def on_mount(self) -> None:
         assert self._editor is not None
-        self.styles.width = "100%"
-        self.styles.height = "auto"
-        self.styles.margin_top = 0
         self.styles.padding = self._parse_padding(self._config.padding)
         self._editor.styles.width = "100%"
         self._editor.styles.background = self._config.background
@@ -281,8 +291,28 @@ class CommandInput(Static):
         self._update_placeholder_hint()
 
 
-class ConnectionInfo(Static):
+class ConnectionInfo(Horizontal):
     """Muestra el estado de la conexión activa y el progreso del agente."""
+
+    DEFAULT_CSS = """
+    ConnectionInfo {
+        width: 100%;
+        height: auto;
+        min-height: 2;
+        max-height: 2;
+        dock: bottom;
+        padding: 0 1;
+        align-vertical: middle;
+    }
+
+    ConnectionInfo #connection-info-status {
+        width: 1fr;
+    }
+
+    ConnectionInfo #connection-info-indicator {
+        width: auto;
+    }
+    """
 
     def __init__(self, panel_config: PanelConfig) -> None:
         super().__init__(id="connection-info")
@@ -294,44 +324,27 @@ class ConnectionInfo(Static):
         self._provider_message: str = ""
 
     def compose(self) -> ComposeResult:
-        yield Horizontal(
-            Static("", id="connection-info-status"),
-            Static("", id="connection-info-indicator"),
-            id="connection-info-row",
-        )
+        yield Static(" ", id="connection-info-status")
+        yield Static(" ", id="connection-info-indicator")
 
     def on_mount(self) -> None:
-        self.styles.width = "100%"
-        self.styles.height = "auto"
-        self.styles.min_height = 2
-        self.styles.max_height = 2
-        self.styles.dock = "bottom"
-        self.styles.padding = (0, 1)
         self.styles.background = self._panel_config.background or "black"
         self.styles.border_top = ("heavy", self._panel_config.border_style)
-
-        row = self.query_one("#connection-info-row", Horizontal)
-        row.styles.width = "100%"
-        row.styles.height = "100%"
-        row.styles.align_vertical = "middle"
-        row.styles.justify_content = "space-between"
-
         self._status_node = self.query_one("#connection-info-status", Static)
         self._indicator_node = self.query_one("#connection-info-indicator", Static)
         self._indicator_node.styles.color = self._panel_config.text_style
-
         self.refresh_status(self._message)
 
     def refresh_status(self, message: str, provider: str | None = None) -> None:
         self._message = message
         self._provider_message = provider or ""
-        self._render()
+        self._paint_status()
 
     def set_thinking(self, active: bool) -> None:
         self._thinking = active
-        self._render()
+        self._paint_status()
 
-    def _render(self) -> None:
+    def _paint_status(self) -> None:
         if not self._status_node or not self._indicator_node:
             return
         status_text = Text()

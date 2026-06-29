@@ -9,7 +9,7 @@ authors = [
   {name = "Equipo Shell Sentinel"}
 ]
 dependencies = [
-  "textual==0.67.1"
+  "textual==8.2.7"
 ]
 
 [project.optional-dependencies]

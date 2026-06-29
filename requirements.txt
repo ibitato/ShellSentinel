@@ -1,4 +1,4 @@
-textual==0.67.1
+textual==8.2.7
 paramiko==5.0.0
 strands-agents[openai,ollama]>=1.45.0
 strands-agents-tools>=0.8.2

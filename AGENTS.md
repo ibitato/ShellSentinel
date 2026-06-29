@@ -6,7 +6,7 @@ Aplicación de terminal que mantiene una sesión SSH/SFTP persistente contra un 
 ## Entorno técnico
 - **Lenguaje:** Python 3.10+
 - **Tipo de aplicación:** CLI interactiva
-- **Framework TUI:** [Textual 0.67.1](https://textual.textualize.io)
+- **Framework TUI:** [Textual 8.2.7](https://textual.textualize.io)
 - **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
 - **Ejecución local:** `python -m smart_ai_sys_admin` o `make run`
 - **Gestión de dependencias:** entorno virtual local `.venv`, listado en `requirements*.txt`
