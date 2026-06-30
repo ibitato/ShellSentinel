@@ -44,6 +44,7 @@ Estas librerías están declaradas explícitamente en `pyproject.toml` para audi
 
 - `boto3` — Amazon Bedrock (vía Strands)
 - `openai` — proveedor OpenAI / LM Studio compatible
+- `mistralai` — Mistral La Plateforme (extra `strands-agents[mistral]`)
 - `cryptography` — Paramiko, JWT, MCP
 
 El lockfile fija las versiones exactas de todo el árbol.

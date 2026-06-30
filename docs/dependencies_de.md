@@ -44,6 +44,7 @@ Diese Bibliotheken sind in `pyproject.toml` explizit deklariert (zusätzlich zu 
 
 - `boto3` — Amazon Bedrock (über Strands)
 - `openai` — OpenAI / LM Studio-kompatibler Provider
+- `mistralai` — Mistral La Plateforme (Extra `strands-agents[mistral]`)
 - `cryptography` — Paramiko, JWT, MCP
 
 Das Lockfile pinnt exakte Versionen für den gesamten Abhängigkeitsbaum.

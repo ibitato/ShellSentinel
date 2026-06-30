@@ -32,6 +32,13 @@ Este documento resume los pasos y criterios que debemos seguir al implementar pr
 - La REST API nativa (`/api/v0/*`) ofrece métricas enriquecidas. Úsala como consulta auxiliar cuando debas mostrar estadísticas (TTFT, tokens/segundo) en los logs o telemetría.
 - `GET /api/v0/models/<model_id>` devuelve `max_context_length`; úsalo para calcular límites sensatos de `max_completion_tokens` (ej. `openai/gpt-oss-20b` expone 131072 tokens de contexto).
 
+## Caso práctico: Mistral AI (Camino A+)
+
+- Shell Sentinel incluye `ShellMistralModel`, un wrapper sobre `MistralModel` de Strands (SDK oficial `mistralai` v2). Configura `providers.mistral` con `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` y `params`.
+- **Valores por defecto:** `mistral-medium-3.5`, `reasoning_effort: high` (obligatorio en modelos con reasoning), `max_tokens: 16184`.
+- El wrapper inyecta `reasoning_effort` en cada petición y mapea chunks de thinking a eventos `reasoningContent` (para `show_thinking`).
+- Valida con `make test-mistral` cuando `MISTRAL_API_KEY` esté disponible.
+
 ## Caso práctico: Cerebras
 - Integra el SDK oficial (`cerebras_cloud_sdk`) dentro de un `Model` personalizado para aprovechar streaming vía SSE y soporte de herramientas. En `providers.cerebras` define `model_id`, `params`, `client_args` y una referencia a la clave (`api_key_env` o `CEREBRAS_API_KEY`).
 - El proveedor construye un cliente `AsyncCerebras` persistente; evita reinstanciarlo en cada llamada para mantener conexiones calientes.

@@ -156,11 +156,7 @@ class SlashCommandProcessor:
                 _("ui.commands.unknown", command=command),
                 self._help_overview(),
             )
-        log_args = (
-            redact_connect_args(parts[1:])
-            if command in CONNECT_ALIASES
-            else parts[1:]
-        )
+        log_args = redact_connect_args(parts[1:]) if command in CONNECT_ALIASES else parts[1:]
         self._logger.info("Procesando comando %s con argumentos %s", command, log_args)
         try:
             return handler(parts[1:])

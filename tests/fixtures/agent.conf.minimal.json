@@ -50,6 +50,15 @@
       "model_id": "cerebras-test",
       "api_key_env": "CEREBRAS_API_KEY",
       "params": {}
+    },
+    "mistral": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "mistral-medium-3.5",
+      "api_key_env": "MISTRAL_API_KEY",
+      "reasoning_effort": "high",
+      "params": {
+        "max_tokens": 16184
+      }
     }
   },
   "tools": {

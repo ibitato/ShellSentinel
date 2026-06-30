@@ -129,6 +129,9 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
             <br />LM Studio requires <code>lms server start</code>; Cerebras expects
             <code>CEREBRAS_API_KEY</code> (or <code>api_key_env</code>) and leverages the official SDK
             with SSE streaming.
+            <br />Mistral AI expects <code>MISTRAL_API_KEY</code>, <code>provider: mistral</code>,
+            defaults <code>reasoning_effort: high</code> and <code>max_tokens: 16184</code>
+            (<code>mistral-medium-3.5</code>).
             <br />Use <code>remote_command.max_output_chars</code> to limit how much stdout/stderr gets
             forwarded to the agent.
           </li>

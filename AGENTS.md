@@ -70,6 +70,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - LM Studio: OpenAI-compatible mode; run `lms server start`, configure `providers.lmstudio` in `conf/agent.conf`.
 - Example model `openai/gpt-oss-20b`: `max_context_length = 131072`; `max_completion_tokens` set accordingly in config.
 - Cerebras: official SDK; configure `providers.cerebras`, set `CEREBRAS_API_KEY` or `api_key_env`.
+- Mistral AI: official `mistralai` SDK via `ShellMistralModel`; configure `providers.mistral`, set `MISTRAL_API_KEY` or `api_key_env`, defaults `reasoning_effort=high` and `max_tokens=16184`.
 - Enable `mcp` only when declared servers are available; startup fails otherwise.
 - New dependencies: edit `pyproject.toml`, run `make lock`, validate with `make test`. Do not hand-edit `requirements*.txt`.
 - Custom model providers: read `docs/custom_model_providers_en.md` (and `docs/custom_model_providers_es.md`, `docs/custom_model_providers_de.md`) before changing `smart_ai_sys_admin.agent`.

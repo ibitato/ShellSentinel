@@ -123,7 +123,9 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
             <code>conf/agent.conf.example</code> antes de modificarlo.<br />Si usas LM Studio, arranca el
             servidor con <code>lms server start</code>; para Cerebras exporta
             <code>CEREBRAS_API_KEY</code> o define <code>api_key_env</code> y aprovecha el SDK oficial con
-            streaming SSE.<br />Ajusta <code>remote_command.max_output_chars</code> para limitar la salida que
+            streaming SSE.<br />Para Mistral AI exporta <code>MISTRAL_API_KEY</code>, usa
+            <code>provider: mistral</code> y por defecto <code>reasoning_effort: high</code> y
+            <code>max_tokens: 16184</code> (<code>mistral-medium-3.5</code>).<br />Ajusta <code>remote_command.max_output_chars</code> para limitar la salida que
             verá el agente.
           </li>
         </ul>

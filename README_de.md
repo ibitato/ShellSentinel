@@ -68,9 +68,10 @@ make run
 - `conf/app_config.json` enthält Platzhalter `{{übersetzungs.schlüssel}}`, die beim Laden ersetzt werden. Beim Anpassen der Werte die doppelten geschweiften Klammern nicht entfernen.
 
 ### Konfiguration des KI-Agenten (Strands Agents)
-- Kopiere `conf/agent.conf.example` nach `conf/agent.conf` und wähle im Block `provider` zwischen Amazon Bedrock, OpenAI, LM Studio, Cerebras oder Ollama/lokal.
+- Kopiere `conf/agent.conf.example` nach `conf/agent.conf` und wähle im Block `provider` zwischen Amazon Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI oder Ollama/lokal.
 - Entscheidest du dich für LM Studio, starte den lokalen Server mit `lms server start` und kontrolliere `providers.lmstudio` (`base_url`, `model_id`, `api_key_env`/`api_key`, `client_args`), damit die Einstellungen zu deiner Installation passen.
 - Für Cerebras exportierst du `CEREBRAS_API_KEY` (oder setzt `api_key_env`) und passt `providers.cerebras` (`model_id`, `params`, `client_args.timeout`, etc.) an; der Custom Provider nutzt das offizielle SDK und transformiert die SSE-Events.
+- Für Mistral AI exportierst du `MISTRAL_API_KEY` (oder setzt `api_key_env`), wählst `provider: "mistral"` und prüfst `providers.mistral`. Standardwerte: `model_id: mistral-medium-3.5`, `reasoning_effort: high` (Pflicht bei Reasoning-Modellen), `max_tokens: 16184`. Mit `make test-mistral` kannst du den API-Key testen.
 - Jeder Anbieter besitzt einen eigenen `system_prompt` in `system_prompts/`. Eigene Prompts können per Pfad eingebunden werden.
 - Hinterlege Zugangsdaten über Umgebungsvariablen (z. B. `export OPENAI_API_KEY="..."`). Im Konfigurationsfile werden keine Secrets im Klartext gespeichert.
 - OpenAI- und Bedrock-Defaults erlauben lange Antworten; das Beispiel setzt `max_completion_tokens` (OpenAI) auf **32 768** und `max_tokens` (Bedrock) auf **8 192**. Passe die Werte an deine Kontingente an.

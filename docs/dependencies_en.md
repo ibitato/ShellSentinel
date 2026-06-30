@@ -44,6 +44,7 @@ These libraries are declared explicitly in `pyproject.toml` for auditability and
 
 - `boto3` — Amazon Bedrock (via Strands)
 - `openai` — OpenAI / LM Studio-compatible provider
+- `mistralai` — Mistral La Plateforme (`strands-agents[mistral]` extra)
 - `cryptography` — Paramiko, JWT, MCP
 
 The lockfile pins exact versions for the full dependency tree.

@@ -5,6 +5,15 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-29
+
+### Added
+
+- First-class `mistral` LLM provider (Mistral La Plateforme) with mandatory `reasoning_effort=high` and default `max_tokens=16184`.
+- `ShellMistralModel` wrapper extending Strands `MistralModel` for reasoning injection and thinking stream mapping.
+- `system_prompts/mistral.md` and `providers.mistral` block in `conf/agent.conf.example`.
+- Integration test suite: `make test-mistral` (requires `MISTRAL_API_KEY`).
+
 ## [1.1.1] - 2026-06-29
 
 ### Added
@@ -51,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release of Shell Sentinel: conversational TUI with persistent SSH/SFTP sessions, multilingual support (EN/ES/DE), and configurable LLM providers.
 - Static site under `website/` and initial user documentation.
 
+[1.2.0]: https://github.com/ibitato/ShellSentinel/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/ibitato/ShellSentinel/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/ibitato/ShellSentinel/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/ibitato/ShellSentinel/releases/tag/1.0.0

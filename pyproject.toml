@@ -1,6 +1,6 @@
 [project]
 name = "smart-ai-sys-admin"
-version = "1.1.1"
+version = "1.2.0"
 description = "AI assisted terminal admin that maintains SSH/SFTP sessions"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
@@ -11,7 +11,7 @@ authors = [
 dependencies = [
   "textual==8.2.7",
   "paramiko==5.0.0",
-  "strands-agents[openai,ollama]>=1.45.0",
+  "strands-agents[mistral,openai,ollama]>=1.45.0",
   "strands-agents-tools>=0.8.2",
   "PyJWT>=2.13.0",
   "requests>=2.34.0",
@@ -20,6 +20,7 @@ dependencies = [
   "pyyaml>=6.0.3",
   "python-dotenv>=1.2.0",
   "cerebras_cloud_sdk>=1.67.0",
+  "mistralai>=2.5.0,<3.0",
   # Transitivas críticas declaradas explícitamente (Bedrock, OpenAI, SSH).
   "boto3>=1.35.0",
   "openai>=1.50.0",
@@ -63,6 +64,7 @@ testpaths = ["tests"]
 addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing"
 markers = [
   "integration: pruebas lentas o que requieren servicios externos",
+  "mistral: PoC Mistral cloud (requiere MISTRAL_API_KEY)",
 ]
 
 [tool.coverage.run]

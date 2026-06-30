@@ -8,11 +8,13 @@ from pathlib import Path
 import pytest
 
 from smart_ai_sys_admin.agent.config import (
+    MISTRAL_DEFAULT_REASONING_EFFORT,
     AgentConfigError,
     BedrockProviderConfig,
     CerebrasProviderConfig,
     LMStudioProviderConfig,
     LocalProviderConfig,
+    MistralProviderConfig,
     OpenAIProviderConfig,
     load_agent_config,
 )
@@ -91,6 +93,7 @@ def test_openai_max_tokens_migration(minimal_agent_conf: Path, monkeypatch: pyte
         ("local", LocalProviderConfig),
         ("lmstudio", LMStudioProviderConfig),
         ("cerebras", CerebrasProviderConfig),
+        ("mistral", MistralProviderConfig),
     ],
 )
 def test_provider_parsing(
@@ -137,3 +140,35 @@ def test_env_override_agent_config_file(minimal_agent_conf: Path, monkeypatch: p
     monkeypatch.setenv("SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE", str(minimal_agent_conf))
     config = load_agent_config()
     assert config.config_path == minimal_agent_conf.resolve()
+
+
+def test_mistral_reasoning_effort_defaults_to_high(
+    minimal_agent_conf: Path, monkeypatch: pytest.MonkeyPatch
+):
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    payload["providers"]["mistral"] = {
+        "system_prompt": "system_prompts/test.md",
+        "model_id": "mistral-medium-3.5",
+        "api_key_env": "MISTRAL_API_KEY",
+        "params": {},
+    }
+    payload["provider"] = "mistral"
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setenv("SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE", str(minimal_agent_conf))
+    config = load_agent_config()
+    provider = config.provider_config()
+    assert isinstance(provider, MistralProviderConfig)
+    assert provider.reasoning_effort == MISTRAL_DEFAULT_REASONING_EFFORT
+
+
+def test_mistral_invalid_reasoning_effort(minimal_agent_conf: Path):
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    payload["providers"]["mistral"] = {
+        "system_prompt": "system_prompts/test.md",
+        "model_id": "mistral-medium-3.5",
+        "reasoning_effort": "medium",
+        "params": {},
+    }
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(AgentConfigError, match="reasoning_effort"):
+        load_agent_config(minimal_agent_conf)

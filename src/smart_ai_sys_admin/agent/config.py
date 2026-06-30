@@ -12,7 +12,7 @@ from typing import Any, Literal
 
 from ..localization import get_localizer
 
-ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras"]
+ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
 
@@ -67,6 +67,20 @@ class CerebrasProviderConfig(ProviderBaseConfig):
     client_args: Mapping[str, Any]
     api_key: str | None
     api_key_env: str | None
+
+
+@dataclass(frozen=True)
+class MistralProviderConfig(ProviderBaseConfig):
+    model_id: str
+    params: Mapping[str, Any]
+    client_args: Mapping[str, Any]
+    api_key: str | None
+    api_key_env: str | None
+    reasoning_effort: str
+
+
+MISTRAL_DEFAULT_MAX_TOKENS = 16184
+MISTRAL_DEFAULT_REASONING_EFFORT = "high"
 
 
 @dataclass(frozen=True)
@@ -296,6 +310,27 @@ def _build_provider_configs(
             api_key_env=data.get("api_key_env"),
         )
 
+    if "mistral" in payload:
+        data = payload["mistral"]
+        system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
+        reasoning_effort = data.get("reasoning_effort", MISTRAL_DEFAULT_REASONING_EFFORT)
+        if reasoning_effort not in {"high", "none"}:
+            raise AgentConfigError(
+                "providers.mistral.reasoning_effort debe ser 'high' o 'none', "
+                f"se recibió: {reasoning_effort!r}"
+            )
+        providers["mistral"] = MistralProviderConfig(
+            system_prompt_path=prompt_path,
+            system_prompt=system_prompt,
+            show_thinking=bool(data.get("show_thinking", False)),
+            model_id=data["model_id"],
+            params=_mapping_proxy(data.get("params")),
+            client_args=_mapping_proxy(data.get("client_args")),
+            api_key=data.get("api_key"),
+            api_key_env=data.get("api_key_env"),
+            reasoning_effort=reasoning_effort,
+        )
+
     return MappingProxyType(providers)
 
 
@@ -389,7 +424,7 @@ def load_agent_config(path: str | Path | None = None) -> AgentConfig:
         raise AgentConfigError(f"Versión de configuración no soportada: {version}")
 
     provider = raw.get("provider")
-    if provider not in {"bedrock", "openai", "local", "lmstudio", "cerebras"}:
+    if provider not in {"bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"}:
         raise AgentConfigError("Debes especificar un proveedor válido en 'provider'.")
 
     providers_section = raw.get("providers")
@@ -428,6 +463,9 @@ __all__ = [
     "LMStudioProviderConfig",
     "MCPConfig",
     "MCPTransportConfig",
+    "MistralProviderConfig",
+    "MISTRAL_DEFAULT_MAX_TOKENS",
+    "MISTRAL_DEFAULT_REASONING_EFFORT",
     "OpenAIProviderConfig",
     "ProviderBaseConfig",
     "ProviderLiteral",
