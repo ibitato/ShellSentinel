@@ -11,7 +11,7 @@ Canonical English README: `README.md`. Translations: `README_es.md`, `README_de.
 
 ## Domain summary
 
-- Shell Sentinel is a Textual TUI that keeps a persistent SSH/SFTP session and exposes it to a Strands agent for remote administration.
+- Shell Sentinel is a Textual TUI that keeps a persistent SSH session (SFTP on demand) and exposes it to a Strands agent for remote administration.
 - Entrypoint `src/smart_ai_sys_admin/cli.py` sets up logging and delegates to `SmartAISysAdminApp` (`ui/app.py`).
 - Natural language is translated into actions on an already-connected server.
 
@@ -20,7 +20,8 @@ Canonical English README: `README.md`. Translations: `README_es.md`, `README_de.
 - `SmartAISysAdminApp` composes `ConversationPanel`, `CommandInput`, and `ConnectionInfo` (`ui/app.py`, `ui/panels.py`).
 - `CommandInput` emits `Submitted`; slash-prefixed input goes to `SlashCommandProcessor` (`ui/commands.py`), otherwise the Strands agent runs.
 - `SlashCommandProcessor` handles `/connect`, `/disconnect`, `/help`, aliases; everything else goes to the agent unchanged.
-- `SSHConnectionManager` (`connection.py`) wraps Paramiko and holds connection state; do not open alternate Paramiko clients.
+- `SSHConnectionManager` (`connection.py`) wraps Paramiko and holds connection state; `/connect` opens SSH only — SFTP opens lazily on file transfer. Do not open alternate Paramiko clients.
+- `/connect` credentials are redacted in logs via `smart_ai_sys_admin.security.redaction`.
 
 ## Centralised configuration
 
@@ -44,8 +45,8 @@ Canonical English README: `README.md`. Translations: `README_es.md`, `README_de.
 ## Development workflow
 
 - `python3.12 -m venv .venv && make install` (`pip-sync` + editable install).
-- Dependencies: edit `pyproject.toml`, `make lock`, commit `requirements*.txt`. See `docs/dependencies_en.md`.
-- Before PR: `make format`, `make lint`, `make test` (104 cases, CI on Python 3.12).
+- Dependencies: edit `pyproject.toml`, `make lock` (or `make lock-upgrade` when upgrading pins), commit `requirements*.txt`. See `docs/dependencies_en.md`.
+- Before PR: `make format`, `make lint`, `make test` (CI on Python 3.12). Optional: `make test-mistral` when `MISTRAL_API_KEY` is set.
 - Run TUI: `make run` or `python -m smart_ai_sys_admin`; debug agent via `logs/app.log`.
 
 ## Common extensions

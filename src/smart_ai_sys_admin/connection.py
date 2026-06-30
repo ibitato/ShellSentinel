@@ -91,15 +91,9 @@ class SSHConnectionManager:
                 auth_method,
             )
             ssh_client.connect(**connect_kwargs)
-            sftp_client = ssh_client.open_sftp()
             transport = ssh_client.get_transport()
             if transport:
                 transport.set_keepalive(30)
-            try:
-                channel = sftp_client.get_channel()
-                channel.settimeout(30)
-            except Exception:  # pragma: no cover - depende del backend
-                pass
         except Exception as exc:  # pragma: no cover - depende del entorno remoto.
             ssh_client.close()
             self._logger.exception(
@@ -108,7 +102,7 @@ class SSHConnectionManager:
             raise ConnectionError(str(exc)) from exc
 
         self._ssh_client = ssh_client
-        self._sftp_client = sftp_client
+        self._sftp_client = None
         self._details = ConnectionDetails(
             host=host,
             port=port,
@@ -205,6 +199,25 @@ class SSHConnectionManager:
         self._logger.debug("Comando '%s' finalizado con código %s", command, exit_status)
         return exit_status, out_text, err_text
 
+    def _open_sftp(self) -> paramiko.SFTPClient:
+        if not self.is_connected or not self._ssh_client:
+            raise NoActiveConnection(_("connection.errors.no_active_ssh"))
+        if self._sftp_client is not None:
+            return self._sftp_client
+        try:
+            sftp_client = self._ssh_client.open_sftp()
+        except Exception as exc:  # pragma: no cover - depende del entorno remoto
+            self._logger.exception("Fallo abriendo sesión SFTP")
+            raise ConnectionError(str(exc)) from exc
+        try:
+            channel = sftp_client.get_channel()
+            channel.settimeout(30)
+        except Exception:  # pragma: no cover - depende del backend
+            pass
+        self._sftp_client = sftp_client
+        self._logger.debug("Sesión SFTP abierta")
+        return sftp_client
+
     def upload_file(
         self,
         local_path: str,
@@ -214,8 +227,7 @@ class SSHConnectionManager:
     ) -> str:
         if not self.is_connected:
             raise NoActiveConnection(_("connection.errors.no_active_ssh"))
-        if not self._sftp_client:
-            raise NoActiveConnection(_("connection.errors.no_active_sftp"))
+        sftp = self._open_sftp()
 
         local = Path(local_path).expanduser()
         if not local.exists():
@@ -234,7 +246,6 @@ class SSHConnectionManager:
             )
 
         remote = PurePosixPath(remote_path)
-        sftp = self._sftp_client
 
         if not overwrite:
             try:
@@ -283,8 +294,7 @@ class SSHConnectionManager:
     ) -> Path:
         if not self.is_connected:
             raise NoActiveConnection(_("connection.errors.no_active_ssh"))
-        if not self._sftp_client:
-            raise NoActiveConnection(_("connection.errors.no_active_sftp"))
+        sftp = self._open_sftp()
 
         remote = PurePosixPath(remote_path)
         local = Path(local_path).expanduser()
@@ -298,7 +308,7 @@ class SSHConnectionManager:
         local.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            self._sftp_client.get(str(remote), str(local))
+            sftp.get(str(remote), str(local))
         except FileNotFoundError as exc:
             raise ConnectionError(
                 _(
@@ -322,8 +332,7 @@ class SSHConnectionManager:
     def _ensure_remote_directory(self, directory: PurePosixPath) -> None:
         if not directory or str(directory) in {"", ".", "/"}:
             return
-        if not self._sftp_client:
-            raise NoActiveConnection("La sesión SFTP no está disponible.")
+        sftp = self._open_sftp()
 
         current = PurePosixPath("/")
         for part in directory.parts:
@@ -332,10 +341,10 @@ class SSHConnectionManager:
                 continue
             current = current / part
             try:
-                self._sftp_client.stat(str(current))
+                sftp.stat(str(current))
             except FileNotFoundError:
                 try:
-                    self._sftp_client.mkdir(str(current))
+                    sftp.mkdir(str(current))
                     self._logger.debug("Directorio remoto creado: %s", current)
                 except Exception as exc:  # pragma: no cover - depende del host remoto
                     raise ConnectionError(

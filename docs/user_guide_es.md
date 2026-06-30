@@ -44,7 +44,7 @@ Al arrancar verás una pantalla de bienvenida que se cierra sola en 5 segundos o
 ## Comandos básicos
 Puedes usar los comandos en inglés, español o alemán.
 
-- `/connect <host> <user> <password|key_path> [puerto]` — conecta al servidor (puerto opcional, 22 por defecto).
+- `/connect <host> <user> <password|key_path> [puerto]` — conecta la sesión SSH (puerto opcional, 22 por defecto). SFTP se abre automáticamente en la primera transferencia de archivos.
 - `/disconnect` — cierra la conexión activa.
 - `/help` — muestra el resumen de comandos disponibles.
 - `/status` — muestra el estado actual del agente y la conexión.
@@ -57,14 +57,16 @@ Escribe instrucciones libres; si no coinciden con un comando slash, se enviarán
 - "Listar los procesos que consumen más CPU".
 - "Subir el archivo `/tmp/script.sh` a `/home/ubuntu/bin/script.sh`".
 
-El agente reutiliza la conexión SSH/SFTP abierta para ejecutar comandos y transferir archivos.
+El agente reutiliza la sesión SSH activa para ejecutar comandos. Las transferencias de archivos abren SFTP bajo demanda en la misma conexión.
 
 ## Configuración adicional
 - `conf/app_config.json` define estilos, textos y atajos mediante claves como `{{ui.output_panel.title}}`, resueltas según el locale.
 - Las traducciones residen en `conf/locales/<idioma>/strings.json`. Al añadir nuevos textos, usa el helper `_('clave')` en el código y crea la entrada en cada idioma.
-- `conf/agent.conf` controla el proveedor LLM, opciones de herramientas y timeouts. Copia `conf/agent.conf.example` antes de modificarlo y, si eliges `lmstudio`, recuerda iniciar el servidor local con `lms server start` y ajustar `base_url`/`api_key` según tu entorno. Para `cerebras`, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y personaliza `client_args`/`params`; la integración usa el SDK oficial con streaming SSE. Ajusta `remote_command.max_output_chars` para limitar la cantidad de salida que recibirá el agente.
+- `conf/agent.conf` controla el proveedor LLM, opciones de herramientas y timeouts. Copia `conf/agent.conf.example` antes de modificarlo y, si eliges `lmstudio`, recuerda iniciar el servidor local con `lms server start` y ajustar `base_url`/`api_key` según tu entorno. Para `cerebras`, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y personaliza `client_args`/`params`; la integración usa el SDK oficial con streaming SSE. Para `mistral`, exporta `MISTRAL_API_KEY`, define `provider: "mistral"` y usa por defecto `reasoning_effort: high` y `max_tokens: 16184` con el modelo `mistral-medium-3.5`. Ajusta `remote_command.max_output_chars` para limitar la cantidad de salida que recibirá el agente.
 
 ## Solución de problemas
 - **No hay colores o la interfaz se ve mal**: revisa la variable `TERM` y la advertencia mostrada al inicio.
 - **El agente no responde**: comprueba `conf/agent.conf`, variables de entorno de credenciales y los logs en `logs/app.log`.
 - **Error “No hay una conexión SSH activa”**: ejecuta `/connect` antes de solicitar acciones al agente.
+- **Fallo SFTP o transferencia tras un `/connect` correcto**: el shell remoto puede imprimir banners en sesiones no interactivas (por ejemplo `pyfiglet` en `~/.bashrc`). Envuelve la salida decorativa en una comprobación interactiva (`[[ $- == *i* ]]`) o pide al administrador usar `Subsystem sftp internal-sftp` en `sshd_config`.
+- **Credenciales en logs**: las contraseñas de `/connect` se enmascaran como `***` en `logs/app.log` y en el eco del comando en la TUI.

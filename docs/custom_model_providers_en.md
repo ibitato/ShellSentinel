@@ -37,6 +37,13 @@ This document summarises the steps and criteria for implementing custom model pr
 - The native REST API (`/api/v0/*`) offers richer metrics. Use it for telemetry when you need statistics (TTFT, tokens/sec) in logs.
 - `GET /api/v0/models/<model_id>` returns `max_context_length`; use it to set sensible `max_completion_tokens` limits (e.g. `openai/gpt-oss-20b` exposes 131072 context tokens).
 
+## Practical case: Mistral AI (Path A+)
+
+- Shell Sentinel ships a `ShellMistralModel` wrapper over Strands `MistralModel` (official `mistralai` v2 SDK). Configure `providers.mistral` with `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` and `params`.
+- **Defaults:** `mistral-medium-3.5`, `reasoning_effort: high` (mandatory for reasoning-capable models), `max_tokens: 16184`.
+- The wrapper injects `reasoning_effort` into every API request and maps thinking chunks to `reasoningContent` stream events (for `show_thinking`).
+- Validate with `make test-mistral` when `MISTRAL_API_KEY` is available.
+
 ## Practical case: Cerebras
 
 - Integrate the official SDK (`cerebras_cloud_sdk`) inside a custom `Model` for SSE streaming and tool support. In `providers.cerebras` define `model_id`, `params`, `client_args` and a key reference (`api_key_env` or `CEREBRAS_API_KEY`).

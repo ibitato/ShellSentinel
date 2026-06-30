@@ -61,13 +61,9 @@ def test_connect_missing_key_file(connection_logger, tmp_path: Path):
 @patch("smart_ai_sys_admin.connection.paramiko.SSHClient")
 def test_connect_password_success(mock_ssh_client_cls, connection_logger):
     ssh_client = MagicMock()
-    sftp_client = MagicMock()
     transport = MagicMock()
     transport.is_active.return_value = True
     ssh_client.get_transport.return_value = transport
-    ssh_client.open_sftp.return_value = sftp_client
-    channel = MagicMock()
-    sftp_client.get_channel.return_value = channel
     mock_ssh_client_cls.return_value = ssh_client
 
     manager = SSHConnectionManager(connection_logger)
@@ -76,6 +72,29 @@ def test_connect_password_success(mock_ssh_client_cls, connection_logger):
     assert details.auth_method == "password"
     assert manager.is_connected
     ssh_client.connect.assert_called_once()
+    ssh_client.open_sftp.assert_not_called()
+    assert manager._sftp_client is None
+
+
+@patch("smart_ai_sys_admin.connection.paramiko.SSHClient")
+def test_open_sftp_lazy_on_upload(mock_ssh_client_cls, connection_logger, tmp_path: Path):
+    ssh_client = MagicMock()
+    sftp_client = MagicMock()
+    transport = MagicMock()
+    transport.is_active.return_value = True
+    ssh_client.get_transport.return_value = transport
+    ssh_client.open_sftp.return_value = sftp_client
+    sftp_client.get_channel.return_value = MagicMock()
+    mock_ssh_client_cls.return_value = ssh_client
+
+    manager = SSHConnectionManager(connection_logger)
+    manager.connect("host", "alice", password="secret")
+    local = tmp_path / "file.txt"
+    local.write_text("data", encoding="utf-8")
+
+    manager.upload_file(str(local), "/remote/file.txt", overwrite=True)
+
+    ssh_client.open_sftp.assert_called_once()
 
 
 def test_connect_already_open(connection_logger):

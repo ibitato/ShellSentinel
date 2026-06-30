@@ -64,6 +64,18 @@
       },
       "client_args": {},
       "api_key_env": "CEREBRAS_API_KEY"
+    },
+    "mistral": {
+      "system_prompt": "system_prompts/mistral.md",
+      "model_id": "mistral-medium-3.5",
+      "show_thinking": false,
+      "api_key_env": "MISTRAL_API_KEY",
+      "reasoning_effort": "high",
+      "client_args": {},
+      "params": {
+        "temperature": 0.3,
+        "max_tokens": 16184
+      }
     }
   },
   "tools": {

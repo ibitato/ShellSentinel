@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from unittest.mock import patch
 
@@ -35,6 +36,17 @@ def test_connect_success(fake_ssh_manager, slash_processor: SlashCommandProcesso
     assert result is not None
     assert fake_ssh_manager._fake_connected
     assert len(fake_ssh_manager.connect_calls) == 1
+
+
+def test_connect_does_not_log_password(
+    caplog, fake_ssh_manager, slash_processor: SlashCommandProcessor
+):
+    caplog.set_level(logging.INFO, logger="smart_ai_sys_admin.ui.commands")
+    slash_processor.process("/connect srv alice top-secret")
+    for record in caplog.records:
+        assert "top-secret" not in record.getMessage()
+        if "argumentos" in record.getMessage():
+            assert "***" in record.getMessage()
 
 
 def test_connect_invalid_port(slash_processor: SlashCommandProcessor):

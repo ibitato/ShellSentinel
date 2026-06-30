@@ -50,7 +50,8 @@ If a change is user-visible in the TUI or on the website, update all three produ
 ## Before opening a pull request
 
 - `make format`, `make lint`, and `make test` pass locally
-- Lockfiles updated if `pyproject.toml` dependencies changed (`make lock`)
+- Lockfiles updated if `pyproject.toml` dependencies changed (`make lock` or `make lock-upgrade`)
+- Optional integration check: `make test-mistral` when validating Mistral (requires `MISTRAL_API_KEY`; not run in CI)
 - Docs match the new behaviour in the correct language tier
 
 ## Pull request guidance

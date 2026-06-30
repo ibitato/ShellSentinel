@@ -37,6 +37,13 @@ Dieses Dokument fasst die Schritte und Kriterien für die Implementierung benutz
 - Die native REST-API (`/api/v0/*`) liefert Metriken für Telemetrie (TTFT, Tokens/s).
 - `GET /api/v0/models/<model_id>` liefert `max_context_length` für sinnvolle `max_completion_tokens` (z. B. `openai/gpt-oss-20b` mit 131072 Kontext-Tokens).
 
+## Praxisbeispiel: Mistral AI (Pfad A+)
+
+- Shell Sentinel liefert `ShellMistralModel`, einen Wrapper über Strands `MistralModel` (offizielles `mistralai` v2 SDK). Konfiguriere `providers.mistral` mit `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` und `params`.
+- **Standardwerte:** `mistral-medium-3.5`, `reasoning_effort: high` (Pflicht bei Reasoning-Modellen), `max_tokens: 16184`.
+- Der Wrapper injiziert `reasoning_effort` in jede API-Anfrage und mappt Thinking-Chunks auf `reasoningContent`-Stream-Events (`show_thinking`).
+- Validierung mit `make test-mistral`, wenn `MISTRAL_API_KEY` gesetzt ist.
+
 ## Praxisbeispiel: Cerebras
 
 - Offizielles SDK (`cerebras_cloud_sdk`) in ein benutzerdefiniertes `Model` für SSE-Streaming und Tool-Support integrieren. In `providers.cerebras` `model_id`, `params`, `client_args` und Schlüsselreferenz (`api_key_env` oder `CEREBRAS_API_KEY`) definieren.

@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from pathlib import Path
 
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Vertical
@@ -19,6 +18,7 @@ from ..connection import (
 )
 from ..localization import _
 from ..plugins import PluginManager
+from ..security import redact_connect_args
 from .commands import CONNECT_ALIASES, EXIT_ALIASES, SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
@@ -157,11 +157,9 @@ class SmartAISysAdminApp(App[None]):
             return content
         command = tokens[0].lower()
         if command in CONNECT_ALIASES and len(tokens) >= 4:
-            secret = tokens[3]
-            candidate = Path(secret).expanduser()
-            if not candidate.exists():
-                tokens[3] = "***"
-        return " ".join(tokens)
+            redacted = redact_connect_args(tokens[1:])
+            return " ".join([tokens[0], *redacted])
+        return content
 
     def _handle_exit_request(self) -> None:
         assert self._conversation is not None

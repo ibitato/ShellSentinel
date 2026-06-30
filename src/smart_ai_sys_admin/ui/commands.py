@@ -17,6 +17,7 @@ from ..connection import (
 )
 from ..localization import _
 from ..plugins.types import PluginSlashCommand
+from ..security import redact_connect_args
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..agent.runtime import AgentRuntime
@@ -155,7 +156,8 @@ class SlashCommandProcessor:
                 _("ui.commands.unknown", command=command),
                 self._help_overview(),
             )
-        self._logger.info("Procesando comando %s con argumentos %s", command, parts[1:])
+        log_args = redact_connect_args(parts[1:]) if command in CONNECT_ALIASES else parts[1:]
+        self._logger.info("Procesando comando %s con argumentos %s", command, log_args)
         try:
             return handler(parts[1:])
         except Exception as exc:  # pragma: no cover - salvaguarda adicional
@@ -182,7 +184,11 @@ class SlashCommandProcessor:
 
     def _command_connect(self, args: list[str]) -> str:
         if len(args) < 3:
-            self._logger.info("Parámetros insuficientes para %s: %s", PRIMARY_CONNECT, args)
+            self._logger.info(
+                "Parámetros insuficientes para %s: %s",
+                PRIMARY_CONNECT,
+                redact_connect_args(args),
+            )
             return self._format_help(
                 _("ui.commands.connect.missing_args", command=PRIMARY_CONNECT),
                 self._connect_help(),

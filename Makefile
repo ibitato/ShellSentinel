@@ -9,17 +9,19 @@ PIP_SYNC := .venv/bin/pip-sync
 
 export PYTHONPATH := src
 
-.PHONY: help install install-prod lock sync-deps format lint lint-fix test run clean website-serve
+.PHONY: help install install-prod lock lock-upgrade sync-deps format lint lint-fix test test-mistral run clean website-serve
 
 help:
 	@echo "Comandos disponibles:"
 	@echo "  make install       - Instala dependencias de desarrollo (lock) y el paquete editable"
 	@echo "  make install-prod  - Instala solo dependencias de ejecución (lock)"
 	@echo "  make lock          - Regenera requirements.txt y requirements-dev.txt desde pyproject.toml"
+	@echo "  make lock-upgrade  - Regenera lockfiles actualizando todas las versiones (resolver conflictos)"
 	@echo "  make sync-deps     - Sincroniza el venv con requirements-dev.txt (pip-sync)"
 	@echo "  make format        - Aplica formateo con Black"
 	@echo "  make lint          - Ejecuta linting con Ruff"
 	@echo "  make test          - Ejecuta la suite de pruebas"
+	@echo "  make test-mistral  - PoC Mistral cloud (requiere MISTRAL_API_KEY)"
 	@echo "  make run           - Ejecuta la CLI"
 	@echo "  make website-serve - Sirve la web estática en localhost:8787"
 	@echo "  make clean         - Elimina artefactos temporales"
@@ -44,6 +46,10 @@ lock: .venv/bin/pip-compile
 	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras pyproject.toml -o requirements.txt
 	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras pyproject.toml --extra dev -o requirements-dev.txt
 
+lock-upgrade: .venv/bin/pip-compile
+	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras --upgrade pyproject.toml -o requirements.txt
+	$(PIP_COMPILE) --resolver=backtracking --no-strip-extras --upgrade pyproject.toml --extra dev -o requirements-dev.txt
+
 sync-deps: .venv/bin/pip-compile
 	$(PIP_SYNC) requirements-dev.txt
 	$(PIP) install -e . --no-deps
@@ -59,6 +65,9 @@ lint-fix: .venv/bin/activate
 
 test: .venv/bin/activate
 	$(PYTEST)
+
+test-mistral: .venv/bin/activate
+	$(PYTEST) tests/integration/mistral -m mistral -q --no-cov
 
 run: .venv/bin/activate
 	$(PYTHON) -m smart_ai_sys_admin

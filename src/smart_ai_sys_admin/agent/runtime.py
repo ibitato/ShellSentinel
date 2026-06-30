@@ -304,6 +304,7 @@ class AgentRuntime:
             "local": "Ollama",
             "lmstudio": "LM Studio",
             "cerebras": "Cerebras",
+            "mistral": "Mistral AI",
         }
 
         provider_key = self._config.provider if self._config else None

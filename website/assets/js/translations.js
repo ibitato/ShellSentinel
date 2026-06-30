@@ -54,7 +54,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Extensible providers & plugins",
           body:
-            "Swap LLM backends or ship plugins that add commands, dashboards or MCP bridges—all without modifying the TUI core.",
+            "Swap LLM backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) or ship plugins that add commands, dashboards or MCP bridges—all without modifying the TUI core.",
         },
         {
           icon: "🛡️",
@@ -106,7 +106,7 @@ window.TRANSLATIONS = {
         {
           title: "2. Open a trusted session",
           body:
-            "Run `/connect` to establish a persistent SSH/SFTP channel. Keys, passwords and custom ports are supported out of the box.",
+            "Run `/connect` to establish a persistent SSH session (SFTP opens on the first file transfer). Keys, passwords and custom ports are supported out of the box.",
         },
         {
           title: "3. Describe what you need",
@@ -264,8 +264,8 @@ window.TRANSLATIONS = {
       eyebrow: "Availability",
       title: "Download & onboarding",
       lead:
-        "Stable builds are published through GitHub Releases. Grab version 1.1.1 and keep the quick start guide close when setting up.",
-      primaryCta: "Download Shell Sentinel 1.1.1",
+        "Stable builds are published through GitHub Releases. Grab version 1.2.0 and keep the quick start guide close when setting up.",
+      primaryCta: "Download Shell Sentinel 1.2.0",
       secondaryCta: "Follow quick start guide",
       note:
         "Install from source by creating a virtual environment, running make install and launching make run.",
@@ -343,7 +343,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Proveedores y plugins extensibles",
           body:
-            "Cambia de backend LLM o crea plugins que añadan comandos, paneles o puentes MCP sin modificar el núcleo de la TUI.",
+            "Cambia de backend LLM (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) o crea plugins que añadan comandos, paneles o puentes MCP sin modificar el núcleo de la TUI.",
         },
         {
           icon: "🛡️",
@@ -395,7 +395,7 @@ window.TRANSLATIONS = {
         {
           title: "2. Abre una sesión confiable",
           body:
-            "Ejecuta `/connect` para establecer un canal SSH/SFTP persistente. Claves, contraseñas y puertos personalizados están soportados.",
+            "Ejecuta `/connect` para establecer una sesión SSH persistente (SFTP se abre en la primera transferencia). Claves, contraseñas y puertos personalizados están soportados.",
         },
         {
           title: "3. Explica lo que necesitas",
@@ -553,8 +553,8 @@ window.TRANSLATIONS = {
       eyebrow: "Disponibilidad",
       title: "Descarga y onboarding",
       lead:
-        "La versión estable 1.1.1 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
-      primaryCta: "Descargar Shell Sentinel 1.1.1",
+        "La versión estable 1.2.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
+      primaryCta: "Descargar Shell Sentinel 1.2.0",
       secondaryCta: "Seguir guía de inicio rápido",
       note:
         "Instala desde el código creando un entorno virtual, ejecutando make install y arrancando con make run.",
@@ -632,7 +632,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Erweiterbare Provider & Plugins",
           body:
-            "Wechsle LLM-Backends oder entwickle Plugins für zusätzliche Befehle, Dashboards oder MCP-Brücken – ganz ohne Kernänderungen.",
+            "Wechsle LLM-Backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) oder entwickle Plugins für zusätzliche Befehle, Dashboards oder MCP-Brücken – ganz ohne Kernänderungen.",
         },
         {
           icon: "🛡️",
@@ -684,7 +684,7 @@ window.TRANSLATIONS = {
         {
           title: "2. Vertrauenswürdige Session öffnen",
           body:
-            "Starte `/connect`, um einen persistenten SSH/SFTP-Kanal aufzubauen. Schlüssel, Passwörter und eigene Ports sind möglich.",
+            "Starte `/connect`, um eine persistente SSH-Sitzung aufzubauen (SFTP bei der ersten Übertragung). Schlüssel, Passwörter und eigene Ports sind möglich.",
         },
         {
           title: "3. Bedarf formulieren",
@@ -842,8 +842,8 @@ window.TRANSLATIONS = {
       eyebrow: "Verfügbarkeit",
       title: "Download & Onboarding",
       lead:
-        "Der stabile Release 1.1.1 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
-      primaryCta: "Shell Sentinel 1.1.1 herunterladen",
+        "Der stabile Release 1.2.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
+      primaryCta: "Shell Sentinel 1.2.0 herunterladen",
       secondaryCta: "Schnellstart öffnen",
       note:
         "Installation aus dem Quellcode: Virtuelle Umgebung erstellen, make install ausführen und mit make run starten.",

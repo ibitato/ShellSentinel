@@ -19,6 +19,7 @@ from strands.models.ollama import OllamaModel
 from strands.models.openai import OpenAIModel
 
 from .config import (
+    MISTRAL_DEFAULT_MAX_TOKENS,
     AgentConfig,
     AgentConfigError,
     AgentOptions,
@@ -27,11 +28,12 @@ from .config import (
     LMStudioProviderConfig,
     LocalProviderConfig,
     MCPConfig,
+    MistralProviderConfig,
     OpenAIProviderConfig,
     ProviderBaseConfig,
     RemoteCommandConfig,
 )
-from .providers import CerebrasModel
+from .providers import CerebrasModel, ShellMistralModel
 
 logger = logging.getLogger("smart_ai_sys_admin.agent.factory")
 
@@ -84,6 +86,8 @@ class AgentFactory:
             return self._build_lmstudio_model(provider_cfg)
         if isinstance(provider_cfg, CerebrasProviderConfig):
             return self._build_cerebras_model(provider_cfg)
+        if isinstance(provider_cfg, MistralProviderConfig):
+            return self._build_mistral_model(provider_cfg)
         raise AgentConfigError("Tipo de proveedor no soportado")
 
     def _build_bedrock_model(self, cfg: BedrockProviderConfig) -> BedrockModel:
@@ -206,6 +210,42 @@ class AgentFactory:
             client_args=client_args,
             api_key=cfg.api_key,
             api_key_env=cfg.api_key_env,
+        )
+
+    def _build_mistral_model(self, cfg: MistralProviderConfig) -> ShellMistralModel:
+        client_args = dict(cfg.client_args)
+        api_key = cfg.api_key
+        if cfg.api_key_env:
+            api_key = os.getenv(cfg.api_key_env)
+            if not api_key:
+                raise AgentConfigError(
+                    "No se encontró la variable de entorno "
+                    f"'{cfg.api_key_env}' para la clave de Mistral."
+                )
+        if not api_key:
+            api_key = os.getenv("MISTRAL_API_KEY")
+        if not api_key:
+            raise AgentConfigError(
+                "Mistral requiere especificar 'api_key', 'api_key_env' o definir MISTRAL_API_KEY."
+            )
+
+        params = dict(cfg.params)
+        if "stream" not in params:
+            params["stream"] = self._config.options.streaming
+        if "max_tokens" not in params:
+            params["max_tokens"] = MISTRAL_DEFAULT_MAX_TOKENS
+
+        logger.debug(
+            "Instanciando ShellMistralModel con model_id=%s reasoning_effort=%s",
+            cfg.model_id,
+            cfg.reasoning_effort,
+        )
+        return ShellMistralModel(
+            api_key=api_key,
+            client_args=client_args or None,
+            model_id=cfg.model_id,
+            reasoning_effort=cfg.reasoning_effort,  # type: ignore[arg-type]
+            **params,
         )
 
     def _build_conversation_manager(self, options: AgentOptions):

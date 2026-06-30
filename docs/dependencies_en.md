@@ -12,7 +12,7 @@ Shell Sentinel uses **pip-tools** with a single source of truth and versioned lo
 | `requirements.txt` | **Runtime** lock (generated). Includes pinned transitive packages. |
 | `requirements-dev.txt` | **Development** lock (generated). Includes runtime + lint/test/lock tools. |
 
-Do not edit `requirements*.txt` by hand except after merge conflicts; regenerate with `make lock`.
+Do not edit `requirements*.txt` by hand except after merge conflicts; regenerate with `make lock` or `make lock-upgrade` when you need to refresh pinned versions.
 
 ## Installation
 
@@ -30,7 +30,8 @@ make install          # development (recommended)
 1. Edit `[project.dependencies]` or `[project.optional-dependencies.dev]` in `pyproject.toml`.
 2. Regenerate locks with Python 3.12:
    ```bash
-   make lock
+   make lock          # incremental pin refresh
+   # make lock-upgrade   # upgrade all pins (use when resolving version conflicts)
    ```
 3. Sync the environment:
    ```bash
@@ -44,6 +45,7 @@ These libraries are declared explicitly in `pyproject.toml` for auditability and
 
 - `boto3` — Amazon Bedrock (via Strands)
 - `openai` — OpenAI / LM Studio-compatible provider
+- `mistralai` — Mistral La Plateforme (`strands-agents[mistral]` extra)
 - `cryptography` — Paramiko, JWT, MCP
 
 The lockfile pins exact versions for the full dependency tree.

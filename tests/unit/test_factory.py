@@ -6,8 +6,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from smart_ai_sys_admin.agent.config import AgentConfigError, load_agent_config
+from smart_ai_sys_admin.agent.config import (
+    MISTRAL_DEFAULT_MAX_TOKENS,
+    AgentConfigError,
+    load_agent_config,
+)
 from smart_ai_sys_admin.agent.factory import AgentFactory
+from smart_ai_sys_admin.agent.providers import ShellMistralModel
 
 
 @pytest.fixture
@@ -96,3 +101,46 @@ def test_factory_properties(agent_config):
     assert factory.remote_command.timeout_seconds == 60
     assert factory.consent_bypass is True
     assert factory.mcp_config.enabled is False
+
+
+def test_build_mistral_model_defaults(minimal_agent_conf, monkeypatch):
+    import json
+
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    payload["provider"] = "mistral"
+    payload["providers"]["mistral"] = {
+        "system_prompt": "system_prompts/test.md",
+        "model_id": "mistral-medium-3.5",
+        "api_key_env": "MISTRAL_API_KEY",
+        "reasoning_effort": "high",
+        "params": {"temperature": 0.3},
+    }
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setenv("SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE", str(minimal_agent_conf))
+    monkeypatch.setenv("MISTRAL_API_KEY", "test-mistral-key")
+    config = load_agent_config()
+    factory = AgentFactory(config)
+    model = factory._build_mistral_model(config.provider_config())  # type: ignore[arg-type]
+    assert isinstance(model, ShellMistralModel)
+    assert model.get_config()["max_tokens"] == MISTRAL_DEFAULT_MAX_TOKENS
+    assert model.reasoning_effort == "high"
+
+
+def test_build_mistral_missing_api_key(minimal_agent_conf, monkeypatch):
+    import json
+
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    payload["provider"] = "mistral"
+    payload["providers"]["mistral"] = {
+        "system_prompt": "system_prompts/test.md",
+        "model_id": "mistral-medium-3.5",
+        "api_key_env": "MISTRAL_API_KEY",
+        "params": {},
+    }
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setenv("SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE", str(minimal_agent_conf))
+    monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
+    config = load_agent_config()
+    factory = AgentFactory(config)
+    with pytest.raises(AgentConfigError, match="MISTRAL_API_KEY"):
+        factory._build_mistral_model(config.provider_config())  # type: ignore[arg-type]

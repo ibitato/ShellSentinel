@@ -75,6 +75,13 @@
           <li>Native REST-API (<code>/api/v0/*</code>) für Metriken und <code>max_context_length</code>.</li>
         </ul>
 
+        <h2>Praxisbeispiel: Mistral AI (Pfad A+)</h2>
+        <ul>
+          <li><code>ShellMistralModel</code> umschließt Strands <code>MistralModel</code> (offizielles <code>mistralai</code> v2 SDK).</li>
+          <li><code>providers.mistral</code> mit Standard <code>reasoning_effort: high</code> und <code>max_tokens: 16184</code>.</li>
+          <li><code>make test-mistral</code> ausführen, wenn <code>MISTRAL_API_KEY</code> gesetzt ist.</li>
+        </ul>
+
         <h2>Praxisbeispiel: Cerebras</h2>
         <ul>
           <li><code>cerebras_cloud_sdk</code> mit SSE-Streaming integrieren.</li>

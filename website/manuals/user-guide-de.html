@@ -87,7 +87,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
         <h2>Wichtige Befehle</h2>
         <p>Alle Befehle stehen auf Englisch, Spanisch und Deutsch zur Verfügung.</p>
         <ul>
-          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [Port]</code> — baut die Remote-Sitzung auf (Standardport 22).</li>
+          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [Port]</code> — baut die SSH-Sitzung auf (Standardport 22). SFTP wird bei der ersten Übertragung geöffnet.</li>
           <li><code>/disconnect</code> — beendet die aktive Verbindung.</li>
           <li><code>/help</code> — listet verfügbare Befehle.</li>
           <li><code>/status</code> — zeigt Agenten-, Provider- und Modellstatus.</li>
@@ -104,8 +104,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
           <li><code>Lade /tmp/script.sh nach /home/ubuntu/bin/script.sh hoch</code></li>
         </ul>
         <p>
-          Der Assistent nutzt die aktive SSH/SFTP-Sitzung für Befehle und Dateiübertragungen und
-          protokolliert jede Aktion ausführlich.
+          Der Assistent nutzt die aktive SSH-Sitzung für Befehle. Dateiübertragungen öffnen SFTP bei Bedarf und protokollieren jede Aktion ausführlich.
         </p>
 
         <h2>Konfiguration</h2>
@@ -125,6 +124,9 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
             <br />Für LM Studio den lokalen Server mit <code>lms server start</code> starten; für
             Cerebras <code>CEREBRAS_API_KEY</code> exportieren oder <code>api_key_env</code> setzen (SDK
             mit SSE-Unterstützung).
+            <br />Für Mistral AI <code>MISTRAL_API_KEY</code> exportieren, <code>provider: mistral</code>
+            wählen, Standard <code>reasoning_effort: high</code> und <code>max_tokens: 16184</code>
+            (<code>mistral-medium-3.5</code>).
             <br />Mit <code>remote_command.max_output_chars</code> begrenzt du die Anzahl der Zeichen, die
             der Agent erhält.
           </li>
@@ -135,6 +137,8 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
           <li><strong>Farb-/Darstellungsprobleme</strong>: <code>TERM</code> prüfen und ggf. auf <code>xterm-256color</code> wechseln.</li>
           <li><strong>Assistent reagiert nicht</strong>: <code>conf/agent.conf</code>, Zugangsdaten und <code>logs/app.log</code> kontrollieren.</li>
           <li><strong>"Keine aktive SSH-Verbindung"</strong>: Vor Remote-Aktionen <code>/connect</code> ausführen.</li>
+          <li><strong>SFTP-Fehler nach erfolgreichem <code>/connect</code></strong>: Die Remote-Shell kann Banner in nicht-interaktiven Sitzungen ausgeben (z. B. <code>pyfiglet</code> in <code>~/.bashrc</code>). Dekorative Ausgabe nur interaktiv erlauben oder <code>Subsystem sftp internal-sftp</code> auf dem Server setzen.</li>
+          <li><strong>Zugangsdaten in Logs</strong>: <code>/connect</code>-Passwörter werden in <code>logs/app.log</code> als <code>***</code> maskiert.</li>
         </ul>
 
         <h2>Weitere Ressourcen</h2>

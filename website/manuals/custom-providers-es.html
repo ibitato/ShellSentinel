@@ -98,6 +98,13 @@
           </li>
         </ul>
 
+        <h2>Caso práctico: Mistral AI (Camino A+)</h2>
+        <ul>
+          <li><code>ShellMistralModel</code> envuelve <code>MistralModel</code> de Strands (SDK <code>mistralai</code> v2).</li>
+          <li>Configura <code>providers.mistral</code> con <code>reasoning_effort: high</code> y <code>max_tokens: 16184</code> por defecto.</li>
+          <li>Ejecuta <code>make test-mistral</code> con <code>MISTRAL_API_KEY</code> disponible.</li>
+        </ul>
+
         <h2>Caso práctico: Cerebras</h2>
         <ul>
           <li>Integra <code>cerebras_cloud_sdk</code> dentro de un modelo personalizado con streaming SSE.</li>
