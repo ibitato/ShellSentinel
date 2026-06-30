@@ -39,7 +39,7 @@ make run
 - The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status plus the active LLM provider/model.
 - Submit instructions with the configured shortcut (default `Ctrl+S`).
 - Supported commands (aliases available in English, Spanish and German):
-- `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH/SFTP session (optional port, defaults to 22).
+- `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH session (optional port, defaults to 22). SFTP opens on the first file transfer.
   - `/disconnect` (`/desconectar`, `/trennen`) closes the active connection if any.
   - `/help` (`/ayuda`, `/hilfe`) shows a Markdown summary of all commands.
   - `/status` (`/estado`) displays the current agent and connection status.
@@ -82,7 +82,7 @@ make run
 - To work with Model Context Protocol (MCP) servers, declare each transport (`stdio`, `sse`, `streamable_http`) under `mcp`. The agent keeps those connections alive during the session and exposes their tools automatically.
   - Example: transport `firecrawl-stdio` runs `npx -y firecrawl-mcp`. Use `env_passthrough` so the agent inherits `FIRECRAWL_API_KEY` (or other secrets) and export them before launching the TUI.
 - When the app starts you will see a retro welcome screen (orange theme) that closes after 5 seconds or any key press.
-- `/connect` sessions keep SSH and SFTP alive. The agent exposes `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` to upload (`upload`/`put`) or download (`download`/`get`) files through the same connection. Rename the tool via `tools.sftp_transfer.name` if needed.
+- `/connect` keeps the SSH session alive; SFTP opens on demand when the agent transfers files. The agent exposes `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` to upload (`upload`/`put`) or download (`download`/`get`) files through the same connection. Passwords supplied to `/connect` are redacted as `***` in logs and echoed input. Rename the tool via `tools.sftp_transfer.name` if needed.
 - You can manage GNU/Linux or Windows servers as long as they provide SSH/SFTP. Adjust commands to the target platform (PowerShell/cmd on Windows) and double-check paths when transferring files.
 
 ### Plugin system
@@ -141,7 +141,7 @@ def register(registry: PluginRegistry) -> None:
 - `CHANGELOG.md`: project version history.
 - `src/smart_ai_sys_admin/`: main application source code (TUI and utilities).
 - `tests/`: automated test suite (unit and integration).
-- `Makefile`: helper tasks for install, lock, format, lint, test, run and clean.
+- `Makefile`: helper tasks for install, lock, lock-upgrade, sync-deps, format, lint, test, test-mistral, run and clean.
 - `AGENTS.md`: contribution guide for human collaborators and AI agents.
 
 ## Licence

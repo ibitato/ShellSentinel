@@ -88,7 +88,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
         <h2>Core commands</h2>
         <p>Commands and aliases are available in English, Spanish and German.</p>
         <ul>
-          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [port]</code> — open the session (default port 22).</li>
+          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [port]</code> — open the SSH session (default port 22). SFTP opens on the first file transfer.</li>
           <li><code>/disconnect</code> — close the active connection.</li>
           <li><code>/help</code> — show the command summary.</li>
           <li><code>/status</code> — inspect agent, provider, model and streaming status.</li>
@@ -109,8 +109,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           </li>
         </ul>
         <p>
-          The agent reuses the active SSH/SFTP session to execute remote commands or transfer files
-          and records every action in the logs.
+          The agent reuses the active SSH session for remote commands. File transfers open SFTP on demand through the same connection and every action is recorded in the logs.
         </p>
 
         <h2>Configuration reference</h2>
@@ -150,6 +149,12 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           <li>
             <strong>"No active SSH connection"</strong>: run <code>/connect</code> before asking the
             agent to execute remote actions.
+          </li>
+          <li>
+            <strong>SFTP or transfer fails after a successful <code>/connect</code></strong>: the remote shell may print banners on non-interactive sessions (for example <code>pyfiglet</code> in <code>~/.bashrc</code>). Wrap decorative output in an interactive check or ask the server admin to use <code>Subsystem sftp internal-sftp</code>.
+          </li>
+          <li>
+            <strong>Credentials in logs</strong>: <code>/connect</code> passwords are masked as <code>***</code> in <code>logs/app.log</code> and echoed input.
           </li>
         </ul>
 

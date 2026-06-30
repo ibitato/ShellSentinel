@@ -38,7 +38,7 @@ make run
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH y el proveedor/modelo LLM activo.
 - Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
 - Comandos disponibles (puedes usar los alias en inglés, español o alemán):
-  - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH y SFTP persistente (el puerto es opcional, por defecto 22).
+  - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH persistente (el puerto es opcional, por defecto 22). SFTP se abre en la primera transferencia de archivos.
   - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
   - `/help` (`/ayuda`, `/hilfe`) muestra un resumen en Markdown de los comandos disponibles.
   - `/status` (`/estado`) muestra el estado actual del agente y la conexión.
@@ -84,7 +84,7 @@ make run
 - Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
   - Ejemplo: el transporte `firecrawl-stdio` lanza `npx -y firecrawl-mcp`. Configura `env_passthrough` para que el agente herede `FIRECRAWL_API_KEY` (u otras variables sensibles) y, antes de iniciar la TUI, expórtalas en tu entorno (`export FIRECRAWL_API_KEY="..."`).
 - Al iniciar la aplicación verás una pantalla de bienvenida retro en tonos naranja; se cierra sola tras 5 s o cuando presionas cualquier tecla.
-- Las sesiones `/conectar` mantienen vivo el canal SSH y SFTP en paralelo. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
+- Las sesiones `/conectar` mantienen viva la sesión SSH; SFTP se abre bajo demanda cuando el agente transfiere archivos. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Las contraseñas de `/connect` se enmascaran como `***` en logs y en la entrada mostrada. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
 - Puedes administrar servidores GNU/Linux o Windows siempre que expongan SSH/SFTP. Ajusta los comandos remotos a la plataforma (por ejemplo, usa PowerShell/cmd para Windows) y valida rutas antes de transferir o modificar contenidos.
 
 ### Sistema de plugins
@@ -140,7 +140,7 @@ def register(registry: PluginRegistry) -> None:
 - `CHANGELOG.md`: historial de versiones del proyecto.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
 - `tests/`: suite de pruebas automatizadas (unitarias e integración).
-- `Makefile`: tareas para instalación, lock, formateo, lint y ejecución.
+- `Makefile`: tareas para instalación, lock, lock-upgrade, sync-deps, formateo, lint, test, test-mistral y ejecución.
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
 
 ## Licencia

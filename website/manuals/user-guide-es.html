@@ -87,7 +87,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
         <h2>Comandos básicos</h2>
         <p>Los comandos están disponibles en inglés, español y alemán.</p>
         <ul>
-          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [puerto]</code> — abre la sesión (puerto 22 por defecto).</li>
+          <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [puerto]</code> — abre la sesión SSH (puerto 22 por defecto). SFTP se abre en la primera transferencia.</li>
           <li><code>/disconnect</code> — cierra la conexión activa.</li>
           <li><code>/help</code> — muestra el resumen de comandos.</li>
           <li><code>/status</code> — expone el estado del agente, proveedor y modelo.</li>
@@ -104,8 +104,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><code>Subir /tmp/script.sh a /home/ubuntu/bin/script.sh</code></li>
         </ul>
         <p>
-          El asistente reutiliza la sesión SSH/SFTP para ejecutar comandos o transferir archivos y
-          deja rastro en los logs.
+          El asistente reutiliza la sesión SSH activa para comandos remotos. Las transferencias abren SFTP bajo demanda y dejan rastro en los logs.
         </p>
 
         <h2>Configuración adicional</h2>
@@ -135,6 +134,8 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><strong>Colores incorrectos</strong>: revisa <code>TERM</code> y cambia a <code>xterm-256color</code>.</li>
           <li><strong>El asistente no responde</strong>: comprueba <code>conf/agent.conf</code>, credenciales y <code>logs/app.log</code>.</li>
           <li><strong>Mensaje "No hay una conexión SSH activa"</strong>: ejecuta <code>/connect</code> antes de pedir acciones remotas.</li>
+          <li><strong>Fallo SFTP tras un <code>/connect</code> correcto</strong>: el shell remoto puede imprimir banners en sesiones no interactivas (p. ej. <code>pyfiglet</code> en <code>~/.bashrc</code>). Envuelve la salida decorativa en una comprobación interactiva o usa <code>Subsystem sftp internal-sftp</code> en el servidor.</li>
+          <li><strong>Credenciales en logs</strong>: las contraseñas de <code>/connect</code> se enmascaran como <code>***</code> en <code>logs/app.log</code>.</li>
         </ul>
 
         <h2>Recursos adicionales</h2>

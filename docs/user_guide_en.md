@@ -44,7 +44,7 @@ A welcome screen appears on startup and closes automatically after 5 seconds or 
 ## Core commands
 Commands are available in English, Spanish and German.
 
-- `/connect <host> <user> <password|key_path> [port]` — open the remote session (optional port, defaults to 22).
+- `/connect <host> <user> <password|key_path> [port]` — open the remote SSH session (optional port, defaults to 22). SFTP opens automatically on the first file transfer.
 - `/disconnect` — close the active connection.
 - `/help` — display a summary of commands.
 - `/status` — display the current agent and connection status.
@@ -57,7 +57,7 @@ Type any natural-language instruction. If it is not a slash command, the Strands
 - "List the top CPU processes".
 - "Upload `/tmp/script.sh` to `/home/ubuntu/bin/script.sh`".
 
-The agent reuses the active SSH/SFTP session to run remote commands and transfer files.
+The agent reuses the active SSH session to run remote commands. File transfers open SFTP on demand through the same connection.
 
 ## Configuration reference
 - `conf/app_config.json` stores styling, prompts and shortcuts using placeholders such as `{{ui.output_panel.title}}`, automatically resolved for the active locale.
@@ -68,3 +68,5 @@ The agent reuses the active SSH/SFTP session to run remote commands and transfer
 - **Colors look wrong / warning about terminal**: check `TERM` and switch to `xterm-256color` if needed.
 - **Agent not responding**: verify `conf/agent.conf`, provider credentials and logs under `logs/app.log`.
 - **"No active SSH connection" errors**: run `/connect` before asking the agent to execute remote actions.
+- **SFTP or file transfer fails after a successful `/connect`**: the remote shell may print banners or MOTD on non-interactive sessions (for example `pyfiglet` in `~/.bashrc`). Wrap decorative output in an interactive check (`[[ $- == *i* ]]`) or ask the server admin to use `Subsystem sftp internal-sftp` in `sshd_config`.
+- **Credentials in logs**: passwords passed to `/connect` are masked as `***` in `logs/app.log` and in echoed command input.

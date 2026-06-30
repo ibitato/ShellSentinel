@@ -199,7 +199,6 @@ class SSHConnectionManager:
         self._logger.debug("Comando '%s' finalizado con código %s", command, exit_status)
         return exit_status, out_text, err_text
 
-
     def _open_sftp(self) -> paramiko.SFTPClient:
         if not self.is_connected or not self._ssh_client:
             raise NoActiveConnection(_("connection.errors.no_active_ssh"))

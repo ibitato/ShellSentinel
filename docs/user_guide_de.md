@@ -44,7 +44,7 @@ Zu Beginn erscheint ein Willkommensbildschirm, der sich nach 5 Sekunden automati
 ## Wichtige Befehle
 Alle Befehle stehen auf Englisch, Spanisch und Deutsch zur Verfügung.
 
-- `/connect <host> <user> <password|key_path> [Port]` — baut die Remote-Sitzung auf (Port optional, Standard 22).
+- `/connect <host> <user> <password|key_path> [Port]` — baut die SSH-Sitzung auf (Port optional, Standard 22). SFTP wird bei der ersten Dateiübertragung automatisch geöffnet.
 - `/disconnect` — beendet die aktive Verbindung.
 - `/help` — listet die verfügbaren Befehle.
 - `/status` — zeigt den aktuellen Agenten- und Verbindungsstatus.
@@ -57,7 +57,7 @@ Formuliere Anweisungen in natürlicher Sprache. Wenn es kein Slash-Befehl ist, v
 - "Zeige die Prozesse mit der höchsten CPU-Auslastung".
 - "Lade `/tmp/script.sh` nach `/home/ubuntu/bin/script.sh` hoch".
 
-Der Agent nutzt die aktive SSH-/SFTP-Sitzung für Befehle und Dateiübertragungen.
+Der Agent nutzt die aktive SSH-Sitzung für Befehle. Dateiübertragungen öffnen SFTP bei Bedarf über dieselbe Verbindung.
 
 ## Konfiguration
 - `conf/app_config.json` enthält Styles, Texte und Tastenkürzel in Form von Platzhaltern wie `{{ui.output_panel.title}}`, die automatisch für das aktive Locale ersetzt werden.
@@ -68,3 +68,5 @@ Der Agent nutzt die aktive SSH-/SFTP-Sitzung für Befehle und Dateiübertragunge
 - **Farb- oder Anzeigeprobleme**: `TERM` prüfen und ggf. auf `xterm-256color` wechseln.
 - **Agent reagiert nicht**: `conf/agent.conf`, Zugangsdaten und Logdateien (`logs/app.log`) kontrollieren.
 - **Fehler „Keine aktive SSH-Verbindung“**: Vor Agent-Aufgaben zuerst `/connect` ausführen.
+- **SFTP- oder Transferfehler nach erfolgreichem `/connect`**: Die Remote-Shell kann Banner in nicht-interaktiven Sitzungen ausgeben (z. B. `pyfiglet` in `~/.bashrc`). Dekorative Ausgabe nur interaktiv erlauben (`[[ $- == *i* ]]`) oder den Administrator bitten, `Subsystem sftp internal-sftp` in `sshd_config` zu setzen.
+- **Zugangsdaten in Logs**: `/connect`-Passwörter werden in `logs/app.log` und in der angezeigten Eingabe als `***` maskiert.

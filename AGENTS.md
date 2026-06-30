@@ -45,7 +45,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - **Formatting:** `black`
 - **Linting:** `ruff`
 - **Tests:** `pytest` (suite in `tests/`, CI on Python 3.12)
-- **Makefile targets:** `install`, `install-prod`, `lock`, `sync-deps`, `format`, `lint`, `test`, `run`, `clean`
+- **Makefile targets:** `install`, `install-prod`, `lock`, `lock-upgrade`, `sync-deps`, `format`, `lint`, `test`, `test-mistral`, `run`, `clean`
 - **MCP tools:** [Firecrawl](https://www.firecrawl.dev/) for web search, scraping and structured extraction when debugging third-party libraries or validating external docs
 
 ## Configuration and content
@@ -61,7 +61,8 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - New plugins: document install/usage **inside the plugin directory** only; do not add plugin-specific docs to general manuals.
 - Source-available licence: no modifying or redistributing altered versions without permission.
 - Long-running remote work: instruct the model to pass `timeout_seconds` to `remote_ssh_command` when expected runtime exceeds 15 minutes. Tune `remote_command.max_output_chars` for large log dumps.
-- File transfer: `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` on the active SFTP session.
+- File transfer: `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` on the active connection. `/connect` opens SSH immediately; SFTP is opened on demand when a transfer runs.
+- `/connect` passwords are redacted in logs and echoed TUI input via `smart_ai_sys_admin.security.redaction`.
 - Use `local_datetime()` at the start of each turn when local time context helps (show to the operator only if they ask).
 - Adapt commands and transfers to the remote OS (GNU/Linux, Unix, Windows PowerShell/cmd).
 - Logging from `conf/app_config.json`, default `DEBUG`; use `smart_ai_sys_admin.*` loggers.
@@ -72,7 +73,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - Cerebras: official SDK; configure `providers.cerebras`, set `CEREBRAS_API_KEY` or `api_key_env`.
 - Mistral AI: official `mistralai` SDK via `ShellMistralModel`; configure `providers.mistral`, set `MISTRAL_API_KEY` or `api_key_env`, defaults `reasoning_effort=high` and `max_tokens=16184`.
 - Enable `mcp` only when declared servers are available; startup fails otherwise.
-- New dependencies: edit `pyproject.toml`, run `make lock`, validate with `make test`. Do not hand-edit `requirements*.txt`.
+- New dependencies: edit `pyproject.toml`, run `make lock` (or `make lock-upgrade` when resolving version conflicts), validate with `make test`. Do not hand-edit `requirements*.txt`.
 - Custom model providers: read `docs/custom_model_providers_en.md` (and `docs/custom_model_providers_es.md`, `docs/custom_model_providers_de.md`) before changing `smart_ai_sys_admin.agent`.
 - Static site `website/`: sync every product-facing change across EN/ES/DE.
 
@@ -81,7 +82,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 1. Activate virtualenv: `source .venv/bin/activate`
 2. Install: `make install`
 3. Before opening a PR: `make format`, `make lint`, `make test`
-4. After `pyproject.toml` dependency changes: `make lock` and commit updated `requirements*.txt`
+4. After `pyproject.toml` dependency changes: `make lock` (or `make lock-upgrade`) and commit updated `requirements*.txt`
 5. Validate TUI: `make run`; validate website: `make website-serve`
 
 ## Conventions
