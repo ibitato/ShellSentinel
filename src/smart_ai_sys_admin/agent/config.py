@@ -12,7 +12,10 @@ from typing import Any, Literal
 
 from ..localization import get_localizer
 
-ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"]
+ProviderLiteral = Literal[
+    "bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"
+]
+OpenAIAPILiteral = Literal["chat_completions", "responses"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
 
@@ -39,6 +42,8 @@ class BedrockProviderConfig(ProviderBaseConfig):
 @dataclass(frozen=True)
 class OpenAIProviderConfig(ProviderBaseConfig):
     model_id: str
+    api: OpenAIAPILiteral
+    stateful: bool
     client_args: Mapping[str, Any]
     params: Mapping[str, Any]
 
@@ -233,6 +238,39 @@ def _tuple_from_sequence(items: Sequence[str] | None) -> tuple[str, ...]:
     return tuple(items or ())
 
 
+def _normalize_openai_params(params: Mapping[str, Any] | None, api: str) -> dict[str, Any]:
+    """Normaliza aliases de configuración para el endpoint OpenAI elegido."""
+
+    if api not in {"chat_completions", "responses"}:
+        raise AgentConfigError(
+            "API de OpenAI desconocida: " f"{api}. Usa 'chat_completions' o 'responses'."
+        )
+
+    normalized = dict(params or {})
+    token_key = "max_output_tokens" if api == "responses" else "max_completion_tokens"
+    opposite_token_key = "max_completion_tokens" if api == "responses" else "max_output_tokens"
+    generic_limit = normalized.pop("max_tokens", None)
+    opposite_limit = normalized.pop(opposite_token_key, None)
+    if token_key not in normalized:
+        if generic_limit is not None:
+            normalized[token_key] = generic_limit
+        elif opposite_limit is not None:
+            normalized[token_key] = opposite_limit
+
+    if api == "responses":
+        reasoning_effort = normalized.pop("reasoning_effort", None)
+        if "reasoning" not in normalized and reasoning_effort is not None:
+            normalized["reasoning"] = {"effort": reasoning_effort}
+    else:
+        reasoning = normalized.pop("reasoning", None)
+        if "reasoning_effort" not in normalized and isinstance(reasoning, Mapping):
+            reasoning_effort = reasoning.get("effort")
+            if reasoning_effort is not None:
+                normalized["reasoning_effort"] = reasoning_effort
+
+    return normalized
+
+
 def _build_provider_configs(
     payload: Mapping[str, Any], config_dir: Path
 ) -> Mapping[ProviderLiteral, ProviderBaseConfig]:
@@ -254,14 +292,15 @@ def _build_provider_configs(
     if "openai" in payload:
         data = payload["openai"]
         system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
-        raw_params = dict(data.get("params", {}))
-        if "max_tokens" in raw_params and "max_completion_tokens" not in raw_params:
-            raw_params["max_completion_tokens"] = raw_params.pop("max_tokens")
+        api = data.get("api", "chat_completions")
+        raw_params = _normalize_openai_params(data.get("params"), api)
         providers["openai"] = OpenAIProviderConfig(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
             model_id=data["model_id"],
+            api=api,
+            stateful=bool(data.get("stateful", False)),
             client_args=_mapping_proxy(data.get("client_args")),
             params=_mapping_proxy(raw_params),
         )
@@ -466,6 +505,7 @@ __all__ = [
     "MistralProviderConfig",
     "MISTRAL_DEFAULT_MAX_TOKENS",
     "MISTRAL_DEFAULT_REASONING_EFFORT",
+    "OpenAIAPILiteral",
     "OpenAIProviderConfig",
     "ProviderBaseConfig",
     "ProviderLiteral",

@@ -25,13 +25,15 @@
       "params": {
         "temperature": 0.3,
         "top_p": 0.8,
-        "max_tokens": 2048,
+        "max_tokens": 8192,
         "streaming": true
       }
     },
     "openai": {
       "system_prompt": "system_prompts/openai.md",
-      "model_id": "gpt-4o",
+      "model_id": "gpt-5.6-sol",
+      "api": "responses",
+      "stateful": false,
       "show_thinking": false,
       "client_args": {
         "api_key_env": "OPENAI_API_KEY",
@@ -39,8 +41,8 @@
         "base_url": "https://api.openai.com/v1"
       },
       "params": {
-        "temperature": 0.7,
-        "max_tokens": 1500
+        "reasoning_effort": "medium",
+        "max_tokens": 32768
       }
     },
     "local": {
@@ -87,7 +89,7 @@
     ],
     "remote_command": {
       "name": "remote_ssh_command",
-      "timeout_seconds": 120,
+      "timeout_seconds": 900,
       "max_output_chars": 120000
     },
     "load_directory": false,

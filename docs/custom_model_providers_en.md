@@ -30,6 +30,29 @@ This document summarises the steps and criteria for implementing custom model pr
 - Do not hardcode tokens or endpoints; use environment variables and `conf/` entries.
 - Add smoke tests or manual scripts to validate provider calls before integrating into the TUI.
 
+## Practical case: OpenAI Responses API
+
+Shell Sentinel selects the endpoint through `providers.openai.api`: `chat_completions` is the default and uses `/v1/chat/completions`; `responses` uses `/v1/responses`. Shared input is normalized per endpoint: `max_tokens` becomes `max_completion_tokens` for Chat Completions or `max_output_tokens` for Responses, while `reasoning_effort`/`reasoning.effort` is converted to the corresponding shape.
+
+The migration was prompted by an HTTP 400 from `gpt-5.6-sol`: Chat Completions does not support function tools together with active `reasoning_effort`. Shell Sentinel attaches tools during administrative turns, so omitting the setting or using `medium` can fail; other GPT-5.x models may silently degrade to zero reasoning tokens. Setting `reasoning_effort: "none"` avoids the 400 by disabling reasoning (`reasoning_tokens=0`), not by making both capabilities compatible. Responses supports function tools with `reasoning.effort: "medium"`.
+
+Reference example configuration (without secrets):
+
+```json
+{
+  "model_id": "gpt-5.6-sol",
+  "api": "responses",
+  "params": {
+    "reasoning_effort": "medium",
+    "max_tokens": 32768
+  }
+}
+```
+
+The effective request uses `reasoning: {"effort": "medium"}` and `max_output_tokens: 32768`; the repository's real configuration uses `max_tokens: 65536`. Responses also accepts `temperature: 0.3` as a verified option, but it is not a default. Read `OPENAI_API_KEY` from the environment.
+
+Optional `stateful` mode can retain `previous_response_id`, but it does not remove a known limitation: `reasoningContent` is not yet fully supported when reconstructing multi-turn conversations. The provider filters those history blocks; the model reasons on every turn but loses some reasoning continuity between turns.
+
 ## Practical case: LM Studio
 
 - LM Studio exposes a local server compatible with the OpenAI API (`/v1/*`). Set `base_url`, `api_key` (or `api_key_env`) and `model_id` in `providers.lmstudio` to reuse Strands `OpenAIModel` without extra changes.

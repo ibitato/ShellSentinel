@@ -173,7 +173,7 @@ window.TRANSLATIONS = {
         {
           title: "Custom providers",
           summary:
-            "Checklist for integrating custom LLM providers with the Strands SDK inside Shell Sentinel.",
+            "Provider checklist plus OpenAI Responses guidance for function tools, reasoning and endpoint parameters.",
           href: "manuals/custom-providers-en.html",
           cta: "Read online",
         },
@@ -462,7 +462,7 @@ window.TRANSLATIONS = {
         {
           title: "Proveedores personalizados",
           summary:
-            "Checklist para integrar proveedores LLM personalizados en el ecosistema de Shell Sentinel.",
+            "Checklist de proveedores y guía de OpenAI Responses sobre function tools, razonamiento y parámetros por endpoint.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
@@ -751,7 +751,7 @@ window.TRANSLATIONS = {
         {
           title: "Benutzerdefinierte Provider",
           summary:
-            "Checkliste zur Integration eigener LLM-Provider mit dem Strands SDK in Shell Sentinel.",
+            "Provider-Checkliste und OpenAI-Responses-Hinweise zu Function Tools, Reasoning und Endpoint-Parametern.",
           href: "manuals/custom-providers-de.html",
           cta: "Online lesen",
         },

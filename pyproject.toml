@@ -11,8 +11,8 @@ authors = [
 dependencies = [
   "textual==8.2.7",
   "paramiko==5.0.0",
-  "strands-agents[mistral,openai,ollama]>=1.45.0",
-  "strands-agents-tools>=0.8.2",
+  "strands-agents[mistral,openai,ollama]==1.50.1",
+  "strands-agents-tools==0.8.5",
   "PyJWT>=2.13.0",
   "requests>=2.34.0",
   "urllib3>=2.0.0",
@@ -23,7 +23,7 @@ dependencies = [
   "mistralai>=2.5.0,<3.0",
   # Transitivas críticas declaradas explícitamente (Bedrock, OpenAI, SSH).
   "boto3>=1.35.0",
-  "openai>=1.50.0",
+  "openai==2.48.0",
   "cryptography>=43.0.0",
 ]
 
@@ -61,10 +61,11 @@ skip-magic-trailing-comma = false
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
-addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing"
+addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing -m 'not e2e'"
 markers = [
   "integration: pruebas lentas o que requieren servicios externos",
   "mistral: PoC Mistral cloud (requiere MISTRAL_API_KEY)",
+  "e2e: pruebas que realizan llamadas reales a servicios externos",
 ]
 
 [tool.coverage.run]

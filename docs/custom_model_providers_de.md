@@ -30,6 +30,29 @@ Dieses Dokument fasst die Schritte und Kriterien für die Implementierung benutz
 - Keine Tokens oder Endpoints hardcoden; Umgebungsvariablen und `conf/` verwenden.
 - Smoke-Tests oder manuelle Skripte vor der TUI-Integration ausführen.
 
+## Praxisbeispiel: OpenAI Responses API
+
+Shell Sentinel wählt den Endpoint über `providers.openai.api`: `chat_completions` ist der Standard und nutzt `/v1/chat/completions`; `responses` nutzt `/v1/responses`. Gemeinsame Eingaben werden je Endpoint normalisiert: `max_tokens` wird für Chat Completions zu `max_completion_tokens` oder für Responses zu `max_output_tokens`; `reasoning_effort`/`reasoning.effort` wird ebenfalls in die passende Form konvertiert.
+
+Auslöser der Migration war ein HTTP 400 von `gpt-5.6-sol`: Chat Completions unterstützt Function Tools nicht zusammen mit aktivem `reasoning_effort`. Shell Sentinel hängt Tools an administrative Turns an, daher kann das Weglassen des Parameters oder `medium` fehlschlagen; andere GPT-5.x-Modelle können still auf null Reasoning-Tokens zurückfallen. `reasoning_effort: "none"` verhindert den Fehler, weil Reasoning deaktiviert wird (`reasoning_tokens=0`), nicht weil beide Funktionen kompatibel werden. Responses unterstützt Function Tools mit `reasoning.effort: "medium"`.
+
+Referenzkonfiguration ohne Secrets:
+
+```json
+{
+  "model_id": "gpt-5.6-sol",
+  "api": "responses",
+  "params": {
+    "reasoning_effort": "medium",
+    "max_tokens": 32768
+  }
+}
+```
+
+Die effektive Anfrage nutzt `reasoning: {"effort": "medium"}` und `max_output_tokens: 32768`; die reale Repository-Konfiguration nutzt `max_tokens: 65536`. Responses akzeptiert optional auch `temperature: 0.3`, dies ist jedoch kein Standardwert. `OPENAI_API_KEY` wird aus der Umgebung gelesen.
+
+Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber eine bekannte Einschränkung nicht: `reasoningContent` wird beim Rekonstruieren von Multi-Turn-Gesprächen noch nicht vollständig unterstützt. Der Provider filtert diese Verlaufsblöcke; das Modell denkt in jedem Turn nach, verliert zwischen Turns jedoch einen Teil der Reasoning-Kontinuität.
+
 ## Praxisbeispiel: LM Studio
 
 - LM Studio stellt einen lokalen OpenAI-kompatiblen Server bereit (`/v1/*`). `base_url`, `api_key` (oder `api_key_env`) und `model_id` in `providers.lmstudio` setzen, um Strands `OpenAIModel` ohne Änderungen zu nutzen.

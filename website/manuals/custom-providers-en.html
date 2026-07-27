@@ -68,6 +68,35 @@
           <li>Run smoke tests before TUI integration.</li>
         </ul>
 
+        <h2>Practical case: OpenAI Responses API</h2>
+        <p>
+          <code>providers.openai.api</code> accepts <code>chat_completions</code> (default,
+          <code>/v1/chat/completions</code>) and <code>responses</code> (<code>/v1/responses</code>).
+          <code>max_tokens</code> is normalized to <code>max_completion_tokens</code> for Chat Completions
+          or <code>max_output_tokens</code> for Responses; <code>reasoning_effort</code> and
+          <code>reasoning.effort</code> are normalized for the selected endpoint too.
+        </p>
+        <p>
+          The migration addresses an HTTP 400 when <code>gpt-5.6-sol</code> receives function tools and
+          active reasoning through Chat Completions. <code>reasoning_effort: "none"</code> avoids the error
+          only by disabling reasoning (<code>reasoning_tokens=0</code>). Responses supports function tools
+          with <code>medium</code> reasoning without that degradation.
+        </p>
+        <pre><code>{
+  "model_id": "gpt-5.6-sol",
+  "api": "responses",
+  "params": {"reasoning_effort": "medium", "max_tokens": 32768}
+}</code></pre>
+        <p>
+          The effective request uses <code>reasoning.effort</code> and <code>max_output_tokens</code>; the
+          real configuration uses <code>65536</code>. Optional <code>temperature: 0.3</code> is supported but
+          is not a default. Export <code>OPENAI_API_KEY</code> from the environment.
+        </p>
+        <p>
+          Optional <code>stateful</code> mode can use <code>previous_response_id</code>, but reconstructed
+          multi-turn <code>reasoningContent</code> does not yet retain full reasoning continuity.
+        </p>
+
         <h2>Practical case: LM Studio</h2>
         <ul>
           <li>OpenAI-compatible local server (<code>/v1/*</code>); configure <code>base_url</code>, <code>api_key</code> and <code>model_id</code>.</li>

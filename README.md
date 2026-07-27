@@ -73,8 +73,17 @@ make run
 - For Cerebras, export `CEREBRAS_API_KEY` (or set `api_key_env`), then tune `providers.cerebras` (`model_id`, `params`, `client_args.timeout`, etc.); the custom provider wraps the official SDK with SSE streaming.
 - For Mistral AI, export `MISTRAL_API_KEY` (or set `api_key_env`), select `provider: "mistral"` and review `providers.mistral`. Defaults: `model_id: mistral-medium-3.5`, `reasoning_effort: high` (required for reasoning models), `max_tokens: 16184`. Run `make test-mistral` to validate your API key.
 - Each provider ships with its own `system_prompt` in `system_prompts/`. Custom prompts can be referenced by path.
-- Copy the example file and set credentials via environment variables (e.g. `export OPENAI_API_KEY="..."`). The config file never stores secrets in plain text.
-- OpenAI and Bedrock defaults allow long outputs; the example config sets `max_completion_tokens` (OpenAI) to **32 768** and `max_tokens` (Bedrock) to **8 192**. Adjust to match your account quotas.
+- OpenAI supports `providers.openai.api: "chat_completions"` (default, `POST /v1/chat/completions`) and `api: "responses"` (`POST /v1/responses`). LM Studio remains in Chat Completions-compatible mode.
+- The shared `max_tokens` setting is normalized to `max_completion_tokens` for Chat Completions and `max_output_tokens` for Responses. Likewise, `reasoning_effort` and `reasoning.effort` are converted to the form expected by the selected endpoint.
+- For GPT-5.x models that use function tools and reasoning, select Responses. Chat Completions may return HTTP 400 for that combination or silently report zero reasoning tokens; `reasoning_effort: "none"` avoids the error only by disabling reasoning.
+- Optional `stateful` mode can reuse `previous_response_id`, but a known limitation remains: reconstructed multi-turn `reasoningContent` does not yet preserve full reasoning continuity.
+- Keep credentials in environment variables and export them before starting the TUI; never store secrets in JSON:
+  ```bash
+  export OPENAI_API_KEY="..."
+  export FIRECRAWL_API_KEY="..."
+  ```
+- The OpenAI example uses `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` and `max_tokens: 32768` (sent as `max_output_tokens`). The real configuration uses **65,536**; the Bedrock example remains at `max_tokens: 8192`. Adjust these values to your quotas.
+- Responses also accepts optional `temperature: 0.3` in `params`; it is not part of the default configuration.
 - Credentials are read from your environment (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, etc.). You can also point to a different file via `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` or reuse `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - The `tools` section enables Strands Agents Tools and the custom `remote_ssh_command`, which reuses the TUI SSH session (the `timeout_seconds` parameter is optional).
 - `remote_ssh_command` defaults to **900 seconds (15 minutes)** as defined in `conf/agent.conf`. If you expect longer operations, ask the agent to include the desired `timeout_seconds`.

@@ -26,6 +26,29 @@ Este documento resume los pasos y criterios que debemos seguir al implementar pr
 - No hardcodear tokens ni endpoints; emplear variables de entorno y entradas en `conf/`.
 - Añadir pruebas de humo o scripts manuales para validar llamadas al proveedor antes de integrarlo en la TUI.
 
+## Caso práctico: OpenAI Responses API
+
+Shell Sentinel permite seleccionar el endpoint con `providers.openai.api`: `chat_completions` es el valor predeterminado y usa `/v1/chat/completions`; `responses` usa `/v1/responses`. La entrada común se normaliza por endpoint: `max_tokens` pasa a `max_completion_tokens` para Chat Completions o a `max_output_tokens` para Responses, y `reasoning_effort`/`reasoning.effort` se convierten a la forma correspondiente.
+
+El caso que motivó la migración fue un HTTP 400 de `gpt-5.6-sol`: Chat Completions no admite function tools junto con un `reasoning_effort` activo. Shell Sentinel adjunta tools en los turnos administrativos, por lo que omitir el parámetro o usar `medium` puede fallar; otros GPT-5.x pueden degradar silenciosamente a cero tokens de razonamiento. Configurar `reasoning_effort: "none"` evita el 400 porque desactiva el razonamiento (`reasoning_tokens=0`), no porque haga compatibles ambas capacidades. Responses sí permite function tools con `reasoning.effort: "medium"`.
+
+Configuración de referencia del ejemplo (sin secretos):
+
+```json
+{
+  "model_id": "gpt-5.6-sol",
+  "api": "responses",
+  "params": {
+    "reasoning_effort": "medium",
+    "max_tokens": 32768
+  }
+}
+```
+
+El request efectivo usa `reasoning: {"effort": "medium"}` y `max_output_tokens: 32768`; la configuración real del repositorio usa `max_tokens: 65536`. Responses acepta también `temperature: 0.3` como opción comprobada, pero no forma parte del valor predeterminado. La clave se obtiene de `OPENAI_API_KEY` en el entorno.
+
+`stateful` es opcional y puede mantener `previous_response_id`, pero no elimina una limitación conocida: `reasoningContent` todavía no está soportado de forma completa al reconstruir conversaciones multi-turno. El proveedor filtra esos bloques del historial; el modelo razona en cada turno, pero pierde continuidad del razonamiento entre turnos. Evalúa `stateful: true` según el flujo y no prometas continuidad completa hasta que el SDK resuelva esta limitación.
+
 ## Caso práctico: LM Studio
 - LM Studio expone un servidor local compatible con la API de OpenAI (`/v1/*`). Define `base_url`, `api_key` (o `api_key_env`) y `model_id` en `providers.lmstudio` para reutilizar el `OpenAIModel` de Strands sin cambios adicionales.
 - El servidor debe arrancarse con `lms server start` (puede ejecutarse en modo headless). Ajusta `timeout` y otros argumentos mediante `client_args` si necesitas mayores márgenes.

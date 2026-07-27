@@ -14,7 +14,7 @@ from strands.agent.conversation_manager import (
     SlidingWindowConversationManager,
     SummarizingConversationManager,
 )
-from strands.models import BedrockModel
+from strands.models import BedrockModel, OpenAIResponsesModel
 from strands.models.ollama import OllamaModel
 from strands.models.openai import OpenAIModel
 
@@ -79,6 +79,8 @@ class AgentFactory:
         if isinstance(provider_cfg, BedrockProviderConfig):
             return self._build_bedrock_model(provider_cfg)
         if isinstance(provider_cfg, OpenAIProviderConfig):
+            if provider_cfg.api == "responses":
+                return self._build_openai_responses_model(provider_cfg)
             return self._build_openai_model(provider_cfg)
         if isinstance(provider_cfg, LocalProviderConfig):
             return self._build_local_model(provider_cfg)
@@ -142,7 +144,7 @@ class AgentFactory:
         logger.debug("Instanciando BedrockModel con parámetros: %s", params.keys())
         return BedrockModel(model_id=cfg.model_id, **params)
 
-    def _build_openai_model(self, cfg: OpenAIProviderConfig) -> OpenAIModel:
+    def _resolve_openai_client_args(self, cfg: OpenAIProviderConfig) -> dict[str, Any]:
         client_args = dict(cfg.client_args)
         api_key_env = client_args.pop("api_key_env", None)
         if api_key_env:
@@ -153,10 +155,28 @@ class AgentFactory:
                     f"'{api_key_env}' para la clave de OpenAI."
                 )
             client_args["api_key"] = api_key
+        return client_args
+
+    def _build_openai_model(self, cfg: OpenAIProviderConfig) -> OpenAIModel:
+        client_args = self._resolve_openai_client_args(cfg)
         logger.debug("Instanciando OpenAIModel con argumentos del cliente: %s", client_args.keys())
         params = dict(cfg.params)
         return OpenAIModel(
             client_args=client_args or None, model_id=cfg.model_id, params=params or None
+        )
+
+    def _build_openai_responses_model(self, cfg: OpenAIProviderConfig) -> OpenAIResponsesModel:
+        client_args = self._resolve_openai_client_args(cfg)
+        logger.debug(
+            "Instanciando OpenAIResponsesModel con argumentos del cliente: %s",
+            client_args.keys(),
+        )
+        params = dict(cfg.params)
+        return OpenAIResponsesModel(
+            client_args=client_args or None,
+            model_id=cfg.model_id,
+            params=params or None,
+            stateful=cfg.stateful,
         )
 
     def _build_local_model(self, cfg: LocalProviderConfig) -> OllamaModel:

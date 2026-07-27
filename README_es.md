@@ -75,8 +75,17 @@ make run
 - Para Cerebras, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y personaliza `providers.cerebras` (`model_id`, `params`, `client_args.timeout`, etc.); el proveedor usa el SDK oficial con streaming SSE.
 - Para Mistral AI, exporta `MISTRAL_API_KEY` (o define `api_key_env`), selecciona `provider: "mistral"` y revisa `providers.mistral`. Valores por defecto: `model_id: mistral-medium-3.5`, `reasoning_effort: high` (obligatorio en modelos con reasoning), `max_tokens: 16184`. Ejecuta `make test-mistral` para validar la clave API.
 - Cada proveedor cuenta con su propio `system_prompt`, ubicado en `system_prompts/`. Puedes personalizar esos ficheros o apuntar a otros paths.
-- Copia el fichero de ejemplo y ajusta las credenciales vía variables de entorno (por ejemplo `export OPENAI_API_KEY="..."`). El archivo no almacena claves en texto plano.
-- Los modelos OpenAI y Bedrock admiten respuestas largas; por defecto `conf/agent.conf.example` fija `max_completion_tokens` (OpenAI) en **32 768** y `max_tokens` (Bedrock) en **8 192**. Ajusta estos límites según las cuotas de tu cuenta.
+- OpenAI admite `providers.openai.api: "chat_completions"` (predeterminado, `POST /v1/chat/completions`) y `api: "responses"` (`POST /v1/responses`). LM Studio permanece en el modo compatible con Chat Completions.
+- El valor común `max_tokens` se normaliza como `max_completion_tokens` para Chat Completions y como `max_output_tokens` para Responses. Del mismo modo, `reasoning_effort` y `reasoning.effort` se convierten a la forma esperada por el endpoint elegido.
+- En modelos GPT-5.x que usan function tools y razonamiento, selecciona Responses. Chat Completions puede devolver HTTP 400 para esa combinación o informar silenciosamente de cero tokens de razonamiento; `reasoning_effort: "none"` evita el error únicamente porque desactiva el razonamiento.
+- El modo opcional `stateful` puede reutilizar `previous_response_id`, pero existe una limitación conocida: al reconstruir conversaciones multi-turno, `reasoningContent` todavía no conserva toda la continuidad del razonamiento.
+- Mantén las credenciales en variables de entorno y expórtalas antes de iniciar la TUI; nunca guardes secretos en JSON:
+  ```bash
+  export OPENAI_API_KEY="..."
+  export FIRECRAWL_API_KEY="..."
+  ```
+- El ejemplo de OpenAI usa `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` y `max_tokens: 32768` (enviado como `max_output_tokens`). La configuración real usa **65.536**; el ejemplo de Bedrock mantiene `max_tokens: 8192`. Ajusta estos valores a tus cuotas.
+- Responses también admite `temperature: 0.3` opcional en `params`; no forma parte de la configuración predeterminada.
 - Las credenciales se obtienen de tu entorno (`AWS_*`, `OPENAI_API_KEY`, etc.). También puedes redefinir la ubicación del fichero con `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` o reutilizar `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional).
 - `remote_ssh_command` emplea por defecto un timeout de **900 segundos (15 minutos)** definido en `conf/agent.conf`. Si el comando puede tardar más, indícalo en tu instrucción para que el agente añada `timeout_seconds` con el valor deseado.

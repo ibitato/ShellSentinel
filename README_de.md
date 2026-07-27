@@ -73,12 +73,21 @@ make run
 - Für Cerebras exportierst du `CEREBRAS_API_KEY` (oder setzt `api_key_env`) und passt `providers.cerebras` (`model_id`, `params`, `client_args.timeout`, etc.) an; der Custom Provider nutzt das offizielle SDK und transformiert die SSE-Events.
 - Für Mistral AI exportierst du `MISTRAL_API_KEY` (oder setzt `api_key_env`), wählst `provider: "mistral"` und prüfst `providers.mistral`. Standardwerte: `model_id: mistral-medium-3.5`, `reasoning_effort: high` (Pflicht bei Reasoning-Modellen), `max_tokens: 16184`. Mit `make test-mistral` kannst du den API-Key testen.
 - Jeder Anbieter besitzt einen eigenen `system_prompt` in `system_prompts/`. Eigene Prompts können per Pfad eingebunden werden.
-- Hinterlege Zugangsdaten über Umgebungsvariablen (z. B. `export OPENAI_API_KEY="..."`). Im Konfigurationsfile werden keine Secrets im Klartext gespeichert.
-- OpenAI- und Bedrock-Defaults erlauben lange Antworten; das Beispiel setzt `max_completion_tokens` (OpenAI) auf **32 768** und `max_tokens` (Bedrock) auf **8 192**. Passe die Werte an deine Kontingente an.
+- Für OpenAI unterstützt `providers.openai.api` die Werte `chat_completions` (Standard, `POST /v1/chat/completions`) und `responses` (`POST /v1/responses`). LM Studio bleibt im Chat-Completions-kompatiblen Modus.
+- Die gemeinsame Eingabe `max_tokens` wird für Chat Completions zu `max_completion_tokens` und für Responses zu `max_output_tokens` normalisiert. Ebenso werden `reasoning_effort` oder `reasoning.effort` in die vom gewählten Endpoint erwartete Form überführt.
+- Verwende bei GPT-5.x-Modellen mit Function Tools `api: "responses"`, wenn Reasoning benötigt wird: Responses unterstützt Tools mit Reasoning, während Chat Completions einen HTTP-400-Fehler liefern oder still auf null Reasoning-Tokens zurückfallen kann. `reasoning_effort: "none"` verhindert den Fehler, deaktiviert aber Reasoning.
+- `stateful` ist für Responses optional. Es kann über `previous_response_id` helfen; eine bekannte Einschränkung bleibt jedoch bestehen: `reasoningContent`-Blöcke behalten in Multi-Turn-Gesprächen noch keine vollständige Kontinuität.
+- Zugangsdaten ausschließlich in der Umgebung halten und vor dem TUI-Start exportieren; niemals Secrets in JSON-Dateien speichern:
+  ```bash
+  export OPENAI_API_KEY
+  export FIRECRAWL_API_KEY
+  ```
+- Das OpenAI-Beispiel verwendet `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` und `max_tokens: 32768` (effektiv als `max_output_tokens`). Die reale Konfiguration nutzt **65.536**; das Bedrock-Beispiel behält `max_tokens: 8192`. Passe die Werte an deine Kontingente an.
+- Responses akzeptiert optional `temperature: 0.3` in `params`; dieser Wert gehört nicht zur Standardkonfiguration.
 - Anmeldeinformationen stammen aus der Umgebung (`AWS_*`, `OPENAI_API_KEY` usw.). Du kannst auch `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` oder `SMART_AI_SYS_ADMIN_CONFIG_DIR` verwenden, um Dateipfade zu überschreiben.
 - In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional).
 - `remote_ssh_command` verwendet standardmäßig **900 Sekunden (15 Minuten)** laut `conf/agent.conf`. Falls längere Befehle erwartet werden, den Agenten bitten, `timeout_seconds` entsprechend zu setzen.
-- Um übermäßige Ausgaben zu vermeiden, begrenzt `remote_command.max_output_chars`, wie viele Zeichen an den Agenten weitergegeben werden. Erhöhe den Wert für Audit-Anwendungsfälle oder senke ihn bei gemeinsam genutzten Terminals.
+- Um übermäßige Ausgaben zu vermeiden, begrenzt `remote_command.max_output_chars`, wie viele Zeichen an den Agenten weitergegeben werden; das Beispiel verwendet **120.000**. Erhöhe den Wert für Audit-Anwendungsfälle oder senke ihn bei gemeinsam genutzten Terminals.
 - Für Model Context Protocol (MCP) Server deklarierst du jeden Transport (`stdio`, `sse`, `streamable_http`) im Abschnitt `mcp`. Die Agentenverbindung bleibt während der Sitzung aktiv und stellt die Tools bereit.
   - Beispiel: Transport `firecrawl-stdio` startet `npx -y firecrawl-mcp`. Über `env_passthrough` erbt der Agent Variablen wie `FIRECRAWL_API_KEY`. Werte vor dem Start der TUI exportieren.
 - Beim Start erscheint ein retro-inspirierter Begrüßungsbildschirm (Orange), der sich nach 5 Sekunden oder einem Tastendruck schließt.

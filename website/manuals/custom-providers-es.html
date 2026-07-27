@@ -88,6 +88,38 @@
           <li>Prepara pruebas de humo o scripts manuales antes de integrar el proveedor en la TUI.</li>
         </ul>
 
+        <h2>Caso práctico: OpenAI Responses API</h2>
+        <p>
+          <code>providers.openai.api</code> admite <code>chat_completions</code> (predeterminado,
+          <code>/v1/chat/completions</code>) y <code>responses</code> (<code>/v1/responses</code>).
+          <code>max_tokens</code> se normaliza a <code>max_completion_tokens</code> para Chat Completions
+          o a <code>max_output_tokens</code> para Responses; <code>reasoning_effort</code> y
+          <code>reasoning.effort</code> también se adaptan al endpoint.
+        </p>
+        <p>
+          El error HTTP 400 que motivó la migración aparece cuando <code>gpt-5.6-sol</code> recibe
+          function tools y razonamiento activo en Chat Completions. Usar
+          <code>reasoning_effort: "none"</code> evita el error porque desactiva el razonamiento y deja
+          <code>reasoning_tokens=0</code>. Responses permite function tools con esfuerzo
+          <code>medium</code> sin esa degradación.
+        </p>
+        <pre><code>{
+  "model_id": "gpt-5.6-sol",
+  "api": "responses",
+  "params": {"reasoning_effort": "medium", "max_tokens": 32768}
+}</code></pre>
+        <p>
+          El request efectivo usa <code>reasoning.effort</code> y <code>max_output_tokens</code>; la
+          configuración real usa <code>65536</code>. <code>temperature: 0.3</code> está aceptado como
+          opción, pero no es el valor predeterminado. Exporta <code>OPENAI_API_KEY</code> desde el entorno.
+        </p>
+        <p>
+          <code>stateful</code> es opcional y puede usar <code>previous_response_id</code>, pero existe una
+          limitación multi-turno: <code>reasoningContent</code> no mantiene aún continuidad completa al
+          reconstruir el historial. El modelo razona en cada turno, pero pierde parte del contexto de
+          razonamiento entre turnos.
+        </p>
+
         <h2>Caso práctico: LM Studio</h2>
         <ul>
           <li>Servidor local compatible con la API de OpenAI (<code>/v1/*</code>); configura <code>base_url</code>, <code>api_key</code> y <code>model_id</code>.</li>

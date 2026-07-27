@@ -123,16 +123,23 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
             <code>_("key")</code> in the codebase and provide entries for every supported language.
           </li>
           <li>
-            <code>conf/agent.conf</code> defines the LLM provider, tool options and timeouts.
-            <br />Copy <code>conf/agent.conf.example</code> before tweaking it.
-            <br />LM Studio requires <code>lms server start</code>; Cerebras expects
-            <code>CEREBRAS_API_KEY</code> (or <code>api_key_env</code>) and leverages the official SDK
-            with SSE streaming.
-            <br />Mistral AI expects <code>MISTRAL_API_KEY</code>, <code>provider: mistral</code>,
-            defaults <code>reasoning_effort: high</code> and <code>max_tokens: 16184</code>
+            <code>conf/agent.conf</code> defines the LLM provider, tools and timeouts. Copy
+            <code>conf/agent.conf.example</code> before changing it. OpenAI supports
+            <code>chat_completions</code> (default) and <code>responses</code>; shared
+            <code>max_tokens</code> and reasoning settings are normalized to the selected endpoint.
+            Use Responses for GPT-5.x function tools with active reasoning. Optional
+            <code>stateful</code> mode can reuse <code>previous_response_id</code>, but multi-turn
+            <code>reasoningContent</code> does not yet retain full continuity.
+            <br />Keep <code>OPENAI_API_KEY</code> in the environment. The example uses
+            <code>gpt-5.6-sol</code>, Responses, <code>reasoning_effort: medium</code> and
+            <code>max_tokens: 32768</code> (effective <code>max_output_tokens</code>); the real
+            configuration uses <code>65536</code>. Bedrock remains at <code>8192</code>, the remote
+            timeout at <code>900</code> seconds and <code>remote_command.max_output_chars: 120000</code>.
+            <br />Run <code>lms server start</code> for LM Studio; export
+            <code>CEREBRAS_API_KEY</code> for Cerebras. Mistral AI uses
+            <code>MISTRAL_API_KEY</code>, <code>provider: mistral</code>, default
+            <code>reasoning_effort: high</code> and <code>max_tokens: 16184</code>
             (<code>mistral-medium-3.5</code>).
-            <br />Use <code>remote_command.max_output_chars</code> to limit how much stdout/stderr gets
-            forwarded to the agent.
           </li>
         </ul>
 
