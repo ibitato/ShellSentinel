@@ -5,6 +5,31 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-27
+
+### Added
+
+- Selectable OpenAI Responses API support through `providers.openai.api`, while preserving Chat Completions as the compatibility default.
+- Unit coverage for endpoint-specific parameter normalization and model selection, plus opt-in end-to-end tests for function tools and reasoning tokens.
+- Configurable Responses `stateful` mode for server-side `previous_response_id` chaining.
+
+### Changed
+
+- OpenAI model construction now selects `OpenAIModel` or `OpenAIResponsesModel` according to the configured API.
+- Shared OpenAI parameters are normalized automatically: `max_tokens` maps to `max_completion_tokens` or `max_output_tokens`, and `reasoning_effort` maps to the endpoint-specific reasoning shape.
+- The OpenAI example now uses `gpt-5.6-sol`, Responses, medium reasoning and a 32,768-token output limit; the active local configuration uses 65,536.
+- Dependencies updated to Strands Agents 1.50.1, Strands Agents Tools 0.8.5 and OpenAI 2.48.0.
+- Product documentation and static-site manuals aligned in English, Spanish and German.
+
+### Fixed
+
+- Avoided the HTTP 400 returned by GPT-5.x when function tools and active reasoning are combined through Chat Completions by routing supported configurations through Responses.
+- MCP stdio transports can now receive explicitly allowlisted secrets such as `FIRECRAWL_API_KEY` through `env_passthrough`, without storing credentials in JSON.
+
+### Known limitations
+
+- Responses reasoning blocks do not yet retain full `reasoningContent` continuity when reconstructing multi-turn conversations; `stateful` is available for controlled evaluation.
+
 ## [1.2.0] - 2026-06-30
 
 ### Added
@@ -71,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release of Shell Sentinel: conversational TUI with persistent SSH/SFTP sessions, multilingual support (EN/ES/DE), and configurable LLM providers.
 - Static site under `website/` and initial user documentation.
 
+[1.3.0]: https://github.com/ibitato/ShellSentinel/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/ibitato/ShellSentinel/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/ibitato/ShellSentinel/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/ibitato/ShellSentinel/compare/1.0.0...1.1.0

@@ -51,3 +51,8 @@ plugins/
 deploy_key_*
 *.pem
 *.key
+
+# Artefactos locales de planificación y herramientas
+/plan_migracion_openai_responses.md
+/screenshots/ChatGPT Image *.png
+/semantic-review/
