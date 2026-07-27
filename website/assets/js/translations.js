@@ -29,7 +29,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Express goals in natural language; the assistant translates them into safe SSH/SFTP actions you can review.",
         "Embedded knowledge base surfaces internal guides, best practices and context-sensitive hints in English, Spanish and German.",
-        "Modular LLM providers and plugin-ready architecture extend commands, dashboards and automations without touching the core.",
+        "Modular LLM providers—including OpenAI Chat Completions and Responses—and a plugin-ready architecture extend commands, dashboards and automations without touching the core.",
       ],
     },
     features: {
@@ -54,7 +54,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Extensible providers & plugins",
           body:
-            "Swap LLM backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) or ship plugins that add commands, dashboards or MCP bridges—all without modifying the TUI core.",
+            "Swap LLM backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI keeps Chat Completions for compatibility and adds Responses for function tools with active reasoning; plugins extend commands, dashboards and MCP bridges without core changes.",
         },
         {
           icon: "🛡️",
@@ -226,7 +226,7 @@ window.TRANSLATIONS = {
             "Stay grounded with logs, locale awareness and timeout controls while collaborating in natural language.",
           bullets: [
             "Confirm your terminal supports 256 colours (`xterm-256color`).",
-            "Export credentials (e.g. `CEREBRAS_API_KEY`) before launching the TUI.",
+            "Export provider credentials from the environment; set `providers.openai.api` to `responses` for GPT-5.x function tools with active reasoning.",
             "Request higher `timeout_seconds` when long-running tasks are expected.",
           ],
         },
@@ -283,7 +283,7 @@ window.TRANSLATIONS = {
       contactTitle: "Stay in touch",
       contactBody:
         "Reach us at support@shellsentinel.net to discuss enterprise integrations or pilot programs.",
-      rights: "© 2025 Shell Sentinel. All rights reserved.",
+      rights: "© 2025–2026 Shell Sentinel. All rights reserved.",
       privacy: "Privacy policy",
       terms: "Terms of service",
     },
@@ -318,7 +318,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Expresa objetivos en lenguaje natural; el asistente los traduce en acciones SSH/SFTP seguras que puedes revisar.",
         "Una base de conocimiento integrada destaca guías internas, buenas prácticas y pistas contextuales en inglés, español y alemán.",
-        "Proveedores LLM modulares y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
+        "Los proveedores LLM modulares —incluidos OpenAI Chat Completions y Responses— y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
       ],
     },
     features: {
@@ -343,7 +343,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Proveedores y plugins extensibles",
           body:
-            "Cambia de backend LLM (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) o crea plugins que añadan comandos, paneles o puentes MCP sin modificar el núcleo de la TUI.",
+            "Cambia de backend LLM (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI mantiene Chat Completions por compatibilidad e incorpora Responses para function tools con razonamiento activo; los plugins amplían comandos, paneles y puentes MCP sin tocar el núcleo.",
         },
         {
           icon: "🛡️",
@@ -515,7 +515,7 @@ window.TRANSLATIONS = {
             "Mantén la sesión anclada con logs, locales y control de timeouts mientras colaboras en lenguaje natural.",
           bullets: [
             "Confirma que tu terminal soporta 256 colores (`xterm-256color`).",
-            "Exporta credenciales (p. ej. `CEREBRAS_API_KEY`) antes de lanzar la TUI.",
+            "Exporta las credenciales de proveedor desde el entorno; usa `providers.openai.api` con `responses` para function tools de GPT-5.x con razonamiento activo.",
             "Solicita un `timeout_seconds` mayor cuando preveas tareas largas.",
           ],
         },
@@ -572,7 +572,7 @@ window.TRANSLATIONS = {
       contactTitle: "Contacto",
       contactBody:
         "Escríbenos a support@shellsentinel.net para valorar integraciones empresariales o pilotos.",
-      rights: "© 2025 Shell Sentinel. Todos los derechos reservados.",
+      rights: "© 2025–2026 Shell Sentinel. Todos los derechos reservados.",
       privacy: "Política de privacidad",
       terms: "Términos de servicio",
     },
@@ -607,7 +607,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Formuliere Ziele in natürlicher Sprache; der Assistent übersetzt sie in überprüfbare, sichere SSH/SFTP-Aktionen.",
         "Eine integrierte Wissensbasis liefert interne Leitfäden, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
-        "Modulare LLM-Provider und eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
+        "Modulare LLM-Provider – einschließlich OpenAI Chat Completions und Responses – sowie eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
       ],
     },
     features: {
@@ -632,7 +632,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Erweiterbare Provider & Plugins",
           body:
-            "Wechsle LLM-Backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama) oder entwickle Plugins für zusätzliche Befehle, Dashboards oder MCP-Brücken – ganz ohne Kernänderungen.",
+            "Wechsle LLM-Backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI behält Chat Completions zur Kompatibilität und ergänzt Responses für Function Tools mit aktivem Reasoning; Plugins erweitern Befehle, Dashboards und MCP-Brücken ohne Core-Änderungen.",
         },
         {
           icon: "🛡️",
@@ -804,7 +804,7 @@ window.TRANSLATIONS = {
             "Arbeite gesichert mit Logs, Locale-Bewusstsein und Timeout-Kontrolle, während du dich auf natürliche Sprache stützt.",
           bullets: [
             "Stelle sicher, dass dein Terminal 256 Farben unterstützt (`xterm-256color`).",
-            "Exportiere Credentials (z. B. `CEREBRAS_API_KEY`) vor dem Start der TUI.",
+            "Exportiere Provider-Credentials aus der Umgebung; setze `providers.openai.api` für GPT-5.x Function Tools mit aktivem Reasoning auf `responses`.",
             "Bitte bei langen Tasks um ein höheres `timeout_seconds`.",
           ],
         },
@@ -861,7 +861,7 @@ window.TRANSLATIONS = {
       contactTitle: "Kontakt",
       contactBody:
         "Schreibe an support@shellsentinel.net, um Enterprise-Integrationen oder Pilotprojekte zu besprechen.",
-      rights: "© 2025 Shell Sentinel. Alle Rechte vorbehalten.",
+      rights: "© 2025–2026 Shell Sentinel. Alle Rechte vorbehalten.",
       privacy: "Datenschutz",
       terms: "Nutzungsbedingungen",
     },
