@@ -12,9 +12,7 @@ from typing import Any, Literal
 
 from ..localization import get_localizer
 
-ProviderLiteral = Literal[
-    "bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"
-]
+ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"]
 OpenAIAPILiteral = Literal["chat_completions", "responses"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]

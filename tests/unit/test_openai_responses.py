@@ -5,6 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from strands.models import OpenAIResponsesModel
+from strands.models.openai import OpenAIModel
+
 from smart_ai_sys_admin.agent.config import (
     AgentConfigError,
     OpenAIProviderConfig,
@@ -12,8 +15,6 @@ from smart_ai_sys_admin.agent.config import (
     load_agent_config,
 )
 from smart_ai_sys_admin.agent.factory import AgentFactory
-from strands.models import OpenAIResponsesModel
-from strands.models.openai import OpenAIModel
 
 
 @pytest.mark.parametrize(

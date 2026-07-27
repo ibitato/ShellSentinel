@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 
 import pytest
+
 from smart_ai_sys_admin.agent.permissions import (
     DEFAULT_PERMISSION_ENV_FLAGS,
     ToolPermissionManager,
@@ -49,7 +50,6 @@ def test_permission_manager_restore_returns_previous_values(monkeypatch: pytest.
             continue
         assert os.environ.get(key) is None
     assert manager.active is False
-
 
 
 def test_permission_manager_activate_is_idempotent():
