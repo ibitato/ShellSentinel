@@ -34,6 +34,7 @@ async def _submit(app: SmartAISysAdminApp, content: str) -> None:
     assert input_widget._editor is not None
     input_widget._editor.load_text(content)
     await app.on_command_input_submitted(CommandInput.Submitted(input_widget, content))
+    await app.workers.wait_for_complete()
 
 
 @pytest.mark.asyncio
@@ -131,3 +132,30 @@ async def test_thinking_indicator_during_invoke(
     app = _build_app(app_config, fake_ssh_manager, SlowRuntime())  # type: ignore[arg-type]
     async with app.run_test():
         await _submit(app, "slow prompt")
+
+
+def test_sanitize_hides_quoted_password(app_config, fake_ssh_manager, fake_agent_runtime):
+    app = _build_app(app_config, fake_ssh_manager, fake_agent_runtime)
+    sanitized = app._sanitize_user_message('/connect srv alice "my secret pass" 2222')
+    assert "secret" not in sanitized
+    assert sanitized == "/connect srv alice *** 2222"
+
+
+def test_sanitize_unbalanced_quotes_hides_arguments(
+    app_config, fake_ssh_manager, fake_agent_runtime
+):
+    app = _build_app(app_config, fake_ssh_manager, fake_agent_runtime)
+    sanitized = app._sanitize_user_message('/connect srv alice "my secret')
+    assert "secret" not in sanitized
+
+
+@pytest.mark.asyncio
+async def test_submission_ignored_while_busy(app_config, fake_ssh_manager, fake_agent_runtime):
+    app = _build_app(app_config, fake_ssh_manager, fake_agent_runtime)
+    async with app.run_test():
+        app._busy = True
+        await _submit(app, "lista procesos")
+        assert fake_agent_runtime.invoke_calls == []
+        app._busy = False
+        await _submit(app, "lista procesos")
+        assert fake_agent_runtime.invoke_calls == ["lista procesos"]

@@ -86,6 +86,7 @@ make run
 - Responses also accepts optional `temperature: 0.3` in `params`; it is not part of the default configuration.
 - Credentials are read from your environment (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, etc.). You can also point to a different file via `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` or reuse `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - The `tools` section enables Strands Agents Tools and the custom `remote_ssh_command`, which reuses the TUI SSH session (the `timeout_seconds` parameter is optional).
+- `tools.default` selects which Strands Agents Tools are registered (`shell`, `file_read`, `file_write`, `sleep`). Remove `shell` and `file_write` to keep the agent off your local workstation; omitting the key enables all of them. `remote_ssh_command`, `remote_sftp_transfer` and `local_datetime` are always available.
 - `remote_ssh_command` defaults to **900 seconds (15 minutes)** as defined in `conf/agent.conf`. If you expect longer operations, ask the agent to include the desired `timeout_seconds`.
 - To prevent overwhelming responses, set `remote_command.max_output_chars` to cap how many characters are forwarded to the agent. Increase it for audit-heavy workflows or reduce it for shared terminals.
 - To work with Model Context Protocol (MCP) servers, declare each transport (`stdio`, `sse`, `streamable_http`) under `mcp`. The agent keeps those connections alive during the session and exposes their tools automatically.

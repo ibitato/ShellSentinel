@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import logging
+import time
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 import paramiko
 
 from .localization import _
+
+_RECV_CHUNK_SIZE = 32768
+_POLL_INTERVAL_SECONDS = 0.05
 
 
 class ConnectionError(Exception):
@@ -173,13 +177,18 @@ class SSHConnectionManager:
         *,
         timeout: int | None = None,
     ) -> tuple[int, str, str]:
-        """Ejecuta un comando remoto y devuelve código de salida, stdout y stderr."""
+        """Ejecuta un comando remoto y devuelve código de salida, stdout y stderr.
+
+        ``timeout`` limita el tiempo total de ejecución (no solo la inactividad).
+        stdout y stderr se drenan a la vez para que un stderr voluminoso no agote
+        la ventana del canal SSH y bloquee el comando remoto.
+        """
 
         if not self.is_connected or not self._ssh_client:
             raise NoActiveConnection(_("connection.errors.no_active_ssh"))
         self._logger.debug("Ejecutando comando remoto: %s", command)
         try:
-            stdin, stdout, stderr = self._ssh_client.exec_command(command, timeout=timeout)
+            stdin, stdout, stderr = self._ssh_client.exec_command(command)
         except Exception as exc:  # pragma: no cover - depende del host remoto
             raise ConnectionError(
                 _(
@@ -188,14 +197,48 @@ class SSHConnectionManager:
                     error=str(exc),
                 )
             ) from exc
+        channel = stdout.channel
+        deadline = time.monotonic() + timeout if timeout else None
+        out_chunks: list[bytes] = []
+        err_chunks: list[bytes] = []
         try:
-            out_text = stdout.read().decode("utf-8", errors="replace")
-            err_text = stderr.read().decode("utf-8", errors="replace")
-            exit_status = stdout.channel.recv_exit_status()
-        finally:
             stdin.close()
+            while True:
+                received = False
+                while channel.recv_ready():
+                    out_chunks.append(channel.recv(_RECV_CHUNK_SIZE))
+                    received = True
+                while channel.recv_stderr_ready():
+                    err_chunks.append(channel.recv_stderr(_RECV_CHUNK_SIZE))
+                    received = True
+                if (
+                    channel.exit_status_ready()
+                    and not channel.recv_ready()
+                    and not channel.recv_stderr_ready()
+                ):
+                    break
+                if deadline is not None and time.monotonic() >= deadline:
+                    self._logger.warning(
+                        "Comando '%s' superó el timeout de %ss; se cierra el canal",
+                        command,
+                        timeout,
+                    )
+                    raise ConnectionError(
+                        _(
+                            "connection.errors.command_timeout",
+                            command=command,
+                            timeout=timeout,
+                        )
+                    )
+                if not received:
+                    time.sleep(_POLL_INTERVAL_SECONDS)
+            exit_status = channel.recv_exit_status()
+        finally:
             stdout.close()
             stderr.close()
+            channel.close()
+        out_text = b"".join(out_chunks).decode("utf-8", errors="replace")
+        err_text = b"".join(err_chunks).decode("utf-8", errors="replace")
         self._logger.debug("Comando '%s' finalizado con código %s", command, exit_status)
         return exit_status, out_text, err_text
 
@@ -334,7 +377,9 @@ class SSHConnectionManager:
             return
         sftp = self._open_sftp()
 
-        current = PurePosixPath("/")
+        # Las rutas relativas se resuelven respecto al directorio inicial de la
+        # sesión SFTP (normalmente el home), igual que hace ``sftp.put``.
+        current = PurePosixPath("/") if directory.is_absolute() else PurePosixPath()
         for part in directory.parts:
             if part == "/":
                 current = PurePosixPath("/")

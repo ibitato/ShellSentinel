@@ -1,5 +1,5 @@
 """Utilidades de seguridad operativa."""
 
-from .redaction import redact_connect_args
+from .redaction import REDACTED_SECRET, redact_connect_args
 
-__all__ = ["redact_connect_args"]
+__all__ = ["REDACTED_SECRET", "redact_connect_args"]

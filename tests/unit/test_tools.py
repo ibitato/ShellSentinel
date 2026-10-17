@@ -122,3 +122,20 @@ def test_resolve_tools_extends_without_mutation():
     second = resolve_tools([custom_tool])
     assert len(second) == len(first) + 1
     assert len(first) == len(resolve_tools())
+
+
+def test_resolve_tools_honors_enabled_builtin():
+    from smart_ai_sys_admin.agent.tools import BUILTIN_STRANDS_TOOLS, SHELL_SENTINEL_TOOLS
+
+    tools = resolve_tools(enabled_builtin=["file_read", "unknown"])
+    assert BUILTIN_STRANDS_TOOLS["file_read"] in tools
+    assert BUILTIN_STRANDS_TOOLS["shell"] not in tools
+    assert BUILTIN_STRANDS_TOOLS["file_write"] not in tools
+    for custom in SHELL_SENTINEL_TOOLS:
+        assert custom in tools
+
+
+def test_resolve_tools_empty_list_keeps_only_custom_tools():
+    from smart_ai_sys_admin.agent.tools import SHELL_SENTINEL_TOOLS
+
+    assert resolve_tools(enabled_builtin=[]) == list(SHELL_SENTINEL_TOOLS)

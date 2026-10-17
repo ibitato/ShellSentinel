@@ -38,7 +38,8 @@
         "no_args": "⚠️ `{command}` akzeptiert keine zusätzlichen Argumente."
       },
       "unexpected_error": "❌ Es ist ein unerwarteter Fehler aufgetreten: {error}",
-      "agent_unavailable": "⚠️ Der KI-Agent ist nicht verfügbar. Bitte überprüfe die Konfiguration."
+      "agent_unavailable": "⚠️ Der KI-Agent ist nicht verfügbar. Bitte überprüfe die Konfiguration.",
+      "busy": "⏳ Die vorherige Anfrage wird noch bearbeitet. Warte, bis sie abgeschlossen ist, bevor du eine neue sendest."
     },
     "commands": {
       "parse_error": "⚠️ Der Befehl konnte nicht verarbeitet werden: {error}",
@@ -136,6 +137,7 @@
       "no_active_ssh": "Keine aktive SSH-Verbindung.",
       "no_active_sftp": "Die SFTP-Sitzung ist nicht verfügbar.",
       "command_failed": "Ausführung von '{command}' fehlgeschlagen: {error}",
+      "command_timeout": "Der Befehl '{command}' hat das Timeout von {timeout}s überschritten und wurde abgebrochen. Gib ein größeres timeout_seconds an, falls mehr Zeit nötig ist.",
       "local_missing": "Lokale Datei '{path}' existiert nicht.",
       "local_not_file": "Lokaler Pfad '{path}' ist keine reguläre Datei.",
       "remote_exists": "Remote-Datei '{path}' existiert bereits. Verwende `overwrite`, um sie zu ersetzen.",

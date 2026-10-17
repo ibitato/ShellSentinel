@@ -108,7 +108,7 @@ class RemoteCommandConfig:
 
 @dataclass(frozen=True)
 class ToolsConfig:
-    default_tools: tuple[str, ...]
+    default_tools: tuple[str, ...] | None
     remote_command: RemoteCommandConfig
     sftp_transfer_name: str
     load_directory: bool
@@ -389,7 +389,9 @@ def _build_agent_options(payload: Mapping[str, Any]) -> AgentOptions:
 
 
 def _build_tools_config(payload: Mapping[str, Any]) -> ToolsConfig:
-    default_tools = _tuple_from_sequence(payload.get("default", []))
+    # ``None`` (clave ausente) conserva todas las herramientas por compatibilidad.
+    raw_default = payload.get("default")
+    default_tools = _tuple_from_sequence(raw_default) if raw_default is not None else None
     remote_cfg = payload.get("remote_command", {})
     remote = RemoteCommandConfig(
         name=remote_cfg.get("name", "remote_ssh_command"),

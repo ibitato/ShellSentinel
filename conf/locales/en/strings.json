@@ -38,7 +38,8 @@
         "no_args": "⚠️ `{command}` does not accept additional arguments."
       },
       "unexpected_error": "❌ An unexpected error occurred: {error}",
-      "agent_unavailable": "⚠️ The AI agent is not available. Check the configuration."
+      "agent_unavailable": "⚠️ The AI agent is not available. Check the configuration.",
+      "busy": "⏳ Still working on the previous request. Wait for it to finish before sending another one."
     },
     "commands": {
       "parse_error": "⚠️ The command could not be parsed: {error}",
@@ -136,6 +137,7 @@
       "no_active_ssh": "No active SSH connection.",
       "no_active_sftp": "The SFTP session is not available.",
       "command_failed": "Failed to execute '{command}': {error}",
+      "command_timeout": "Command '{command}' exceeded the {timeout}s timeout and was aborted. Pass a larger timeout_seconds if it needs more time.",
       "local_missing": "Local file '{path}' does not exist.",
       "local_not_file": "Local path '{path}' is not a regular file.",
       "remote_exists": "Remote file '{path}' already exists. Use `overwrite` to replace it.",

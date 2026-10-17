@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import shlex
 
 from textual.app import App, ComposeResult
 from textual.containers import Grid, Vertical
@@ -18,7 +19,7 @@ from ..connection import (
 )
 from ..localization import _
 from ..plugins import PluginManager
-from ..security import redact_connect_args
+from ..security import REDACTED_SECRET, redact_connect_args
 from .commands import CONNECT_ALIASES, EXIT_ALIASES, SlashCommandProcessor
 from .dialogs import ExitConfirmationModal
 from .panels import CommandInput, ConnectionInfo, ConversationPanel
@@ -63,6 +64,7 @@ class SmartAISysAdminApp(App[None]):
             background=output_cfg.background or "black",
         )
         self._welcome_shown = False
+        self._busy = False
 
     def compose(self) -> ComposeResult:
         input_section = Vertical(
@@ -121,8 +123,30 @@ class SmartAISysAdminApp(App[None]):
                 return
             self._handle_exit_request()
             return
+        if self._busy:
+            self._conversation.add_agent_markdown(_("ui.app.busy"))
+            self._input.focus_editor()
+            return
+        # El trabajo bloqueante (SSH, agente) se ejecuta en un worker para no
+        # detener la cola de mensajes de la App (teclado, atajos, repintado).
+        self._busy = True
+        self.run_worker(
+            self._process_submission(message.content, trimmed),
+            group="submission",
+            exit_on_error=False,
+        )
+
+    async def _process_submission(self, content: str, trimmed: str) -> None:
         try:
-            response = self._command_processor.process(message.content)
+            await self._run_submission(content, trimmed)
+        finally:
+            self._busy = False
+
+    async def _run_submission(self, content: str, trimmed: str) -> None:
+        assert self._conversation is not None
+        assert self._input is not None
+        try:
+            response = await asyncio.to_thread(self._command_processor.process, content)
         except Exception as exc:  # pragma: no cover - protección ante errores inesperados.
             self._app_logger.exception("Error procesando la entrada del usuario")
             response = _("ui.app.unexpected_error", error=str(exc))
@@ -156,8 +180,16 @@ class SmartAISysAdminApp(App[None]):
         if not tokens:
             return content
         command = tokens[0].lower()
-        if command in CONNECT_ALIASES and len(tokens) >= 4:
-            redacted = redact_connect_args(tokens[1:])
+        if command not in CONNECT_ALIASES:
+            return content
+        # Tokenizamos igual que SlashCommandProcessor (shlex) para que una
+        # contraseña entrecomillada con espacios se oculte completa.
+        try:
+            parts = shlex.split(content)
+        except ValueError:
+            return f"{tokens[0]} {REDACTED_SECRET}"
+        if len(parts) >= 4:
+            redacted = redact_connect_args(parts[1:])
             return " ".join([tokens[0], *redacted])
         return content
 

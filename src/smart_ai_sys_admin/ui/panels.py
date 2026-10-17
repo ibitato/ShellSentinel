@@ -103,9 +103,9 @@ class _HistoryAwareTextArea(TextArea):
         self._owner = owner
 
     def on_key(self, event: events.Key) -> None:  # type: ignore[override]
-        if self._owner._handle_editor_key(event):
-            return
-        super().on_event(event)
+        # Textual despacha además ``TextArea._on_key`` por MRO; aquí solo se
+        # interceptan las teclas propias (envío e historial).
+        self._owner._handle_editor_key(event)
 
 
 class CommandInput(Vertical):
