@@ -228,26 +228,57 @@ async def local_datetime(agent: Any) -> str:  # noqa: ARG001 - agente inyectado
     return now.isoformat()
 
 
-DEFAULT_STRANDS_TOOLS: tuple[ToolCallable, ...] = (
-    shell_tool,
-    file_read,
-    file_write,
-    sleep,
+# Herramientas de ``strands_tools`` seleccionables mediante ``tools.default``.
+BUILTIN_STRANDS_TOOLS: dict[str, ToolCallable] = {
+    "shell": shell_tool,
+    "file_read": file_read,
+    "file_write": file_write,
+    "sleep": sleep,
+}
+
+# Herramientas propias de Shell Sentinel, siempre disponibles.
+SHELL_SENTINEL_TOOLS: tuple[ToolCallable, ...] = (
     local_datetime,
     remote_ssh_command,
     remote_sftp_transfer,
 )
 
+DEFAULT_STRANDS_TOOLS: tuple[ToolCallable, ...] = (
+    *BUILTIN_STRANDS_TOOLS.values(),
+    *SHELL_SENTINEL_TOOLS,
+)
 
-def resolve_tools(custom_tools: Sequence[ToolCallable] | None = None) -> list[ToolCallable]:
-    combined = list(DEFAULT_STRANDS_TOOLS)
+
+def resolve_tools(
+    custom_tools: Sequence[ToolCallable] | None = None,
+    enabled_builtin: Sequence[str] | None = None,
+) -> list[ToolCallable]:
+    """Compone la lista de herramientas del agente.
+
+    ``enabled_builtin`` corresponde a ``tools.default`` en ``conf/agent.conf``:
+    ``None`` habilita todas las herramientas de ``strands_tools`` y una lista
+    restringe cuáles se registran. Las herramientas propias siempre se incluyen.
+    """
+
+    if enabled_builtin is None:
+        combined = list(DEFAULT_STRANDS_TOOLS)
+    else:
+        unknown = [name for name in enabled_builtin if name not in BUILTIN_STRANDS_TOOLS]
+        if unknown:
+            logger.warning("Herramientas desconocidas en tools.default ignoradas: %s", unknown)
+        combined = [
+            tool_fn for name, tool_fn in BUILTIN_STRANDS_TOOLS.items() if name in enabled_builtin
+        ]
+        combined.extend(SHELL_SENTINEL_TOOLS)
     if custom_tools:
         combined.extend(custom_tools)
     return combined
 
 
 __all__ = [
+    "BUILTIN_STRANDS_TOOLS",
     "DEFAULT_STRANDS_TOOLS",
+    "SHELL_SENTINEL_TOOLS",
     "DEFAULT_REMOTE_TIMEOUT",
     "local_datetime",
     "remote_ssh_command",

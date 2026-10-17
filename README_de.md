@@ -86,6 +86,7 @@ make run
 - Responses akzeptiert optional `temperature: 0.3` in `params`; dieser Wert gehört nicht zur Standardkonfiguration.
 - Anmeldeinformationen stammen aus der Umgebung (`AWS_*`, `OPENAI_API_KEY` usw.). Du kannst auch `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` oder `SMART_AI_SYS_ADMIN_CONFIG_DIR` verwenden, um Dateipfade zu überschreiben.
 - In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional).
+- `tools.default` legt fest, welche Strands Agents Tools registriert werden (`shell`, `file_read`, `file_write`, `sleep`). Entferne `shell` und `file_write`, damit der Agent nicht auf deiner lokalen Workstation arbeitet; fehlt der Schlüssel, sind alle aktiv. `remote_ssh_command`, `remote_sftp_transfer` und `local_datetime` sind immer verfügbar.
 - `remote_ssh_command` verwendet standardmäßig **900 Sekunden (15 Minuten)** laut `conf/agent.conf`. Falls längere Befehle erwartet werden, den Agenten bitten, `timeout_seconds` entsprechend zu setzen.
 - Um übermäßige Ausgaben zu vermeiden, begrenzt `remote_command.max_output_chars`, wie viele Zeichen an den Agenten weitergegeben werden; das Beispiel verwendet **120.000**. Erhöhe den Wert für Audit-Anwendungsfälle oder senke ihn bei gemeinsam genutzten Terminals.
 - Für Model Context Protocol (MCP) Server deklarierst du jeden Transport (`stdio`, `sse`, `streamable_http`) im Abschnitt `mcp`. Die Agentenverbindung bleibt während der Sitzung aktiv und stellt die Tools bereit.

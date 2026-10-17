@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -125,11 +125,8 @@ def test_run_command_without_connection(connection_logger):
 def test_run_command_returns_output(connection_logger):
     manager = _connected_manager(connection_logger)
     stdout = MagicMock()
-    stderr = MagicMock()
-    stdout.read.return_value = b"hello"
-    stderr.read.return_value = b""
-    stdout.channel.recv_exit_status.return_value = 0
-    manager._ssh_client.exec_command.return_value = (MagicMock(), stdout, stderr)
+    stdout.channel = _fake_channel(b"hello", b"")
+    manager._ssh_client.exec_command.return_value = (MagicMock(), stdout, MagicMock())
 
     code, out, err = manager.run_command("echo hi", timeout=5)
 
@@ -157,3 +154,68 @@ def test_download_rejects_existing_local(connection_logger, tmp_path: Path):
     local.write_text("data", encoding="utf-8")
     with pytest.raises(ConnectionError):
         manager.download_file("/remote/file", str(local), overwrite=False)
+
+
+def _fake_channel(out: bytes, err: bytes, *, exit_status: int = 0, finished: bool = True):
+    """Simula un canal Paramiko que entrega stdout/stderr de una sola vez."""
+
+    channel = MagicMock()
+    state = {"out": out, "err": err}
+
+    def _take(key: str) -> bytes:
+        data, state[key] = state[key], b""
+        return data
+
+    channel.recv_ready.side_effect = lambda: bool(state["out"])
+    channel.recv_stderr_ready.side_effect = lambda: bool(state["err"])
+    channel.recv.side_effect = lambda _size: _take("out")
+    channel.recv_stderr.side_effect = lambda _size: _take("err")
+    channel.exit_status_ready.return_value = finished
+    channel.recv_exit_status.return_value = exit_status
+    return channel
+
+
+def test_run_command_drains_stdout_and_stderr(connection_logger):
+    manager = _connected_manager(connection_logger)
+    stdout = MagicMock()
+    stdout.channel = _fake_channel(b"out", b"err" * 1000, exit_status=3)
+    manager._ssh_client.exec_command.return_value = (MagicMock(), stdout, MagicMock())
+
+    code, out, err = manager.run_command("cmd", timeout=5)
+
+    assert (code, out, err) == (3, "out", "err" * 1000)
+    stdout.channel.close.assert_called_once()
+
+
+def test_run_command_enforces_total_timeout(connection_logger):
+    manager = _connected_manager(connection_logger)
+    stdout = MagicMock()
+    stdout.channel = _fake_channel(b"", b"", finished=False)
+    manager._ssh_client.exec_command.return_value = (MagicMock(), stdout, MagicMock())
+
+    with patch("smart_ai_sys_admin.connection.time.monotonic", side_effect=[0.0, 10.0]):
+        with pytest.raises(ConnectionError, match="cmd"):
+            manager.run_command("cmd", timeout=5)
+    stdout.channel.close.assert_called_once()
+
+
+def test_ensure_remote_directory_relative_path(connection_logger):
+    manager = _connected_manager(connection_logger)
+    sftp = manager._sftp_client
+    sftp.stat.side_effect = FileNotFoundError
+
+    manager._ensure_remote_directory(PurePosixPath("backups/daily"))
+
+    created = [call.args[0] for call in sftp.mkdir.call_args_list]
+    assert created == ["backups", "backups/daily"]
+
+
+def test_ensure_remote_directory_absolute_path(connection_logger):
+    manager = _connected_manager(connection_logger)
+    sftp = manager._sftp_client
+    sftp.stat.side_effect = FileNotFoundError
+
+    manager._ensure_remote_directory(PurePosixPath("/srv/app"))
+
+    created = [call.args[0] for call in sftp.mkdir.call_args_list]
+    assert created == ["/srv", "/srv/app"]

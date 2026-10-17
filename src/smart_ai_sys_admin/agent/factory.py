@@ -291,7 +291,7 @@ class AgentFactory:
     # ------------------------------------------------------------------
 
     @property
-    def default_tool_names(self) -> tuple[str, ...]:
+    def default_tool_names(self) -> tuple[str, ...] | None:
         return self._config.tools.default_tools
 
     @property

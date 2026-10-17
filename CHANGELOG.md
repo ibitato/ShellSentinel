@@ -5,6 +5,24 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Dependencies updated to Strands Agents 1.61.1, Strands Agents Tools 0.8.9 and Textual 8.2.8; lockfiles regenerated. `mcp` is pinned below 2.0 until the MCP transports are migrated, and the OpenAI and Mistral SDK majors remain pinned.
+- `tools.default` in `conf/agent.conf` is now honored: only the listed Strands Agents Tools are registered (all of them when the key is omitted). Shell Sentinel tools are always registered.
+- `remote_ssh_command` timeouts now cap total runtime instead of idle time between reads.
+
+### Fixed
+
+- Security: PyJWT raised to `>=2.15.0` and lockfiles bumped to Pillow 12.3.0 and soupsieve 3.0.3 to address published advisories.
+- The TUI no longer freezes while the agent or `/connect` is running; work runs in a background worker and new submissions are rejected until it finishes.
+- SFTP uploads to relative remote paths now create missing directories under the SFTP home instead of `/`.
+- Remote commands drain stdout and stderr concurrently, avoiding hangs on large stderr output.
+- Quoted `/connect` passwords containing spaces are fully redacted in the conversation panel.
+- Removed an un-awaited coroutine triggered on every keystroke in the input editor.
+- `smart_ai_sys_admin.__version__` now matches the released version.
+
 ## [1.3.0] - 2026-07-27
 
 ### Added

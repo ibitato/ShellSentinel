@@ -241,7 +241,7 @@ class AgentRuntime:
                 if hasattr(remote_ssh_command, "_tool_name"):
                     remote_ssh_command._tool_name = tool_name  # type: ignore[attr-defined]
 
-        base_tools = list(resolve_tools())
+        base_tools = resolve_tools(enabled_builtin=self._factory.default_tool_names)
         self._mcp_manager = MCPManager(config.mcp, self._logger)
         try:
             mcp_tools = self._mcp_manager.activate()

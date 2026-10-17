@@ -172,3 +172,16 @@ def test_mistral_invalid_reasoning_effort(minimal_agent_conf: Path):
     minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(AgentConfigError, match="reasoning_effort"):
         load_agent_config(minimal_agent_conf)
+
+
+def test_tools_default_list_is_parsed(minimal_agent_conf: Path):
+    config = load_agent_config(minimal_agent_conf)
+    assert config.tools.default_tools == ("shell",)
+
+
+def test_tools_default_absent_means_all(minimal_agent_conf: Path):
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    del payload["tools"]["default"]
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    config = load_agent_config(minimal_agent_conf)
+    assert config.tools.default_tools is None

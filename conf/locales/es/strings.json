@@ -38,7 +38,8 @@
         "no_args": "⚠️ `{command}` no admite argumentos adicionales."
       },
       "unexpected_error": "❌ Se produjo un error inesperado: {error}",
-      "agent_unavailable": "⚠️ El agente IA no está disponible. Revisa la configuración."
+      "agent_unavailable": "⚠️ El agente IA no está disponible. Revisa la configuración.",
+      "busy": "⏳ Todavía se está procesando la petición anterior. Espera a que termine antes de enviar otra."
     },
     "commands": {
       "parse_error": "⚠️ No se pudo interpretar el comando: {error}",
@@ -137,6 +138,7 @@
       "no_active_ssh": "No hay una conexión SSH activa.",
       "no_active_sftp": "La sesión SFTP no está disponible.",
       "command_failed": "Fallo ejecutando '{command}': {error}",
+      "command_timeout": "El comando '{command}' superó el timeout de {timeout}s y se interrumpió. Indica un timeout_seconds mayor si necesita más tiempo.",
       "local_missing": "El archivo local '{path}' no existe.",
       "local_not_file": "La ruta local '{path}' no es un archivo regular.",
       "remote_exists": "El archivo remoto '{path}' ya existe. Usa `overwrite` para reemplazarlo.",
