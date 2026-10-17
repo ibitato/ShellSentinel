@@ -73,3 +73,12 @@ El agente reutiliza la sesión SSH activa para ejecutar comandos. Las transferen
 - **Error “No hay una conexión SSH activa”**: ejecuta `/connect` antes de solicitar acciones al agente.
 - **Fallo SFTP o transferencia tras un `/connect` correcto**: el shell remoto puede imprimir banners en sesiones no interactivas (por ejemplo `pyfiglet` en `~/.bashrc`). Envuelve la salida decorativa en una comprobación interactiva (`[[ $- == *i* ]]`) o pide al administrador usar `Subsystem sftp internal-sftp` en `sshd_config`.
 - **Credenciales en logs**: las contraseñas de `/connect` se enmascaran como `***` en `logs/app.log` y en el eco del comando en la TUI.
+- **Un servidor MCP no arrancó**: el panel de conversación muestra un aviso al iniciar y `/status` lista cada servidor MCP configurado con su estado. El mensaje indica la causa y qué hacer:
+  - *no se encuentra el comando*: instala el `command` (por ejemplo `uvx` o `npx`) o añádelo al `PATH`.
+  - *terminó antes de completar el saludo MCP*: ejecuta el comando a mano para ver sus errores y revisa `args` y `env`.
+  - *rechazó las credenciales (HTTP 401/403)*: revisa `headers` y el token.
+  - *no hay un endpoint MCP (HTTP 404)*: revisa la ruta de `url` y el `type` del transporte (`sse` frente a `streamable_http`).
+  - *no se puede conectar*: comprueba que el servidor está arrancado y que la `url` es correcta.
+  - *sin respuesta en N s*: el servidor es lento o se ha quedado colgado; compruébalo y sube `timeout_seconds` si necesita más tiempo para arrancar.
+  - *variables de entorno sin definir*: exporta las variables de `env_passthrough` antes de lanzar la TUI.
+  El agente arranca igualmente; solo faltan las herramientas de ese servidor. `logs/app.log` conserva la traza completa.

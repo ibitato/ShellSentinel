@@ -73,3 +73,12 @@ Der Agent nutzt die aktive SSH-Sitzung für Befehle. Dateiübertragungen öffnen
 - **Fehler „Keine aktive SSH-Verbindung“**: Vor Agent-Aufgaben zuerst `/connect` ausführen.
 - **SFTP- oder Transferfehler nach erfolgreichem `/connect`**: Die Remote-Shell kann Banner in nicht-interaktiven Sitzungen ausgeben (z. B. `pyfiglet` in `~/.bashrc`). Dekorative Ausgabe nur interaktiv erlauben (`[[ $- == *i* ]]`) oder den Administrator bitten, `Subsystem sftp internal-sftp` in `sshd_config` zu setzen.
 - **Zugangsdaten in Logs**: `/connect`-Passwörter werden in `logs/app.log` und in der angezeigten Eingabe als `***` maskiert.
+- **Ein MCP-Server ist nicht gestartet**: Das Konversationsfenster zeigt beim Start eine Warnung, und `/status` listet jeden konfigurierten MCP-Server mit seinem Zustand. Die Meldung nennt die Ursache und die Abhilfe:
+  - *Befehl nicht gefunden*: Den `command` (z. B. `uvx` oder `npx`) installieren oder in den `PATH` aufnehmen.
+  - *beendet, bevor der MCP-Handshake abgeschlossen war*: Den Befehl manuell ausführen, um die Fehler zu sehen, und `args` sowie `env` prüfen.
+  - *Anmeldedaten abgelehnt (HTTP 401/403)*: `headers` und das Token prüfen.
+  - *kein MCP-Endpunkt (HTTP 404)*: Den Pfad in `url` und den `type` des Transports (`sse` vs. `streamable_http`) prüfen.
+  - *keine Verbindung möglich*: Sicherstellen, dass der Server läuft und die `url` stimmt.
+  - *keine Antwort innerhalb von N s*: Der Server ist langsam oder hängt; prüfen und `timeout_seconds` erhöhen, falls er länger zum Starten braucht.
+  - *nicht gesetzte Umgebungsvariablen*: Die in `env_passthrough` aufgeführten Variablen vor dem Start der TUI exportieren.
+  Der Agent startet trotzdem; nur die Werkzeuge dieses Servers fehlen. `logs/app.log` enthält die vollständige Ablaufverfolgung.

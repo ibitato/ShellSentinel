@@ -146,6 +146,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
           <li><strong>"Keine aktive SSH-Verbindung"</strong>: Vor Remote-Aktionen <code>/connect</code> ausführen.</li>
           <li><strong>SFTP-Fehler nach erfolgreichem <code>/connect</code></strong>: Die Remote-Shell kann Banner in nicht-interaktiven Sitzungen ausgeben (z. B. <code>pyfiglet</code> in <code>~/.bashrc</code>). Dekorative Ausgabe nur interaktiv erlauben oder <code>Subsystem sftp internal-sftp</code> auf dem Server setzen.</li>
           <li><strong>Zugangsdaten in Logs</strong>: <code>/connect</code>-Passwörter werden in <code>logs/app.log</code> als <code>***</code> maskiert.</li>
+          <li><strong>Ein MCP-Server ist nicht gestartet</strong>: Das Konversationsfenster zeigt beim Start eine Warnung, und <code>/status</code> listet jeden konfigurierten MCP-Server mit seinem Zustand. Die Meldung nennt die Ursache (Befehl nicht gefunden, Prozess vorzeitig beendet, HTTP 401/403/404, keine Verbindung, keine Antwort innerhalb von <code>timeout_seconds</code>, nicht gesetzte Umgebungsvariablen) und was in <code>conf/agent.conf</code> zu korrigieren ist. Der Agent startet trotzdem ohne die Werkzeuge dieses Servers; <code>logs/app.log</code> enthält die vollständige Ablaufverfolgung.</li>
         </ul>
 
         <h2>Weitere Ressourcen</h2>

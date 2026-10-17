@@ -16,6 +16,7 @@ anyio==4.15.1
     # via
     #   cerebras-cloud-sdk
     #   httpx
+    #   httpx2
     #   mcp
     #   openai
     #   sse-starlette
@@ -90,6 +91,7 @@ frozenlist==1.8.0
 h11==0.16.0
     # via
     #   httpcore
+    #   httpcore2
     #   uvicorn
 h2==4.4.1
     # via httpx
@@ -97,22 +99,26 @@ hpack==4.2.0
     # via h2
 httpcore==1.0.9
     # via httpx
+httpcore2==2.13.1
+    # via httpx2
 httpx[http2]==0.28.1
     # via
     #   cerebras-cloud-sdk
-    #   mcp
     #   mistralai
     #   ollama
     #   openai
     #   strands-agents
-httpx-sse==0.4.3
-    # via mcp
+httpx2==2.13.1
+    # via
+    #   mcp
+    #   smart-ai-sys-admin (pyproject.toml)
 hyperframe==6.1.0
     # via h2
 idna==3.20
     # via
     #   anyio
     #   httpx
+    #   httpx2
     #   requests
     #   yarl
 iniconfig==2.3.1
@@ -142,10 +148,12 @@ markdown-it-py[linkify]==4.2.0
     #   textual
 markdownify==1.2.3
     # via strands-agents-tools
-mcp==1.30.0
+mcp==2.1.1
     # via
     #   smart-ai-sys-admin (pyproject.toml)
     #   strands-agents
+mcp-types==2.1.1
+    # via mcp
 mdit-py-plugins==0.6.1
     # via textual
 mdurl==0.1.2
@@ -170,6 +178,7 @@ openai==2.48.0
     #   strands-agents
 opentelemetry-api==1.45.1
     # via
+    #   mcp
     #   mistralai
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-threading
@@ -222,15 +231,13 @@ pydantic==2.14.1
     # via
     #   cerebras-cloud-sdk
     #   mcp
+    #   mcp-types
     #   mistralai
     #   ollama
     #   openai
-    #   pydantic-settings
     #   strands-agents
 pydantic-core==2.50.1
     # via pydantic
-pydantic-settings==2.16.0
-    # via mcp
 pygments==2.21.0
     # via
     #   pytest
@@ -261,9 +268,7 @@ python-dateutil==2.9.0.post0
     #   botocore
     #   mistralai
 python-dotenv==1.2.4
-    # via
-    #   pydantic-settings
-    #   smart-ai-sys-admin (pyproject.toml)
+    # via smart-ai-sys-admin (pyproject.toml)
 python-multipart==0.0.32
     # via mcp
 pytokens==0.4.1
@@ -329,6 +334,10 @@ textual==8.2.8
     # via smart-ai-sys-admin (pyproject.toml)
 tqdm==4.70.1
     # via openai
+truststore==0.10.5
+    # via
+    #   httpcore2
+    #   httpx2
 typing-extensions==4.16.0
     # via
     #   aiohttp
@@ -336,14 +345,15 @@ typing-extensions==4.16.0
     #   anyio
     #   beautifulsoup4
     #   cerebras-cloud-sdk
+    #   httpx2
     #   mcp
+    #   mcp-types
     #   openai
     #   opentelemetry-api
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
     #   pydantic
     #   pydantic-core
-    #   pydantic-settings
     #   pytest-asyncio
     #   referencing
     #   starlette
@@ -356,7 +366,6 @@ typing-inspection==0.4.4
     #   mcp
     #   mistralai
     #   pydantic
-    #   pydantic-settings
 urllib3==2.8.0
     # via
     #   botocore

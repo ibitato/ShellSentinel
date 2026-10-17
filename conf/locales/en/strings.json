@@ -70,7 +70,8 @@
         "streaming": "Streaming",
         "agent_ready": "Agent ready",
         "config_path": "Configuration",
-        "error": "Error"
+        "error": "Error",
+        "mcp": "MCP servers"
       },
       "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{status_usage}` shows the agent and connection status.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
       "help": {
@@ -181,6 +182,26 @@
         "invalid_action": "❌ Invalid action. Use `upload`/`put` to send files or `download`/`get` to retrieve them.",
         "upload_success": "✅ Upload completed. Local: `{local}` → Remote: `{remote}`",
         "download_success": "✅ Download completed. Remote: `{remote}` → Local: `{local}`"
+      }
+    },
+    "mcp": {
+      "failure": {
+        "command_not_found": "command `{command}` not found. Install it or add it to `PATH`.",
+        "command_not_executable": "command `{command}` cannot be executed ({detail}). Check its permissions.",
+        "process_exited": "`{command}` exited before completing the MCP handshake. Run it by hand to see its errors and review `args` and `env`.",
+        "unauthorized": "`{url}` rejected the credentials (HTTP {status}). Check `headers` and the token.",
+        "not_found": "no MCP endpoint at `{url}` (HTTP 404). Check the `url` path and the transport `type`.",
+        "http_error": "`{url}` returned an error (HTTP {status}). Check the server logs.",
+        "unreachable": "cannot connect to `{url}` ({detail}). Make sure the server is running and the `url` is correct.",
+        "timeout": "no response within {timeout}s. Check the server and raise `timeout_seconds` if it needs longer to start.",
+        "invalid_config": "invalid transport configuration: {detail}",
+        "unknown": "could not start ({detail}). See `logs/app.log`."
+      },
+      "missing_env": "Environment variables not set: {names}. Export them before launching the TUI.",
+      "status": {
+        "ready": "✅ `{id}` ({transport}): {count} tools",
+        "failed": "⚠️ `{id}` ({transport}): {message}",
+        "summary_failed": "⚠️ {failed} of {total} MCP servers unavailable; their tools are disabled for this session."
       }
     }
   }

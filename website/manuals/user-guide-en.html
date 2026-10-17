@@ -163,6 +163,13 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           <li>
             <strong>Credentials in logs</strong>: <code>/connect</code> passwords are masked as <code>***</code> in <code>logs/app.log</code> and echoed input.
           </li>
+          <li>
+            <strong>An MCP server did not start</strong>: the conversation panel shows a warning at startup and
+            <code>/status</code> lists every configured MCP server with its state. The message names the cause
+            (command not found, process exited early, HTTP 401/403/404, cannot connect, no response within
+            <code>timeout_seconds</code>, environment variables not set) and what to fix in <code>conf/agent.conf</code>.
+            The agent still starts without that server's tools; <code>logs/app.log</code> keeps the full trace.
+          </li>
         </ul>
 
         <h2>Additional resources</h2>
