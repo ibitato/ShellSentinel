@@ -33,6 +33,7 @@ class FakeClient:
         self.started = threading.Event()
         self.stopped = threading.Event()
         self.stop_calls = 0
+        self.list_calls = 0
 
     def start(self) -> FakeClient:
         if self.start_delay:
@@ -43,6 +44,7 @@ class FakeClient:
         return self
 
     def list_tools_sync(self) -> list[str]:
+        self.list_calls += 1
         if self.tools_delay:
             time.sleep(self.tools_delay)
         if self.tools_error is not None:
@@ -99,7 +101,8 @@ def test_servers_start_in_parallel_and_tools_keep_config_order():
 
 
 def test_hung_server_is_abandoned_after_deadline_and_closed_when_it_finishes():
-    slow = FakeClient(tools=["late"], start_delay=1.5)
+    # Si el listado también se colgase (tools_delay) no debe llegar a ejecutarse.
+    slow = FakeClient(tools=["late"], start_delay=1.5, tools_delay=30)
     fast = FakeClient(tools=["ok"])
     manager = _manager(
         (_transport("slow", timeout_seconds=1), _transport("fast")),
@@ -114,10 +117,13 @@ def test_hung_server_is_abandoned_after_deadline_and_closed_when_it_finishes():
     assert "1s" in slow_status.message
     assert "timeout_seconds" in slow_status.message
     assert fast_status.ready is True
-    # El cliente abandonado se cierra solo cuando termina de arrancar.
+    # El cliente abandonado se cierra en cuanto termina el saludo, sin listar herramientas.
     assert slow.stopped.wait(2.0)
+    assert slow.list_calls == 0
+    assert slow.stop_calls == 1
     manager.close()
     assert fast.stopped.is_set()
+    assert slow.stop_calls == 1
 
 
 def test_server_hung_on_tool_listing_is_stopped_at_once_and_only_once():

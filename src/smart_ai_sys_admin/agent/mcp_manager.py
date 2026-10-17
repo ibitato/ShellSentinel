@@ -199,7 +199,11 @@ class MCPManager:
             # un proceso o sesión que cerrar si el listado se queda colgado.
             with attempt.lock:
                 attempt.started = True
-            attempt.tools = list(attempt.client.list_tools_sync())
+                abandoned = attempt.abandoned
+            # Si el plazo venció durante el saludo nadie usará este cliente: no se listan
+            # herramientas (podría colgarse) y se cierra más abajo.
+            if not abandoned:
+                attempt.tools = list(attempt.client.list_tools_sync())
         except Exception as exc:
             attempt.error = exc
         finally:
