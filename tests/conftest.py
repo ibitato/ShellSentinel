@@ -170,6 +170,9 @@ class FakeAgentRuntime:
     def agent_summary(self) -> dict:
         return dict(self._summary)
 
+    def mcp_startup_report(self) -> str | None:
+        return None
+
 
 @pytest.fixture
 def fake_agent_runtime() -> FakeAgentRuntime:

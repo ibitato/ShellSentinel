@@ -70,7 +70,8 @@
         "streaming": "Streaming",
         "agent_ready": "Agente listo",
         "config_path": "Configuración",
-        "error": "Error"
+        "error": "Error",
+        "mcp": "Servidores MCP"
       },
       "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{status_usage}` muestra el estado del agente y la conexión.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
       "help": {
@@ -181,6 +182,26 @@
         "invalid_action": "❌ Acción inválida. Usa `upload`/`put` para subir archivos o `download`/`get` para descargarlos.",
         "upload_success": "✅ Archivo subido con éxito. Local: `{local}` → Remoto: `{remote}`",
         "download_success": "✅ Archivo descargado con éxito. Remoto: `{remote}` → Local: `{local}`"
+      }
+    },
+    "mcp": {
+      "failure": {
+        "command_not_found": "no se encuentra el comando `{command}`. Instálalo o añádelo al `PATH`.",
+        "command_not_executable": "no se puede ejecutar el comando `{command}` ({detail}). Revisa sus permisos.",
+        "process_exited": "`{command}` terminó antes de completar el saludo MCP. Ejecútalo a mano para ver sus errores y revisa `args` y `env`.",
+        "unauthorized": "`{url}` rechazó las credenciales (HTTP {status}). Revisa `headers` y el token.",
+        "not_found": "no hay un endpoint MCP en `{url}` (HTTP 404). Revisa la ruta de `url` y el `type` del transporte.",
+        "http_error": "`{url}` devolvió un error (HTTP {status}). Revisa los registros del servidor.",
+        "unreachable": "no se puede conectar con `{url}` ({detail}). Comprueba que el servidor está arrancado y que la `url` es correcta.",
+        "timeout": "sin respuesta en {timeout}s. Comprueba el servidor y sube `timeout_seconds` si necesita más tiempo para arrancar.",
+        "invalid_config": "configuración del transporte inválida: {detail}",
+        "unknown": "no pudo arrancar ({detail}). Consulta `logs/app.log`."
+      },
+      "missing_env": "Variables de entorno sin definir: {names}. Expórtalas antes de lanzar la TUI.",
+      "status": {
+        "ready": "✅ `{id}` ({transport}): {count} herramientas",
+        "failed": "⚠️ `{id}` ({transport}): {message}",
+        "summary_failed": "⚠️ {failed} de {total} servidores MCP no disponibles; sus herramientas quedan desactivadas en esta sesión."
       }
     }
   }

@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from smart_ai_sys_admin.agent.config import MCPConfig, MCPTransportConfig
+from smart_ai_sys_admin.agent.mcp_manager import MCPServerStatus
 from smart_ai_sys_admin.agent.runtime import AgentRuntime, MCPManager
 
 
@@ -160,3 +161,44 @@ def test_agent_summary_after_initialize(
     assert summary["provider"] == "OpenAI"
     assert summary["model"] == "gpt-test"
     assert summary["config_path"] == str(minimal_agent_conf.resolve())
+
+
+def _runtime_with_statuses(agent_runtime: AgentRuntime, *statuses: MCPServerStatus) -> AgentRuntime:
+    manager = MagicMock()
+    manager.statuses = statuses
+    agent_runtime._mcp_manager = manager
+    return agent_runtime
+
+
+def test_mcp_startup_report_none_without_failures(agent_runtime: AgentRuntime):
+    assert agent_runtime.mcp_startup_report() is None
+    _runtime_with_statuses(
+        agent_runtime, MCPServerStatus("docs", "stdio", ready=True, tool_count=4)
+    )
+    assert agent_runtime.mcp_startup_report() is None
+
+
+def test_mcp_startup_report_lists_failed_servers(agent_runtime: AgentRuntime):
+    _runtime_with_statuses(
+        agent_runtime,
+        MCPServerStatus("docs", "stdio", ready=True, tool_count=4),
+        MCPServerStatus("remote", "streamable_http", ready=False, message="cannot connect"),
+    )
+    report = agent_runtime.mcp_startup_report()
+    assert report is not None
+    assert "1 of 2 MCP servers unavailable" in report
+    assert "`remote` (streamable_http): cannot connect" in report
+    assert "docs" not in report
+
+
+def test_agent_summary_describes_mcp_servers(agent_runtime: AgentRuntime):
+    _runtime_with_statuses(
+        agent_runtime,
+        MCPServerStatus("docs", "stdio", ready=True, tool_count=4, message="env missing"),
+        MCPServerStatus("remote", "sse", ready=False, message="HTTP 401"),
+    )
+    servers = agent_runtime.agent_summary()["mcp_servers"]
+    assert servers == [
+        "✅ `docs` (stdio): 4 tools — env missing",
+        "⚠️ `remote` (sse): HTTP 401",
+    ]

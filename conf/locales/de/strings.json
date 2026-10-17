@@ -70,7 +70,8 @@
         "streaming": "Streaming",
         "agent_ready": "Agent bereit",
         "config_path": "Konfiguration",
-        "error": "Fehler"
+        "error": "Fehler",
+        "mcp": "MCP-Server"
       },
       "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{status_usage}` zeigt den Status von Agent und Verbindung an.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
       "help": {
@@ -181,6 +182,26 @@
         "invalid_action": "❌ Ungültige Aktion. Verwende `upload`/`put` für Uploads oder `download`/`get` für Downloads.",
         "upload_success": "✅ Upload abgeschlossen. Lokal: `{local}` → Remote: `{remote}`",
         "download_success": "✅ Download abgeschlossen. Remote: `{remote}` → Lokal: `{local}`"
+      }
+    },
+    "mcp": {
+      "failure": {
+        "command_not_found": "Befehl `{command}` nicht gefunden. Installiere ihn oder nimm ihn in den `PATH` auf.",
+        "command_not_executable": "Befehl `{command}` kann nicht ausgeführt werden ({detail}). Prüfe die Berechtigungen.",
+        "process_exited": "`{command}` wurde beendet, bevor der MCP-Handshake abgeschlossen war. Starte ihn manuell, um die Fehler zu sehen, und prüfe `args` und `env`.",
+        "unauthorized": "`{url}` hat die Anmeldedaten abgelehnt (HTTP {status}). Prüfe `headers` und das Token.",
+        "not_found": "kein MCP-Endpunkt unter `{url}` (HTTP 404). Prüfe den Pfad in `url` und den `type` des Transports.",
+        "http_error": "`{url}` hat einen Fehler zurückgegeben (HTTP {status}). Prüfe die Server-Logs.",
+        "unreachable": "keine Verbindung zu `{url}` möglich ({detail}). Stelle sicher, dass der Server läuft und die `url` stimmt.",
+        "timeout": "keine Antwort innerhalb von {timeout}s. Prüfe den Server und erhöhe `timeout_seconds`, falls er länger zum Starten braucht.",
+        "invalid_config": "ungültige Transportkonfiguration: {detail}",
+        "unknown": "konnte nicht gestartet werden ({detail}). Siehe `logs/app.log`."
+      },
+      "missing_env": "Nicht gesetzte Umgebungsvariablen: {names}. Exportiere sie, bevor du die TUI startest.",
+      "status": {
+        "ready": "✅ `{id}` ({transport}): {count} Werkzeuge",
+        "failed": "⚠️ `{id}` ({transport}): {message}",
+        "summary_failed": "⚠️ {failed} von {total} MCP-Servern nicht verfügbar; ihre Werkzeuge sind in dieser Sitzung deaktiviert."
       }
     }
   }

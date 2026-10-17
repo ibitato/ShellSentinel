@@ -10,9 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Dependencies updated to Strands Agents 1.61.1, Strands Agents Tools 0.8.9 and Textual 8.2.8; lockfiles regenerated. The OpenAI and Mistral SDK majors remain pinned.
-- MCP transports migrated to `mcp` 2.x (2.1.1, built on `httpx2`); the temporary `mcp<2` pin is gone. `streamable_http` transports now build an `httpx2` client carrying the configured `headers` and `timeout_seconds` (connect/write/pool; reads keep MCP's 300 s SSE window) and fall back to MCP's 30 s default when no timeout is set, instead of no connect timeout. `sse` transports now honor `timeout_seconds` as well.
+- MCP transports migrated to `mcp` 2.x (2.1.1, built on `httpx2`); the temporary `mcp<2` pin is gone. `streamable_http` transports now build an `httpx2` client carrying the configured `headers` and `timeout_seconds` (connect/write/pool; reads keep a 300 s SSE window) and fall back to 30 s when no timeout is set, instead of no connect timeout. `sse` transports now honor `timeout_seconds` as well.
+- MCP servers start in parallel and `timeout_seconds` (default 30 s) now also bounds each server's startup, so a hung server no longer blocks the TUI from opening.
 - `tools.default` in `conf/agent.conf` is now honored: only the listed Strands Agents Tools are registered (all of them when the key is omitted). Shell Sentinel tools are always registered.
 - `remote_ssh_command` timeouts now cap total runtime instead of idle time between reads.
+
+### Added
+
+- When an MCP server fails to start, the conversation panel shows a localized warning naming the cause (command not found, process exited, HTTP 401/403/404, unreachable host, timeout, missing environment variables) and what to fix, and `/status` lists every configured MCP server with its state and tool count. Previously the agent reported success and the log only said `unhandled errors in a TaskGroup`.
 
 ### Fixed
 

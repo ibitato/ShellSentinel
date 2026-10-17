@@ -502,6 +502,10 @@ class SlashCommandProcessor:
                 lines.append(f"- {summary['status']}")
             if summary.get("error"):
                 lines.append(f"- {_('ui.commands.status.error')}: {summary['error']}")
+            mcp_servers = summary.get("mcp_servers") or []
+            if mcp_servers:
+                lines.append(f"- {_('ui.commands.status.mcp')}:")
+                lines.extend(f"  - {entry}" for entry in mcp_servers)
         return "\n".join(lines)
 
     def _status_help(self) -> str:

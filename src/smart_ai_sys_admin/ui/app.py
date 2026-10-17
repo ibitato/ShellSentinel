@@ -254,6 +254,9 @@ class SmartAISysAdminApp(App[None]):
         self._agent_runtime.initialize()
         if self._agent_runtime.error_message:
             self._conversation.add_agent_markdown(self._agent_runtime.error_message)
+        mcp_report = self._agent_runtime.mcp_startup_report()
+        if mcp_report:
+            self._conversation.add_agent_markdown(mcp_report)
         self._update_connection_info()
 
     def _show_welcome_screen(self) -> None:

@@ -131,3 +131,18 @@ def test_plugin_command_executes(slash_processor: SlashCommandProcessor):
 def test_suggestion_for_connect(slash_processor: SlashCommandProcessor):
     suggestion = slash_processor.suggestion_for("/connect srv")
     assert suggestion is None or isinstance(suggestion, str)
+
+
+def test_status_lists_mcp_servers(slash_processor: SlashCommandProcessor, fake_agent_runtime):
+    fake_agent_runtime._summary["mcp_servers"] = ["ok-server: 3 tools", "bad-server: unreachable"]
+    result = slash_processor.process("/status")
+    assert result is not None
+    assert "MCP servers" in result
+    assert "  - ok-server: 3 tools" in result
+    assert "  - bad-server: unreachable" in result
+
+
+def test_status_omits_mcp_section_without_servers(slash_processor: SlashCommandProcessor):
+    result = slash_processor.process("/status")
+    assert result is not None
+    assert "MCP servers" not in result

@@ -73,3 +73,12 @@ The agent reuses the active SSH session to run remote commands. File transfers o
 - **"No active SSH connection" errors**: run `/connect` before asking the agent to execute remote actions.
 - **SFTP or file transfer fails after a successful `/connect`**: the remote shell may print banners or MOTD on non-interactive sessions (for example `pyfiglet` in `~/.bashrc`). Wrap decorative output in an interactive check (`[[ $- == *i* ]]`) or ask the server admin to use `Subsystem sftp internal-sftp` in `sshd_config`.
 - **Credentials in logs**: passwords passed to `/connect` are masked as `***` in `logs/app.log` and in echoed command input.
+- **An MCP server did not start**: the conversation panel shows a warning at startup and `/status` lists every configured MCP server with its state. The message names the cause and what to do:
+  - *command not found*: install the `command` (for example `uvx` or `npx`) or add it to `PATH`.
+  - *exited before completing the MCP handshake*: run the command by hand to see its errors and review `args` and `env`.
+  - *rejected the credentials (HTTP 401/403)*: check `headers` and the token.
+  - *no MCP endpoint (HTTP 404)*: check the `url` path and the transport `type` (`sse` vs `streamable_http`).
+  - *cannot connect*: make sure the server is running and the `url` is correct.
+  - *no response within N s*: the server is slow or hung; check it and raise `timeout_seconds` if it needs longer to start.
+  - *environment variables not set*: export the variables listed in `env_passthrough` before launching the TUI.
+  The agent still starts; only that server's tools are missing. `logs/app.log` keeps the full trace.

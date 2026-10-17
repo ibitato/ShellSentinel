@@ -3,152 +3,23 @@
 from __future__ import annotations
 
 import logging
-import os
 import re
-from collections.abc import AsyncIterator, Mapping
-from contextlib import ExitStack, asynccontextmanager
 from typing import Any
 
-import httpx2
-from mcp import StdioServerParameters, stdio_client
-from mcp.client.sse import sse_client
-from mcp.client.streamable_http import streamable_http_client
-from mcp.shared._httpx_utils import (
-    MCP_DEFAULT_SSE_READ_TIMEOUT,
-    MCP_DEFAULT_TIMEOUT,
-    create_mcp_http_client,
-)
 from strands.agent.agent_result import AgentResult
-from strands.tools.mcp import MCPClient
 
 from ..connection import SSHConnectionManager
 from ..localization import _
 from .config import (
     AgentConfig,
     AgentConfigError,
-    MCPConfig,
-    MCPTransportConfig,
     ProviderBaseConfig,
     load_agent_config,
 )
 from .factory import AgentFactory
+from .mcp_manager import MCPManager, MCPServerStatus
 from .permissions import ToolPermissionManager
 from .tools import remote_ssh_command, resolve_tools
-
-
-def _http_timeout(timeout_seconds: float | None) -> httpx2.Timeout:
-    """Timeout httpx2 para transportes MCP HTTP.
-
-    ``timeout_seconds`` controla conexión, escritura y pool; la lectura conserva
-    el margen amplio de MCP para flujos SSE de larga duración.
-    """
-    general = MCP_DEFAULT_TIMEOUT if timeout_seconds is None else timeout_seconds
-    return httpx2.Timeout(general, read=MCP_DEFAULT_SSE_READ_TIMEOUT)
-
-
-@asynccontextmanager
-async def _streamable_http_transport(
-    url: str, headers: Mapping[str, str], timeout_seconds: float | None
-) -> AsyncIterator[Any]:
-    """Abre un transporte Streamable HTTP de mcp 2.x con cabeceras y timeout propios.
-
-    mcp 2.x ya no acepta ``headers``/``timeout`` sueltos: hay que pasarle un
-    cliente httpx2 configurado. ``streamable_http_client`` solo cierra los
-    clientes que crea él mismo, así que el nuestro se cierra aquí junto al transporte.
-    """
-    async with (
-        create_mcp_http_client(
-            headers=dict(headers), timeout=_http_timeout(timeout_seconds)
-        ) as http_client,
-        streamable_http_client(url, http_client=http_client) as streams,
-    ):
-        yield streams
-
-
-class MCPManager:
-    """Gestiona la conexión con servidores MCP según la configuración."""
-
-    def __init__(self, config: MCPConfig, logger: logging.Logger) -> None:
-        self._config = config
-        self._logger = logger
-        self._clients: list[MCPClient] = []
-        self._stack: ExitStack | None = None
-
-    def activate(self) -> list[Any]:
-        if not self._config.enabled or not self._config.transports:
-            return []
-        tools: list[Any] = []
-        self._stack = ExitStack()
-        for transport in self._config.transports:
-            try:
-                client = self._create_client(transport)
-            except Exception as exc:  # pragma: no cover - defensivo
-                self._logger.warning(
-                    "No se pudo crear el cliente MCP '%s': %s", transport.identifier, exc
-                )
-                continue
-            try:
-                self._stack.enter_context(client)
-            except Exception as exc:  # pragma: no cover - depende del entorno
-                self._logger.warning(
-                    "No se pudo iniciar el cliente MCP '%s': %s", transport.identifier, exc
-                )
-                continue
-            self._clients.append(client)
-            try:
-                tools.extend(client.list_tools_sync())
-            except Exception as exc:  # pragma: no cover - depende del servidor MCP
-                self._logger.warning(
-                    "Error obteniendo herramientas del servidor MCP '%s': %s",
-                    transport.identifier,
-                    exc,
-                )
-        return tools
-
-    def close(self) -> None:
-        if self._stack:
-            self._stack.close()
-        self._stack = None
-        self._clients.clear()
-
-    def _create_client(self, cfg: MCPTransportConfig) -> MCPClient:
-        if cfg.transport_type == "stdio":
-            if not cfg.command:
-                raise ValueError("El transporte MCP 'stdio' requiere el campo 'command'.")
-            env = {
-                name: value
-                for name in cfg.env_passthrough
-                if (value := os.getenv(name)) is not None
-            }
-            missing_env = set(cfg.env_passthrough) - env.keys()
-            if missing_env:
-                self._logger.warning(
-                    "Variables de entorno MCP no definidas para '%s': %s",
-                    cfg.identifier,
-                    ", ".join(sorted(missing_env)),
-                )
-            env.update(cfg.env)
-            params = StdioServerParameters(
-                command=cfg.command,
-                args=list(cfg.args),
-                env=env,
-                cwd=cfg.cwd,
-            )
-            return MCPClient(lambda: stdio_client(params))
-        if cfg.transport_type == "sse":
-            if not cfg.url:
-                raise ValueError("El transporte MCP 'sse' requiere el campo 'url'.")
-            sse_kwargs: dict[str, Any] = {"headers": dict(cfg.headers)}
-            if cfg.timeout_seconds is not None:
-                sse_kwargs["timeout"] = cfg.timeout_seconds
-            return MCPClient(lambda: sse_client(cfg.url, **sse_kwargs))
-        if cfg.transport_type == "streamable_http":
-            if not cfg.url:
-                raise ValueError("El transporte MCP 'streamable_http' requiere el campo 'url'.")
-            return MCPClient(
-                lambda: _streamable_http_transport(cfg.url, cfg.headers, cfg.timeout_seconds)
-            )
-        raise ValueError(f"Tipo de transporte MCP no soportado: {cfg.transport_type}")
 
 
 class AgentRuntime:
@@ -198,6 +69,7 @@ class AgentRuntime:
             "config_path": None,
             "status": self._status_message,
             "error": self._error_message,
+            "mcp_servers": [self._describe_mcp_server(st) for st in self.mcp_statuses],
         }
         if not self._config:
             return summary
@@ -212,6 +84,39 @@ class AgentRuntime:
         summary["provider"] = self._format_provider_label(provider_cfg)
         summary["model"] = getattr(provider_cfg, "model_id", None)
         return summary
+
+    @property
+    def mcp_statuses(self) -> tuple[MCPServerStatus, ...]:
+        """Estado de cada servidor MCP configurado tras el arranque."""
+
+        if not self._mcp_manager:
+            return ()
+        return self._mcp_manager.statuses
+
+    @staticmethod
+    def _describe_mcp_server(status: MCPServerStatus) -> str:
+        key = "agent.mcp.status.ready" if status.ready else "agent.mcp.status.failed"
+        line = _(
+            key,
+            id=status.identifier,
+            transport=status.transport_type,
+            count=status.tool_count,
+            message=status.message or "",
+        )
+        if status.ready and status.message:
+            line += f" — {status.message}"
+        return line
+
+    def mcp_startup_report(self) -> str | None:
+        """Markdown con los servidores MCP que no arrancaron, o ``None`` si todos lo hicieron."""
+
+        statuses = self.mcp_statuses
+        failed = [st for st in statuses if not st.ready]
+        if not failed:
+            return None
+        lines = [_("agent.mcp.status.summary_failed", failed=len(failed), total=len(statuses))]
+        lines.extend(f"- {self._describe_mcp_server(st)}" for st in failed)
+        return "\n".join(lines)
 
     def provider_footer_summary(self) -> str:
         """Devuelve la etiqueta localizada para mostrar proveedor y modelo activos."""
