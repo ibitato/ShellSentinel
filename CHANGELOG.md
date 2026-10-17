@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Dependencies updated to Strands Agents 1.61.1, Strands Agents Tools 0.8.9 and Textual 8.2.8; lockfiles regenerated. `mcp` is pinned below 2.0 until the MCP transports are migrated, and the OpenAI and Mistral SDK majors remain pinned.
+- Dependencies updated to Strands Agents 1.61.1, Strands Agents Tools 0.8.9 and Textual 8.2.8; lockfiles regenerated. The OpenAI and Mistral SDK majors remain pinned.
+- MCP transports migrated to `mcp` 2.x (2.1.1, built on `httpx2`); the temporary `mcp<2` pin is gone. `streamable_http` transports now build an `httpx2` client carrying the configured `headers` and `timeout_seconds` (connect/write/pool; reads keep MCP's 300 s SSE window) and fall back to MCP's 30 s default when no timeout is set, instead of no connect timeout. `sse` transports now honor `timeout_seconds` as well.
 - `tools.default` in `conf/agent.conf` is now honored: only the listed Strands Agents Tools are registered (all of them when the key is omitted). Shell Sentinel tools are always registered.
 - `remote_ssh_command` timeouts now cap total runtime instead of idle time between reads.
 

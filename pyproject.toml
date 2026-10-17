@@ -25,8 +25,10 @@ dependencies = [
   "boto3>=1.35.0",
   "openai==2.48.0",
   "cryptography>=43.0.0",
-  # mcp 2.x cambia la API de transportes (streamable_http_client, httpx2); se migra aparte.
-  "mcp>=1.23.0,<2",
+  # runtime.py usa la API de transportes de mcp 2.x (streamable_http_client + httpx2);
+  # strands-agents acota el máximo soportado de mcp.
+  "mcp>=2.0.0,<3",
+  "httpx2>=2.5.0,<3",
 ]
 
 [project.optional-dependencies]

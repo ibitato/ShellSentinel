@@ -5,12 +5,19 @@ from __future__ import annotations
 import logging
 import os
 import re
-from contextlib import ExitStack
+from collections.abc import AsyncIterator, Mapping
+from contextlib import ExitStack, asynccontextmanager
 from typing import Any
 
+import httpx2
 from mcp import StdioServerParameters, stdio_client
 from mcp.client.sse import sse_client
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
+from mcp.shared._httpx_utils import (
+    MCP_DEFAULT_SSE_READ_TIMEOUT,
+    MCP_DEFAULT_TIMEOUT,
+    create_mcp_http_client,
+)
 from strands.agent.agent_result import AgentResult
 from strands.tools.mcp import MCPClient
 
@@ -27,6 +34,35 @@ from .config import (
 from .factory import AgentFactory
 from .permissions import ToolPermissionManager
 from .tools import remote_ssh_command, resolve_tools
+
+
+def _http_timeout(timeout_seconds: float | None) -> httpx2.Timeout:
+    """Timeout httpx2 para transportes MCP HTTP.
+
+    ``timeout_seconds`` controla conexión, escritura y pool; la lectura conserva
+    el margen amplio de MCP para flujos SSE de larga duración.
+    """
+    general = MCP_DEFAULT_TIMEOUT if timeout_seconds is None else timeout_seconds
+    return httpx2.Timeout(general, read=MCP_DEFAULT_SSE_READ_TIMEOUT)
+
+
+@asynccontextmanager
+async def _streamable_http_transport(
+    url: str, headers: Mapping[str, str], timeout_seconds: float | None
+) -> AsyncIterator[Any]:
+    """Abre un transporte Streamable HTTP de mcp 2.x con cabeceras y timeout propios.
+
+    mcp 2.x ya no acepta ``headers``/``timeout`` sueltos: hay que pasarle un
+    cliente httpx2 configurado. ``streamable_http_client`` solo cierra los
+    clientes que crea él mismo, así que el nuestro se cierra aquí junto al transporte.
+    """
+    async with (
+        create_mcp_http_client(
+            headers=dict(headers), timeout=_http_timeout(timeout_seconds)
+        ) as http_client,
+        streamable_http_client(url, http_client=http_client) as streams,
+    ):
+        yield streams
 
 
 class MCPManager:
@@ -102,16 +138,15 @@ class MCPManager:
         if cfg.transport_type == "sse":
             if not cfg.url:
                 raise ValueError("El transporte MCP 'sse' requiere el campo 'url'.")
-            return MCPClient(lambda: sse_client(cfg.url, headers=dict(cfg.headers)))
+            sse_kwargs: dict[str, Any] = {"headers": dict(cfg.headers)}
+            if cfg.timeout_seconds is not None:
+                sse_kwargs["timeout"] = cfg.timeout_seconds
+            return MCPClient(lambda: sse_client(cfg.url, **sse_kwargs))
         if cfg.transport_type == "streamable_http":
             if not cfg.url:
                 raise ValueError("El transporte MCP 'streamable_http' requiere el campo 'url'.")
             return MCPClient(
-                lambda: streamablehttp_client(
-                    cfg.url,
-                    headers=dict(cfg.headers),
-                    timeout=cfg.timeout_seconds,
-                )
+                lambda: _streamable_http_transport(cfg.url, cfg.headers, cfg.timeout_seconds)
             )
         raise ValueError(f"Tipo de transporte MCP no soportado: {cfg.transport_type}")
 
