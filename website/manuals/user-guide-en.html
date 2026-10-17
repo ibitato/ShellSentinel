@@ -141,6 +141,18 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
             <code>reasoning_effort: high</code> and <code>max_tokens: 16184</code>
             (<code>mistral-medium-3.5</code>).
           </li>
+          <li>
+            <strong>Prompt caching</strong>: each provider block accepts an optional <code>cache</code>
+            object (<code>enabled</code>, <code>strategy</code>, <code>ttl</code>,
+            <code>system_prompt_ttl</code>, <code>tools_ttl</code>, <code>cache_key</code>) mapped to
+            Strands' <code>CacheConfig</code>. Bedrock defaults to <code>enabled: true</code> with
+            <code>strategy: "auto"</code> (cache points only for Claude model ids). OpenAI and Mistral
+            default to <code>enabled: true</code> and send a stable <code>prompt_cache_key</code> derived
+            from the configuration path and <code>model_id</code>; pin <code>cache_key</code> or set it to
+            <code>false</code> to opt out. LM Studio is disabled unless enabled explicitly; Ollama and
+            Cerebras ignore the block with a logged warning. <code>/status</code> shows whether caching is
+            active and the cached vs total input tokens of the last turn.
+          </li>
         </ul>
 
         <h2>Troubleshooting</h2>

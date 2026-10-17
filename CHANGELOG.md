@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Prompt caching per provider through an optional `cache` block in `conf/agent.conf` (`enabled`, `strategy`, `ttl`, `system_prompt_ttl`, `tools_ttl`, `cache_key`), passed to Strands as `CacheConfig`. Enabled by default for Bedrock (`strategy: "auto"`, cache points injected only for Claude model ids), OpenAI and Mistral (a stable `prompt_cache_key` derived from the configuration path and `model_id`, overridable with `cache_key` or disabled with `cache_key: false`); disabled by default for LM Studio; ignored with a logged warning for Ollama and Cerebras. `/status` shows whether caching is active and the cached vs total input tokens of the last turn, which is also logged at INFO.
 - When an MCP server fails to start, the conversation panel shows a localized warning naming the cause (command not found, process exited, HTTP 401/403/404, unreachable host, timeout, missing environment variables) and what to fix, and `/status` lists every configured MCP server with its state and tool count. Previously the agent reported success and the log only said `unhandled errors in a TaskGroup`.
 
 ### Fixed

@@ -16,6 +16,15 @@ ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", 
 OpenAIAPILiteral = Literal["chat_completions", "responses"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
+CacheStrategyLiteral = Literal["auto", "anthropic"]
+
+# Valores aceptados por Strands para los TTL de caché (Bedrock usa "5m"/"1h"; OpenAI
+# añade "in_memory"/"24h" como pista de retención para la clave de enrutamiento).
+CACHE_STRATEGIES: frozenset[str] = frozenset({"auto", "anthropic"})
+CACHE_TTL_VALUES: frozenset[str] = frozenset({"5m", "1h", "in_memory", "24h"})
+CACHE_CONFIG_KEYS: frozenset[str] = frozenset(
+    {"enabled", "strategy", "ttl", "system_prompt_ttl", "tools_ttl", "cache_key"}
+)
 
 
 class AgentConfigError(RuntimeError):
@@ -23,10 +32,48 @@ class AgentConfigError(RuntimeError):
 
 
 @dataclass(frozen=True)
+class ProviderCacheConfig:
+    """Configuración de prompt caching de un proveedor (espejo de ``CacheConfig`` de Strands).
+
+    ``enabled`` controla si se pasa ``cache_config`` al modelo. ``strategy`` solo la usa
+    Bedrock (``auto`` inserta cache points únicamente en modelos Claude). ``ttl``,
+    ``system_prompt_ttl`` y ``tools_ttl`` ajustan la retención; ``cache_key`` es la clave
+    de enrutamiento que OpenAI y Mistral usan para agrupar prefijos (se deriva una clave
+    estable cuando no se indica).
+    """
+
+    enabled: bool
+    strategy: CacheStrategyLiteral | None = None
+    ttl: str | None = None
+    system_prompt_ttl: bool | str | None = None
+    tools_ttl: bool | str | None = None
+    cache_key: str | Literal[False] | None = None
+
+
+# Valores por defecto por proveedor: activamos la caché donde no tiene coste extra.
+# Bedrock necesita cache points explícitos (``strategy: auto``); OpenAI y Mistral cachean
+# prefijos en el servidor y solo reciben la clave de enrutamiento. Ollama/LM Studio cachean
+# localmente y Cerebras no expone caché, así que ahí permanece desactivada.
+DEFAULT_CACHE_CONFIGS: Mapping[ProviderLiteral, ProviderCacheConfig] = MappingProxyType(
+    {
+        "bedrock": ProviderCacheConfig(enabled=True, strategy="auto"),
+        "openai": ProviderCacheConfig(enabled=True),
+        "mistral": ProviderCacheConfig(enabled=True),
+        "local": ProviderCacheConfig(enabled=False),
+        "lmstudio": ProviderCacheConfig(enabled=False),
+        "cerebras": ProviderCacheConfig(enabled=False),
+    }
+)
+
+
+@dataclass(frozen=True)
 class ProviderBaseConfig:
     system_prompt_path: Path
     system_prompt: str
     show_thinking: bool
+    cache: ProviderCacheConfig = field(
+        default_factory=lambda: ProviderCacheConfig(enabled=False), kw_only=True
+    )
 
 
 @dataclass(frozen=True)
@@ -269,6 +316,90 @@ def _normalize_openai_params(params: Mapping[str, Any] | None, api: str) -> dict
     return normalized
 
 
+def _validate_cache_ttl(value: Any, key: str, allow_bool: bool) -> bool | str | None:
+    """Valida un TTL de caché (``ttl``, ``system_prompt_ttl`` o ``tools_ttl``)."""
+
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        if allow_bool:
+            return value
+        raise AgentConfigError(
+            f"{key} debe ser una cadena de duración "
+            f"({', '.join(sorted(CACHE_TTL_VALUES))}), se recibió: {value!r}"
+        )
+    if isinstance(value, str) and value in CACHE_TTL_VALUES:
+        return value
+    accepted = ", ".join(f"'{item}'" for item in sorted(CACHE_TTL_VALUES))
+    extra = " true/false o " if allow_bool else " "
+    raise AgentConfigError(
+        f"{key} debe ser{extra}una duración válida ({accepted}), se recibió: {value!r}"
+    )
+
+
+def _build_cache_config(
+    provider: ProviderLiteral, payload: Mapping[str, Any] | None
+) -> ProviderCacheConfig:
+    """Construye la configuración de caché de un proveedor a partir de su bloque ``cache``.
+
+    Un bloque ausente devuelve los valores por defecto del proveedor; un bloque presente
+    parte de ellos y sobrescribe solo las claves indicadas.
+    """
+
+    defaults = DEFAULT_CACHE_CONFIGS[provider]
+    if payload is None:
+        return defaults
+
+    prefix = f"providers.{provider}.cache"
+    if not isinstance(payload, Mapping):
+        raise AgentConfigError(f"{prefix} debe ser un objeto JSON, se recibió: {payload!r}")
+
+    unknown = sorted(set(payload) - CACHE_CONFIG_KEYS)
+    if unknown:
+        raise AgentConfigError(
+            f"{prefix} contiene claves desconocidas: {', '.join(unknown)}. "
+            f"Claves admitidas: {', '.join(sorted(CACHE_CONFIG_KEYS))}."
+        )
+
+    enabled = payload.get("enabled", defaults.enabled)
+    if not isinstance(enabled, bool):
+        raise AgentConfigError(f"{prefix}.enabled debe ser true o false, se recibió: {enabled!r}")
+
+    strategy = payload.get("strategy", defaults.strategy)
+    if strategy is not None and strategy not in CACHE_STRATEGIES:
+        raise AgentConfigError(
+            f"{prefix}.strategy debe ser 'auto' o 'anthropic', se recibió: {strategy!r}"
+        )
+
+    ttl = _validate_cache_ttl(payload.get("ttl", defaults.ttl), f"{prefix}.ttl", allow_bool=False)
+    system_prompt_ttl = _validate_cache_ttl(
+        payload.get("system_prompt_ttl", defaults.system_prompt_ttl),
+        f"{prefix}.system_prompt_ttl",
+        allow_bool=True,
+    )
+    tools_ttl = _validate_cache_ttl(
+        payload.get("tools_ttl", defaults.tools_ttl), f"{prefix}.tools_ttl", allow_bool=True
+    )
+
+    cache_key = payload.get("cache_key", defaults.cache_key)
+    if cache_key is not None and cache_key is not False:
+        if not isinstance(cache_key, str) or not cache_key.strip():
+            raise AgentConfigError(
+                f"{prefix}.cache_key debe ser una cadena no vacía o false, "
+                f"se recibió: {cache_key!r}"
+            )
+        cache_key = cache_key.strip()
+
+    return ProviderCacheConfig(
+        enabled=enabled,
+        strategy=strategy,
+        ttl=ttl,
+        system_prompt_ttl=system_prompt_ttl,
+        tools_ttl=tools_ttl,
+        cache_key=cache_key,
+    )
+
+
 def _build_provider_configs(
     payload: Mapping[str, Any], config_dir: Path
 ) -> Mapping[ProviderLiteral, ProviderBaseConfig]:
@@ -281,6 +412,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("bedrock", data.get("cache")),
             model_id=data["model_id"],
             region_name=data.get("region_name"),
             params=_mapping_proxy(data.get("params")),
@@ -296,6 +428,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("openai", data.get("cache")),
             model_id=data["model_id"],
             api=api,
             stateful=bool(data.get("stateful", False)),
@@ -310,6 +443,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("local", data.get("cache")),
             host=data["host"],
             model_id=data["model_id"],
             params=_mapping_proxy(data.get("params")),
@@ -325,6 +459,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("lmstudio", data.get("cache")),
             model_id=data["model_id"],
             base_url=base_url,
             api_key=data.get("api_key"),
@@ -340,6 +475,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("cerebras", data.get("cache")),
             model_id=data["model_id"],
             params=_mapping_proxy(data.get("params")),
             client_args=_mapping_proxy(data.get("client_args")),
@@ -360,6 +496,7 @@ def _build_provider_configs(
             system_prompt_path=prompt_path,
             system_prompt=system_prompt,
             show_thinking=bool(data.get("show_thinking", False)),
+            cache=_build_cache_config("mistral", data.get("cache")),
             model_id=data["model_id"],
             params=_mapping_proxy(data.get("params")),
             client_args=_mapping_proxy(data.get("client_args")),
@@ -496,7 +633,13 @@ __all__ = [
     "AgentConfigError",
     "AgentOptions",
     "BedrockProviderConfig",
+    "CACHE_CONFIG_KEYS",
+    "CACHE_STRATEGIES",
+    "CACHE_TTL_VALUES",
+    "CacheStrategyLiteral",
     "ConversationConfig",
+    "DEFAULT_CACHE_CONFIGS",
+    "ProviderCacheConfig",
     "LocalProviderConfig",
     "CerebrasProviderConfig",
     "LMStudioProviderConfig",

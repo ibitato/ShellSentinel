@@ -111,6 +111,14 @@
           <li><code>make test-mistral</code> ausführen, wenn <code>MISTRAL_API_KEY</code> gesetzt ist.</li>
         </ul>
 
+        <h2>Prompt-Caching</h2>
+        <ul>
+          <li>Optionaler Block <code>cache</code> pro Provider (<code>enabled</code>, <code>strategy</code>, <code>ttl</code>, <code>system_prompt_ttl</code>, <code>tools_ttl</code>, <code>cache_key</code>), abgebildet auf Strands' <code>CacheConfig</code>.</li>
+          <li>Bedrock: standardmäßig <code>enabled: true</code> + <code>strategy: "auto"</code>; Cache-Points nur bei Claude-Modell-IDs.</li>
+          <li>OpenAI und Mistral: standardmäßig <code>enabled: true</code>; es wird nur ein stabiler <code>prompt_cache_key</code> aus Konfigurationspfad und <code>model_id</code> gesendet (<code>cache_key: false</code> deaktiviert ihn).</li>
+          <li>LM Studio ist standardmäßig deaktiviert; Ollama und Cerebras ignorieren den Block mit einer Warnung im Log. <code>/status</code> zeigt gecachte gegenüber gesamten Eingabe-Tokens des letzten Turns.</li>
+        </ul>
+
         <h2>Praxisbeispiel: Cerebras</h2>
         <ul>
           <li><code>cerebras_cloud_sdk</code> mit SSE-Streaming integrieren.</li>
