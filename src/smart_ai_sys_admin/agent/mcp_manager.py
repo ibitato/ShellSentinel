@@ -124,6 +124,8 @@ class _StartAttempt:
     error: BaseException | None = None
     started: bool = False
     abandoned: bool = False
+    # El recolector ya ha lanzado el cierre del cliente; el hilo de arranque no debe repetirlo.
+    stopping: bool = False
     done: threading.Event = field(default_factory=threading.Event)
     lock: threading.Lock = field(default_factory=threading.Lock)
 
@@ -191,19 +193,24 @@ class MCPManager:
 
     def _start_client(self, attempt: _StartAttempt) -> None:
         assert attempt.client is not None
-        started = False
         try:
             attempt.client.start()
-            started = True
-            attempt.tools = list(attempt.client.list_tools_sync())
+            # Se publica antes de listar herramientas para que el recolector sepa que ya hay
+            # un proceso o sesión que cerrar si el listado se queda colgado.
+            with attempt.lock:
+                attempt.started = True
+                abandoned = attempt.abandoned
+            # Si el plazo venció durante el saludo nadie usará este cliente: no se listan
+            # herramientas (podría colgarse) y se cierra más abajo.
+            if not abandoned:
+                attempt.tools = list(attempt.client.list_tools_sync())
         except Exception as exc:
             attempt.error = exc
         finally:
             with attempt.lock:
-                attempt.started = started
-                abandoned = attempt.abandoned
+                cleanup_here = attempt.abandoned and attempt.started and not attempt.stopping
                 attempt.done.set()
-        if abandoned and started:
+        if cleanup_here:
             # El plazo ya venció y nadie gestionará este cliente: se cierra aquí.
             self._stop_client(attempt.client)
 
@@ -214,6 +221,16 @@ class MCPManager:
         with attempt.lock:
             if not attempt.done.is_set():
                 attempt.abandoned = True
+                if attempt.started:
+                    # Saludo completado pero el listado de herramientas no responde: se cierra
+                    # en segundo plano para no bloquear la TUI ni dejar el proceso huérfano.
+                    attempt.stopping = True
+                    threading.Thread(
+                        target=self._stop_client,
+                        args=(attempt.client,),
+                        name=f"mcp-stop-{cfg.identifier}",
+                        daemon=True,
+                    ).start()
                 failure = MCPFailure(MCPFailureKind.TIMEOUT, "startup deadline exceeded")
                 self._record_failure(cfg, failure)
                 return []
