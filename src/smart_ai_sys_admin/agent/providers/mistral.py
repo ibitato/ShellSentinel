@@ -43,6 +43,32 @@ def _extract_delta_segments(content: Any) -> list[tuple[str, str]]:
     return segments
 
 
+def _extract_cached_prompt_tokens(usage: Any) -> int | None:
+    """Obtiene ``prompt_tokens_details.cached_tokens`` del usage de Mistral si existe.
+
+    El SDK expone ``prompt_tokens_details`` como objeto tipado en algunos endpoints y
+    como dict (campo extra de pydantic) en Chat Completions, así que se aceptan ambos.
+    Devuelve ``None`` cuando el campo falta, es ``None`` o no es un entero válido.
+    """
+    if usage is None:
+        return None
+    details = (
+        usage.get("prompt_tokens_details")
+        if isinstance(usage, dict)
+        else getattr(usage, "prompt_tokens_details", None)
+    )
+    if details is None:
+        return None
+    cached = (
+        details.get("cached_tokens")
+        if isinstance(details, dict)
+        else getattr(details, "cached_tokens", None)
+    )
+    if isinstance(cached, bool) or not isinstance(cached, int) or cached < 0:
+        return None
+    return cached
+
+
 class ShellMistralModel(MistralModel):
     """Extiende Strands MistralModel inyectando reasoning_effort y thinking stream."""
 
@@ -90,7 +116,27 @@ class ShellMistralModel(MistralModel):
             }
         if chunk_type == "content_stop" and data_type in {"reasoning_content", "text"}:
             return {"contentBlockStop": {}}
+        if chunk_type == "metadata":
+            return self._format_metadata_chunk(event)
         return super().format_chunk(event)
+
+    def _format_metadata_chunk(self, event: dict[str, Any]) -> StreamEvent:
+        """Añade ``cacheReadInputTokens`` al usage que construye Strands.
+
+        Strands solo copia ``prompt_tokens``/``completion_tokens``/``total_tokens`` e ignora
+        ``prompt_tokens_details.cached_tokens``, por lo que ``/status`` mostraba siempre cero
+        aciertos de caché con Mistral. Se mantiene ``inputTokens = prompt_tokens`` (contabilidad
+        estilo OpenAI, con los tokens cacheados ya incluidos), que ``summarize_cache_usage``
+        ya interpreta correctamente.
+        """
+        stream_event = super().format_chunk(event)
+        cached = _extract_cached_prompt_tokens(event.get("data"))
+        if cached is None:
+            return stream_event
+        usage = stream_event.get("metadata", {}).get("usage")
+        if isinstance(usage, dict):
+            usage["cacheReadInputTokens"] = cached
+        return stream_event
 
     @override
     async def stream(

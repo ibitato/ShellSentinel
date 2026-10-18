@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The Mistral provider now reports prompt-cache hits: `ShellMistralModel` copies `prompt_tokens_details.cached_tokens` from the Mistral SDK usage (streaming and non-streaming) into `cacheReadInputTokens`, so `/status` and the INFO log show real cached-token counts instead of always zero.
 - Security: PyJWT raised to `>=2.15.0` and lockfiles bumped to Pillow 12.3.0 and soupsieve 3.0.3 to address published advisories.
 - The TUI no longer freezes while the agent or `/connect` is running; work runs in a background worker and new submissions are rejected until it finishes.
 - SFTP uploads to relative remote paths now create missing directories under the SFTP home instead of `/`.
