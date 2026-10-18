@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 import re
 import shlex
+import shutil
 import socket
 import threading
 import time
@@ -331,12 +332,24 @@ class ScriptedSSHServer:
             self._thread = None
 
     def reset(self) -> None:
-        """Limpia guion, patrones y comandos registrados entre pruebas."""
+        """Limpia guion, patrones, comandos registrados y el contenido del SFTP entre pruebas."""
 
         self.recorded_commands.clear()
         self.script.clear()
         self.patterns.clear()
         self.default = self._command_not_found
+        self.clear_sftp_root()
+
+    def clear_sftp_root(self) -> None:
+        """Vacía la raíz SFTP (el servidor es de sesión; cada prueba parte de un árbol limpio)."""
+
+        if self.sftp_root is None or not self.sftp_root.exists():
+            return
+        for child in self.sftp_root.iterdir():
+            if child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
 
     # ------------------------------------------------------------------ guion
     def add_pattern(self, regex: str, responder: Responder) -> None:

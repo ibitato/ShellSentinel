@@ -222,6 +222,23 @@ def test_resolve_prefers_exact_then_patterns_then_default():
     assert missing.exit_code == 127 and "command not found" in missing.stderr
 
 
+def test_reset_clears_sftp_root_and_script(tmp_path: Path):
+    root = tmp_path / "sftp"
+    root.mkdir()
+    (root / "upload").mkdir()
+    (root / "upload" / "left.txt").write_text("stale", encoding="utf-8")
+    (root / "top.txt").write_text("stale", encoding="utf-8")
+    server = ScriptedSSHServer(sftp_root=root)
+    server.script["x"] = CommandResult()
+    server.recorded_commands.append("x")
+
+    server.reset()
+
+    assert list(root.iterdir()) == []
+    assert server.script == {} and server.recorded_commands == []
+    assert root.exists()
+
+
 def test_resolve_combines_exit_code_and_delay():
     server = ScriptedSSHServer()
     server.script["a"] = CommandResult(0, "A", delay=0.1)
