@@ -71,7 +71,9 @@
         "agent_ready": "Agente listo",
         "config_path": "Configuración",
         "error": "Error",
-        "mcp": "Servidores MCP"
+        "mcp": "Servidores MCP",
+        "cache": "Prompt caching",
+        "cache_usage": "Último turno: {cached} de {total} tokens de entrada leídos de caché ({percent} %), {written} escritos"
       },
       "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{status_usage}` muestra el estado del agente y la conexión.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
       "help": {

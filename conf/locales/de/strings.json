@@ -71,7 +71,9 @@
         "agent_ready": "Agent bereit",
         "config_path": "Konfiguration",
         "error": "Fehler",
-        "mcp": "MCP-Server"
+        "mcp": "MCP-Server",
+        "cache": "Prompt-Caching",
+        "cache_usage": "Letzter Turn: {cached} von {total} Eingabe-Tokens aus dem Cache gelesen ({percent} %), {written} geschrieben"
       },
       "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{status_usage}` zeigt den Status von Agent und Verbindung an.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
       "help": {

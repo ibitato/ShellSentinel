@@ -502,6 +502,22 @@ class SlashCommandProcessor:
                 lines.append(f"- {summary['status']}")
             if summary.get("error"):
                 lines.append(f"- {_('ui.commands.status.error')}: {summary['error']}")
+            cache_enabled = summary.get("cache_enabled")
+            if cache_enabled is not None:
+                cache_value = yes_label if cache_enabled else no_label
+                lines.append(f"- {_('ui.commands.status.cache')}: {cache_value}")
+            cache_usage = summary.get("cache_usage")
+            if cache_usage:
+                lines.append(
+                    "- "
+                    + _(
+                        "ui.commands.status.cache_usage",
+                        cached=f"{cache_usage.get('cached_tokens', 0):,}",
+                        total=f"{cache_usage.get('input_tokens', 0):,}",
+                        percent=cache_usage.get("percent", 0),
+                        written=f"{cache_usage.get('written_tokens', 0):,}",
+                    )
+                )
             mcp_servers = summary.get("mcp_servers") or []
             if mcp_servers:
                 lines.append(f"- {_('ui.commands.status.mcp')}:")

@@ -27,6 +27,13 @@
         "top_p": 0.8,
         "max_tokens": 8192,
         "streaming": true
+      },
+      "cache": {
+        "enabled": true,
+        "strategy": "auto",
+        "ttl": null,
+        "system_prompt_ttl": null,
+        "tools_ttl": null
       }
     },
     "openai": {
@@ -43,6 +50,10 @@
       "params": {
         "reasoning_effort": "medium",
         "max_tokens": 32768
+      },
+      "cache": {
+        "enabled": true,
+        "cache_key": null
       }
     },
     "local": {
@@ -77,6 +88,10 @@
       "params": {
         "temperature": 0.3,
         "max_tokens": 16184
+      },
+      "cache": {
+        "enabled": true,
+        "cache_key": null
       }
     }
   },

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Mapping
 from typing import Any
 
 from strands.agent.agent_result import AgentResult
@@ -41,6 +42,7 @@ class AgentRuntime:
         self._ready = False
         self._hide_thinking = False
         self._permission_manager = ToolPermissionManager(logger=self._logger)
+        self._last_cache_usage: dict[str, int] | None = None
 
     @property
     def ready(self) -> bool:
@@ -70,6 +72,8 @@ class AgentRuntime:
             "status": self._status_message,
             "error": self._error_message,
             "mcp_servers": [self._describe_mcp_server(st) for st in self.mcp_statuses],
+            "cache_enabled": None,
+            "cache_usage": self.last_cache_usage,
         }
         if not self._config:
             return summary
@@ -83,7 +87,15 @@ class AgentRuntime:
 
         summary["provider"] = self._format_provider_label(provider_cfg)
         summary["model"] = getattr(provider_cfg, "model_id", None)
+        if self._factory is not None:
+            summary["cache_enabled"] = self._factory.cache_enabled
         return summary
+
+    @property
+    def last_cache_usage(self) -> dict[str, int] | None:
+        """Uso de caché del último turno: tokens de entrada, leídos y escritos en caché."""
+
+        return dict(self._last_cache_usage) if self._last_cache_usage else None
 
     @property
     def mcp_statuses(self) -> tuple[MCPServerStatus, ...]:
@@ -230,6 +242,7 @@ class AgentRuntime:
             self._logger.exception("Error ejecutando el agente")
             return f"❌ El agente falló al procesar la instrucción: {exc}"
         if isinstance(result, AgentResult):
+            self._record_cache_usage(result)
             text = self._render_agent_result(result)
             return text or "(sin respuesta)"
         return str(result)
@@ -239,6 +252,24 @@ class AgentRuntime:
         if self._hide_thinking:
             text = re.sub(r"<think>.*?</think>\s*", "", text, flags=re.DOTALL | re.IGNORECASE)
         return text.strip()
+
+    def _record_cache_usage(self, result: AgentResult) -> None:
+        """Extrae de las métricas de Strands los tokens cacheados del último turno."""
+
+        usage = _last_invocation_usage(result)
+        if usage is None:
+            self._last_cache_usage = None
+            return
+
+        snapshot = summarize_cache_usage(usage)
+        self._last_cache_usage = snapshot
+        self._logger.info(
+            "Prompt cache del último turno: %d de %d tokens de entrada leídos de caché "
+            "(%d escritos)",
+            snapshot["cached_tokens"],
+            snapshot["input_tokens"],
+            snapshot["written_tokens"],
+        )
 
     def shutdown(self) -> None:
         if self._mcp_manager:
@@ -276,4 +307,48 @@ class AgentRuntime:
         return label or (provider_key or "")
 
 
-__all__ = ["AgentRuntime"]
+def _last_invocation_usage(result: AgentResult) -> Mapping[str, Any] | None:
+    """Devuelve el ``Usage`` de la última invocación del agente, o ``None`` si no hay métricas."""
+
+    metrics = getattr(result, "metrics", None)
+    if metrics is None:
+        return None
+    invocations = getattr(metrics, "agent_invocations", None) or []
+    usage: Any = None
+    if invocations:
+        usage = getattr(invocations[-1], "usage", None)
+    if not usage:
+        usage = getattr(metrics, "accumulated_usage", None)
+    if not isinstance(usage, Mapping):
+        return None
+    return usage
+
+
+def summarize_cache_usage(usage: Mapping[str, Any]) -> dict[str, int]:
+    """Normaliza un ``Usage`` de Strands en tokens de entrada, leídos y escritos en caché.
+
+    Bedrock informa ``inputTokens`` sin contar los tokens cacheados, mientras que OpenAI
+    los incluye en ``prompt_tokens``. Se aplica la misma heurística que
+    ``strands.telemetry.metrics``: si entrada + salida coincide con el total, los tokens
+    cacheados ya están incluidos; en caso contrario se suman.
+    """
+
+    input_tokens = int(usage.get("inputTokens", 0) or 0)
+    output_tokens = int(usage.get("outputTokens", 0) or 0)
+    total_tokens = int(usage.get("totalTokens", 0) or 0)
+    cached = int(usage.get("cacheReadInputTokens", 0) or 0)
+    written = int(usage.get("cacheWriteInputTokens", 0) or 0)
+
+    if input_tokens + output_tokens != total_tokens:
+        input_tokens += cached + written
+
+    percent = round(100 * cached / input_tokens) if input_tokens > 0 else 0
+    return {
+        "input_tokens": input_tokens,
+        "cached_tokens": cached,
+        "written_tokens": written,
+        "percent": percent,
+    }
+
+
+__all__ = ["AgentRuntime", "summarize_cache_usage"]

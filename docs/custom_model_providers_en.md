@@ -67,6 +67,14 @@ Optional `stateful` mode can retain `previous_response_id`, but it does not remo
 - The wrapper injects `reasoning_effort` into every API request and maps thinking chunks to `reasoningContent` stream events (for `show_thinking`).
 - Validate with `make test-mistral` when `MISTRAL_API_KEY` is available.
 
+## Prompt caching
+
+- Every provider block in `conf/agent.conf` accepts an optional `cache` object with the same fields as Strands' `CacheConfig` (`strands.models.model`): `enabled`, `strategy` (`auto`|`anthropic`), `ttl`, `system_prompt_ttl`, `tools_ttl` and `cache_key`. `AgentFactory` converts it with `build_strands_cache_config` and passes `cache_config=` to `BedrockModel`, `OpenAIModel`, `OpenAIResponsesModel` and `ShellMistralModel` (which forwards it to `MistralModel`).
+- **Bedrock** needs explicit cache points. The default `enabled: true` + `strategy: "auto"` lets Strands inject them only for Claude/Anthropic model ids; other models are left untouched. `ttl` accepts `5m`/`1h`; `system_prompt_ttl` and `tools_ttl` accept `true`/`false` or a TTL string.
+- **OpenAI and Mistral** cache prefixes server-side and only consume `cache_key` (sent as `prompt_cache_key`; OpenAI also honours `ttl` when it is `in_memory` or `24h`). Shell Sentinel has no Strands session manager, so when `cache_key` is unset the factory derives `shell-sentinel-<sha256(config path + model_id)[:16]>` with `derive_cache_key`, making repeat sessions share a prefix. Set `cache_key: false` to send no key.
+- **LM Studio** reuses `OpenAIModel` but defaults to `enabled: false` because it caches locally; enabling it sends the same routing key. **Ollama and Cerebras** have no cache handling: an enabled block is ignored with a warning from `smart_ai_sys_admin.agent.factory`.
+- Strands records `cacheReadInputTokens`/`cacheWriteInputTokens` in the agent metrics. `AgentRuntime` summarises the last invocation (`summarize_cache_usage`), logs it at INFO and exposes it to `/status`. Mistral's provider does not populate those fields, so hits show as zero there.
+
 ## Practical case: Cerebras
 
 - Integrate the official SDK (`cerebras_cloud_sdk`) inside a custom `Model` for SSE streaming and tool support. In `providers.cerebras` define `model_id`, `params`, `client_args` and a key reference (`api_key_env` or `CEREBRAS_API_KEY`).

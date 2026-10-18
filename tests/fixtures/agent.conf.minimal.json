@@ -23,13 +23,21 @@
       "params": {
         "temperature": 0.5,
         "max_tokens": 512
+      },
+      "cache": {
+        "enabled": true,
+        "cache_key": null
       }
     },
     "bedrock": {
       "system_prompt": "system_prompts/test.md",
       "model_id": "test-model",
       "region_name": "us-east-1",
-      "params": {}
+      "params": {},
+      "cache": {
+        "enabled": true,
+        "strategy": "auto"
+      }
     },
     "local": {
       "system_prompt": "system_prompts/test.md",

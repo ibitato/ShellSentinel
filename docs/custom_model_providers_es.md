@@ -62,6 +62,14 @@ El request efectivo usa `reasoning: {"effort": "medium"}` y `max_output_tokens: 
 - El wrapper inyecta `reasoning_effort` en cada petición y mapea chunks de thinking a eventos `reasoningContent` (para `show_thinking`).
 - Valida con `make test-mistral` cuando `MISTRAL_API_KEY` esté disponible.
 
+## Prompt caching
+
+- Cada bloque de proveedor de `conf/agent.conf` admite un objeto opcional `cache` con los mismos campos que el `CacheConfig` de Strands (`strands.models.model`): `enabled`, `strategy` (`auto`|`anthropic`), `ttl`, `system_prompt_ttl`, `tools_ttl` y `cache_key`. `AgentFactory` lo convierte con `build_strands_cache_config` y pasa `cache_config=` a `BedrockModel`, `OpenAIModel`, `OpenAIResponsesModel` y `ShellMistralModel` (que lo reenvía a `MistralModel`).
+- **Bedrock** necesita cache points explícitos. El valor por defecto `enabled: true` + `strategy: "auto"` deja que Strands los inserte solo en modelos Claude/Anthropic; el resto de modelos no se toca. `ttl` admite `5m`/`1h`; `system_prompt_ttl` y `tools_ttl` admiten `true`/`false` o una cadena TTL.
+- **OpenAI y Mistral** cachean prefijos en el servidor y solo consumen `cache_key` (enviado como `prompt_cache_key`; OpenAI también respeta `ttl` cuando vale `in_memory` o `24h`). Shell Sentinel no usa un gestor de sesiones de Strands, así que cuando `cache_key` no está definido la fábrica deriva `shell-sentinel-<sha256(ruta de configuración + model_id)[:16]>` con `derive_cache_key`, de modo que sesiones repetidas comparten prefijo. Usa `cache_key: false` para no enviar clave.
+- **LM Studio** reutiliza `OpenAIModel` pero parte de `enabled: false` porque cachea localmente; al activarlo se envía la misma clave de enrutamiento. **Ollama y Cerebras** no gestionan caché: un bloque activado se ignora con un aviso del logger `smart_ai_sys_admin.agent.factory`.
+- Strands registra `cacheReadInputTokens`/`cacheWriteInputTokens` en las métricas del agente. `AgentRuntime` resume la última invocación (`summarize_cache_usage`), lo registra a nivel INFO y lo expone en `/status`. El proveedor de Mistral no rellena esos campos, así que allí los aciertos aparecen como cero.
+
 ## Caso práctico: Cerebras
 - Integra el SDK oficial (`cerebras_cloud_sdk`) dentro de un `Model` personalizado para aprovechar streaming vía SSE y soporte de herramientas. En `providers.cerebras` define `model_id`, `params`, `client_args` y una referencia a la clave (`api_key_env` o `CEREBRAS_API_KEY`).
 - El proveedor construye un cliente `AsyncCerebras` persistente; evita reinstanciarlo en cada llamada para mantener conexiones calientes.

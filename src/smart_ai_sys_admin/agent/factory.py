@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import os
 from collections.abc import Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from strands import Agent
@@ -15,6 +17,7 @@ from strands.agent.conversation_manager import (
     SummarizingConversationManager,
 )
 from strands.models import BedrockModel, OpenAIResponsesModel
+from strands.models.model import CacheConfig
 from strands.models.ollama import OllamaModel
 from strands.models.openai import OpenAIModel
 
@@ -31,11 +34,57 @@ from .config import (
     MistralProviderConfig,
     OpenAIProviderConfig,
     ProviderBaseConfig,
+    ProviderCacheConfig,
     RemoteCommandConfig,
 )
 from .providers import CerebrasModel, ShellMistralModel
 
 logger = logging.getLogger("smart_ai_sys_admin.agent.factory")
+
+CACHE_KEY_PREFIX = "shell-sentinel-"
+
+
+def derive_cache_key(config_path: Path | str, model_id: str) -> str:
+    """Deriva una clave de enrutamiento de caché estable para OpenAI/Mistral.
+
+    Shell Sentinel no usa un gestor de sesiones de Strands, así que sin esta clave cada
+    arranque sería un prefijo distinto para el proveedor. La clave combina la ruta de la
+    configuración y el ``model_id`` para que sesiones repetidas compartan el prefijo
+    cacheado sin filtrar información sensible.
+    """
+
+    digest = hashlib.sha256(f"{config_path}|{model_id}".encode()).hexdigest()
+    return f"{CACHE_KEY_PREFIX}{digest[:16]}"
+
+
+def build_strands_cache_config(
+    cache: ProviderCacheConfig, *, default_cache_key: str | None = None
+) -> CacheConfig | None:
+    """Traduce ``ProviderCacheConfig`` a ``strands.models.model.CacheConfig``.
+
+    Devuelve ``None`` cuando la caché está desactivada. Solo se pasan a Strands los campos
+    que el operador fijó (o la clave derivada), de modo que los valores por defecto de
+    Strands se mantienen y sus avisos sobre campos no soportados siguen siendo fiables.
+    """
+
+    if not cache.enabled:
+        return None
+
+    kwargs: dict[str, Any] = {}
+    if cache.strategy is not None:
+        kwargs["strategy"] = cache.strategy
+    if cache.ttl is not None:
+        kwargs["ttl"] = cache.ttl
+    if cache.system_prompt_ttl is not None:
+        kwargs["system_prompt_ttl"] = cache.system_prompt_ttl
+    if cache.tools_ttl is not None:
+        kwargs["tools_ttl"] = cache.tools_ttl
+
+    cache_key = cache.cache_key if cache.cache_key is not None else default_cache_key
+    if cache_key is not None:
+        kwargs["cache_key"] = cache_key
+
+    return CacheConfig(**kwargs)
 
 
 @dataclass(frozen=True)
@@ -141,6 +190,13 @@ class AgentFactory:
                 "Se indicó endpoint_url para Bedrock; se usará la configuración estándar de boto3"
             )
 
+        # Bedrock exige cache points explícitos: Strands los inserta con ``strategy="auto"``
+        # solo para modelos Claude/Anthropic, así que otros modelos no se ven afectados.
+        cache_config = build_strands_cache_config(cfg.cache)
+        if cache_config is not None:
+            params["cache_config"] = cache_config
+            logger.debug("Prompt caching de Bedrock activo: %s", cache_config)
+
         logger.debug("Instanciando BedrockModel con parámetros: %s", params.keys())
         return BedrockModel(model_id=cfg.model_id, **params)
 
@@ -157,12 +213,42 @@ class AgentFactory:
             client_args["api_key"] = api_key
         return client_args
 
+    def _routing_cache_config(self, cfg: ProviderBaseConfig, model_id: str) -> CacheConfig | None:
+        """Caché para proveedores que enrutan por clave (OpenAI, Mistral, LM Studio).
+
+        Estos servidores cachean prefijos automáticamente; Strands solo envía la clave de
+        enrutamiento (``prompt_cache_key``). Si el operador no fijó ``cache_key`` se deriva
+        una estable a partir de la ruta de configuración y el modelo.
+        """
+
+        config_path = getattr(self._config, "config_path", None) or ""
+        default_key = derive_cache_key(config_path, model_id)
+        cache_config = build_strands_cache_config(cfg.cache, default_cache_key=default_key)
+        if cache_config is not None:
+            logger.debug("Prompt caching por clave activo: cache_key=%s", cache_config.cache_key)
+        return cache_config
+
+    @staticmethod
+    def _warn_cache_config_not_supported(provider: str, cache: ProviderCacheConfig) -> None:
+        """Avisa cuando se activa la caché en un proveedor que no la gestiona desde Strands."""
+
+        if cache.enabled:
+            logger.warning(
+                "providers.%s.cache está activado pero el proveedor '%s' no admite prompt caching "
+                "configurable desde Strands; el bloque se ignora.",
+                provider,
+                provider,
+            )
+
     def _build_openai_model(self, cfg: OpenAIProviderConfig) -> OpenAIModel:
         client_args = self._resolve_openai_client_args(cfg)
         logger.debug("Instanciando OpenAIModel con argumentos del cliente: %s", client_args.keys())
         params = dict(cfg.params)
         return OpenAIModel(
-            client_args=client_args or None, model_id=cfg.model_id, params=params or None
+            client_args=client_args or None,
+            model_id=cfg.model_id,
+            params=params or None,
+            cache_config=self._routing_cache_config(cfg, cfg.model_id),
         )
 
     def _build_openai_responses_model(self, cfg: OpenAIProviderConfig) -> OpenAIResponsesModel:
@@ -177,10 +263,13 @@ class AgentFactory:
             model_id=cfg.model_id,
             params=params or None,
             stateful=cfg.stateful,
+            cache_config=self._routing_cache_config(cfg, cfg.model_id),
         )
 
     def _build_local_model(self, cfg: LocalProviderConfig) -> OllamaModel:
         params = dict(cfg.params)
+        # Ollama cachea el prefijo localmente por su cuenta; Strands no aplica CacheConfig.
+        self._warn_cache_config_not_supported("local", cfg.cache)
         logger.debug(
             "Instanciando OllamaModel contra %s con parámetros: %s", cfg.host, params.keys()
         )
@@ -218,11 +307,20 @@ class AgentFactory:
             client_args["base_url"],
             params.keys(),
         )
-        return OpenAIModel(client_args=client_args, model_id=cfg.model_id, params=params or None)
+        # LM Studio cachea localmente; la caché queda desactivada por defecto, pero si el
+        # operador la activa se envía la clave de enrutamiento OpenAI-compatible.
+        return OpenAIModel(
+            client_args=client_args,
+            model_id=cfg.model_id,
+            params=params or None,
+            cache_config=self._routing_cache_config(cfg, cfg.model_id),
+        )
 
     def _build_cerebras_model(self, cfg: CerebrasProviderConfig) -> CerebrasModel:
         params = dict(cfg.params)
         client_args = dict(cfg.client_args)
+        # El proveedor Cerebras de Shell Sentinel no implementa prompt caching.
+        self._warn_cache_config_not_supported("cerebras", cfg.cache)
         logger.debug("Instanciando CerebrasModel con parámetros: %s", params.keys())
         return CerebrasModel(
             model_id=cfg.model_id,
@@ -254,6 +352,10 @@ class AgentFactory:
             params["stream"] = self._config.options.streaming
         if "max_tokens" not in params:
             params["max_tokens"] = MISTRAL_DEFAULT_MAX_TOKENS
+        # ShellMistralModel reenvía ``cache_config`` a MistralModel vía **model_config.
+        cache_config = self._routing_cache_config(cfg, cfg.model_id)
+        if cache_config is not None:
+            params["cache_config"] = cache_config
 
         logger.debug(
             "Instanciando ShellMistralModel con model_id=%s reasoning_effort=%s",
@@ -310,8 +412,20 @@ class AgentFactory:
     def consent_bypass(self) -> bool:
         return self._config.tools.consent_bypass
 
+    @property
+    def cache_enabled(self) -> bool:
+        """Indica si el proveedor activo envía configuración de caché a Strands."""
+
+        provider_cfg = self._config.provider_config()
+        if isinstance(provider_cfg, (LocalProviderConfig, CerebrasProviderConfig)):
+            return False
+        return provider_cfg.cache.enabled
+
 
 __all__ = [
     "AgentBuildResult",
     "AgentFactory",
+    "CACHE_KEY_PREFIX",
+    "build_strands_cache_config",
+    "derive_cache_key",
 ]

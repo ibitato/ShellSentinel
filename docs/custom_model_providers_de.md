@@ -67,6 +67,14 @@ Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber ei
 - Der Wrapper injiziert `reasoning_effort` in jede API-Anfrage und mappt Thinking-Chunks auf `reasoningContent`-Stream-Events (`show_thinking`).
 - Validierung mit `make test-mistral`, wenn `MISTRAL_API_KEY` gesetzt ist.
 
+## Prompt-Caching
+
+- Jeder Provider-Block in `conf/agent.conf` akzeptiert ein optionales Objekt `cache` mit denselben Feldern wie Strands' `CacheConfig` (`strands.models.model`): `enabled`, `strategy` (`auto`|`anthropic`), `ttl`, `system_prompt_ttl`, `tools_ttl` und `cache_key`. `AgentFactory` wandelt es mit `build_strands_cache_config` um und übergibt `cache_config=` an `BedrockModel`, `OpenAIModel`, `OpenAIResponsesModel` und `ShellMistralModel` (das es an `MistralModel` weiterreicht).
+- **Bedrock** benötigt explizite Cache-Points. Der Standard `enabled: true` + `strategy: "auto"` lässt Strands sie nur bei Claude/Anthropic-Modell-IDs setzen; andere Modelle bleiben unverändert. `ttl` akzeptiert `5m`/`1h`; `system_prompt_ttl` und `tools_ttl` akzeptieren `true`/`false` oder einen TTL-String.
+- **OpenAI und Mistral** cachen Präfixe serverseitig und verwenden nur `cache_key` (gesendet als `prompt_cache_key`; OpenAI berücksichtigt zusätzlich `ttl`, wenn es `in_memory` oder `24h` ist). Shell Sentinel nutzt keinen Strands-Session-Manager; ist `cache_key` nicht gesetzt, leitet die Factory `shell-sentinel-<sha256(Konfigurationspfad + model_id)[:16]>` über `derive_cache_key` ab, sodass wiederholte Sitzungen ein Präfix teilen. `cache_key: false` sendet keinen Schlüssel.
+- **LM Studio** nutzt `OpenAIModel`, startet aber mit `enabled: false`, weil es lokal cacht; beim Aktivieren wird derselbe Routing-Schlüssel gesendet. **Ollama und Cerebras** haben keine Cache-Behandlung: ein aktivierter Block wird mit einer Warnung des Loggers `smart_ai_sys_admin.agent.factory` ignoriert.
+- Strands erfasst `cacheReadInputTokens`/`cacheWriteInputTokens` in den Agent-Metriken. `AgentRuntime` fasst die letzte Invocation zusammen (`summarize_cache_usage`), protokolliert sie auf INFO und stellt sie `/status` bereit. Der Mistral-Provider füllt diese Felder nicht, dort erscheinen Treffer daher als null.
+
 ## Praxisbeispiel: Cerebras
 
 - Offizielles SDK (`cerebras_cloud_sdk`) in ein benutzerdefiniertes `Model` für SSE-Streaming und Tool-Support integrieren. In `providers.cerebras` `model_id`, `params`, `client_args` und Schlüsselreferenz (`api_key_env` oder `CEREBRAS_API_KEY`) definieren.

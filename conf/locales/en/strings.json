@@ -71,7 +71,9 @@
         "agent_ready": "Agent ready",
         "config_path": "Configuration",
         "error": "Error",
-        "mcp": "MCP servers"
+        "mcp": "MCP servers",
+        "cache": "Prompt caching",
+        "cache_usage": "Last turn: {cached} of {total} input tokens read from cache ({percent}%), {written} written"
       },
       "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{status_usage}` shows the agent and connection status.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
       "help": {
