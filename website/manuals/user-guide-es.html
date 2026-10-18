@@ -133,7 +133,12 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
             <br />Para LM Studio ejecuta <code>lms server start</code>; para Cerebras exporta
             <code>CEREBRAS_API_KEY</code>. Mistral AI usa <code>MISTRAL_API_KEY</code>,
             <code>provider: mistral</code>, <code>reasoning_effort: high</code> y
-            <code>max_tokens: 16184</code> (<code>mistral-medium-3.5</code>) por defecto.
+            <code>max_tokens: 16184</code> (<code>mistral-medium-3.5</code>) por defecto. Google Gemini usa
+            <code>GEMINI_API_KEY</code> (o <code>GOOGLE_API_KEY</code>, o <code>api_key_env</code>),
+            <code>provider: gemini</code> y <code>gemini-3.8-flash</code> con <code>temperature: 0.3</code> y
+            <code>max_tokens: 16384</code> (enviado como <code>max_output_tokens</code>); el resto de
+            <code>params</code> va a <code>GenerateContentConfig</code> y <code>client_args</code> al cliente
+            de <code>google-genai</code> (<code>vertexai: true</code> para Vertex AI).
           </li>
           <li>
             <strong>Prompt caching</strong>: cada bloque de proveedor admite un objeto opcional
@@ -143,9 +148,11 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
             <code>strategy: "auto"</code> (cache points solo en modelos Claude). OpenAI y Mistral usan por
             defecto <code>enabled: true</code> y envían un <code>prompt_cache_key</code> estable derivado de
             la ruta de configuración y de <code>model_id</code>; fija <code>cache_key</code> o ponlo a
-            <code>false</code> para desactivarlo. LM Studio queda desactivado salvo que lo actives; Ollama y
-            Cerebras ignoran el bloque con un aviso en el log. <code>/status</code> indica si la caché está
-            activa y los tokens de entrada cacheados frente al total del último turno.
+            <code>false</code> para desactivarlo. LM Studio queda desactivado salvo que lo actives; Ollama,
+            Cerebras y Gemini ignoran el bloque con un aviso en el log (Gemini cachea prefijos de forma
+            implícita y los tokens cacheados que informa siguen apareciendo en <code>/status</code>).
+            <code>/status</code> indica si la caché está activa y los tokens de entrada cacheados frente al
+            total del último turno.
           </li>
           <li>
             <strong>Límite de turnos</strong>: <code>agent.max_turns</code> (por defecto <code>25</code>) acota

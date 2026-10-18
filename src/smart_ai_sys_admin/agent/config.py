@@ -12,7 +12,10 @@ from typing import Any, Literal
 
 from ..localization import get_localizer
 
-ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"]
+ProviderLiteral = Literal["bedrock", "openai", "local", "lmstudio", "cerebras", "mistral", "gemini"]
+SUPPORTED_PROVIDERS: frozenset[str] = frozenset(
+    {"bedrock", "openai", "local", "lmstudio", "cerebras", "mistral", "gemini"}
+)
 OpenAIAPILiteral = Literal["chat_completions", "responses"]
 ConversationStrategyLiteral = Literal["sliding_window", "summarizing", "none"]
 MCPTransportLiteral = Literal["stdio", "sse", "streamable_http"]
@@ -53,7 +56,9 @@ class ProviderCacheConfig:
 # Valores por defecto por proveedor: activamos la caché donde no tiene coste extra.
 # Bedrock necesita cache points explícitos (``strategy: auto``); OpenAI y Mistral cachean
 # prefijos en el servidor y solo reciben la clave de enrutamiento. Ollama/LM Studio cachean
-# localmente y Cerebras no expone caché, así que ahí permanece desactivada.
+# localmente y Cerebras no expone caché, así que ahí permanece desactivada. El ``GeminiModel``
+# de Strands no acepta ``CacheConfig`` (Gemini cachea prefijos de forma implícita y reporta
+# ``cached_content_token_count`` por su cuenta), así que también queda desactivada.
 DEFAULT_CACHE_CONFIGS: Mapping[ProviderLiteral, ProviderCacheConfig] = MappingProxyType(
     {
         "bedrock": ProviderCacheConfig(enabled=True, strategy="auto"),
@@ -62,6 +67,7 @@ DEFAULT_CACHE_CONFIGS: Mapping[ProviderLiteral, ProviderCacheConfig] = MappingPr
         "local": ProviderCacheConfig(enabled=False),
         "lmstudio": ProviderCacheConfig(enabled=False),
         "cerebras": ProviderCacheConfig(enabled=False),
+        "gemini": ProviderCacheConfig(enabled=False),
     }
 )
 
@@ -129,8 +135,29 @@ class MistralProviderConfig(ProviderBaseConfig):
     reasoning_effort: str
 
 
+@dataclass(frozen=True)
+class GeminiProviderConfig(ProviderBaseConfig):
+    """Configuración del proveedor Google Gemini (``strands.models.gemini.GeminiModel``).
+
+    ``api_key_env`` indica la variable de entorno con la clave (``GEMINI_API_KEY`` por
+    defecto); si está vacía se prueba ``GOOGLE_API_KEY``, el nombre que también reconoce el
+    SDK ``google-genai``. ``client_args`` se pasa tal cual a ``genai.Client`` (``vertexai``,
+    ``project``, ``location``, ``http_options``...). ``params`` alimenta
+    ``GenerateContentConfig`` (``temperature``, ``max_output_tokens``, ``thinking_config``...).
+    """
+
+    model_id: str
+    params: Mapping[str, Any]
+    client_args: Mapping[str, Any]
+    api_key_env: str
+
+
 MISTRAL_DEFAULT_MAX_TOKENS = 16184
 MISTRAL_DEFAULT_REASONING_EFFORT = "high"
+
+GEMINI_DEFAULT_API_KEY_ENV = "GEMINI_API_KEY"
+# Nombres de variable que se prueban, en orden, cuando ``api_key_env`` no está definida.
+GEMINI_FALLBACK_API_KEY_ENVS: tuple[str, ...] = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
 
 
 @dataclass(frozen=True)
@@ -322,6 +349,72 @@ def _normalize_openai_params(params: Mapping[str, Any] | None, api: str) -> dict
     return normalized
 
 
+def _normalize_gemini_params(params: Mapping[str, Any] | None) -> dict[str, Any]:
+    """Normaliza los ``params`` de Gemini al vocabulario de ``GenerateContentConfig``.
+
+    El límite genérico ``max_tokens`` (compartido con el resto de proveedores) se traduce a
+    ``max_output_tokens``; si el operador ya fijó ``max_output_tokens`` prevalece este último.
+    """
+
+    if params is not None and not isinstance(params, Mapping):
+        raise AgentConfigError(
+            f"providers.gemini.params debe ser un objeto JSON, se recibió: {params!r}"
+        )
+    normalized = dict(params or {})
+    generic_limit = normalized.pop("max_tokens", None)
+    if generic_limit is not None and "max_output_tokens" not in normalized:
+        normalized["max_output_tokens"] = generic_limit
+    return normalized
+
+
+def _build_gemini_config(data: Mapping[str, Any], config_dir: Path) -> GeminiProviderConfig:
+    """Construye y valida el bloque ``providers.gemini``."""
+
+    if not isinstance(data, Mapping):
+        raise AgentConfigError(f"providers.gemini debe ser un objeto JSON, se recibió: {data!r}")
+    if "system_prompt" not in data:
+        raise AgentConfigError("providers.gemini requiere la clave 'system_prompt'.")
+    system_prompt, prompt_path = _load_system_prompt(config_dir, data["system_prompt"])
+
+    model_id = data.get("model_id")
+    if not isinstance(model_id, str) or not model_id.strip():
+        raise AgentConfigError(
+            "providers.gemini.model_id debe ser una cadena no vacía "
+            f"(p. ej. 'gemini-3.8-flash'), se recibió: {model_id!r}"
+        )
+
+    api_key_env = data.get("api_key_env", GEMINI_DEFAULT_API_KEY_ENV)
+    if api_key_env is None:
+        api_key_env = GEMINI_DEFAULT_API_KEY_ENV
+    if not isinstance(api_key_env, str) or not api_key_env.strip():
+        raise AgentConfigError(
+            "providers.gemini.api_key_env debe ser el nombre de una variable de entorno "
+            f"(p. ej. 'GEMINI_API_KEY'), se recibió: {api_key_env!r}"
+        )
+    if "api_key" in data:
+        raise AgentConfigError(
+            "providers.gemini no admite 'api_key' en JSON; exporta la clave en la variable "
+            "indicada por 'api_key_env' (GEMINI_API_KEY por defecto)."
+        )
+
+    client_args = data.get("client_args")
+    if client_args is not None and not isinstance(client_args, Mapping):
+        raise AgentConfigError(
+            f"providers.gemini.client_args debe ser un objeto JSON, se recibió: {client_args!r}"
+        )
+
+    return GeminiProviderConfig(
+        system_prompt_path=prompt_path,
+        system_prompt=system_prompt,
+        show_thinking=bool(data.get("show_thinking", False)),
+        cache=_build_cache_config("gemini", data.get("cache")),
+        model_id=model_id.strip(),
+        params=_mapping_proxy(_normalize_gemini_params(data.get("params"))),
+        client_args=_mapping_proxy(client_args),
+        api_key_env=api_key_env.strip(),
+    )
+
+
 def _validate_cache_ttl(value: Any, key: str, allow_bool: bool) -> bool | str | None:
     """Valida un TTL de caché (``ttl``, ``system_prompt_ttl`` o ``tools_ttl``)."""
 
@@ -511,6 +604,9 @@ def _build_provider_configs(
             reasoning_effort=reasoning_effort,
         )
 
+    if "gemini" in payload:
+        providers["gemini"] = _build_gemini_config(payload["gemini"], config_dir)
+
     return MappingProxyType(providers)
 
 
@@ -623,7 +719,7 @@ def load_agent_config(path: str | Path | None = None) -> AgentConfig:
         raise AgentConfigError(f"Versión de configuración no soportada: {version}")
 
     provider = raw.get("provider")
-    if provider not in {"bedrock", "openai", "local", "lmstudio", "cerebras", "mistral"}:
+    if provider not in SUPPORTED_PROVIDERS:
         raise AgentConfigError("Debes especificar un proveedor válido en 'provider'.")
 
     providers_section = raw.get("providers")
@@ -662,6 +758,9 @@ __all__ = [
     "CacheStrategyLiteral",
     "ConversationConfig",
     "DEFAULT_CACHE_CONFIGS",
+    "GEMINI_DEFAULT_API_KEY_ENV",
+    "GEMINI_FALLBACK_API_KEY_ENVS",
+    "GeminiProviderConfig",
     "DEFAULT_MAX_TURNS",
     "ProviderCacheConfig",
     "LocalProviderConfig",
@@ -677,6 +776,7 @@ __all__ = [
     "ProviderBaseConfig",
     "ProviderLiteral",
     "RemoteCommandConfig",
+    "SUPPORTED_PROVIDERS",
     "ToolsConfig",
     "load_agent_config",
 ]

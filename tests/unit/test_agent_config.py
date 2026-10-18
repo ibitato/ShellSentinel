@@ -13,6 +13,7 @@ from smart_ai_sys_admin.agent.config import (
     AgentConfigError,
     BedrockProviderConfig,
     CerebrasProviderConfig,
+    GeminiProviderConfig,
     LMStudioProviderConfig,
     LocalProviderConfig,
     MistralProviderConfig,
@@ -95,6 +96,7 @@ def test_openai_max_tokens_migration(minimal_agent_conf: Path, monkeypatch: pyte
         ("lmstudio", LMStudioProviderConfig),
         ("cerebras", CerebrasProviderConfig),
         ("mistral", MistralProviderConfig),
+        ("gemini", GeminiProviderConfig),
     ],
 )
 def test_provider_parsing(

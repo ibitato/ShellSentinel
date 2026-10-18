@@ -34,11 +34,13 @@ class LiveProvider:
     """Proveedor/modelo real contra el que se ejecuta la suite live."""
 
     name: str
-    conf_key: Literal["openai", "mistral"]
+    conf_key: Literal["openai", "mistral", "gemini"]
     model_id: str
     api_key_env: str
     provider_block: Mapping[str, Any] = field(default_factory=dict)
     cache_expectation: CacheExpectation = "none"
+    # False cuando el proveedor ignora el bloque ``cache`` (``/status`` muestra "no").
+    cache_configurable: bool = True
     cache_min_prefix_tokens: int = 0
     max_model_calls: int = 12
     turn_timeout_s: float = 180.0
@@ -87,6 +89,17 @@ REGISTRY: tuple[LiveProvider, ...] = (
             "params": {"temperature": 0.3, "max_tokens": 4096},
         },
         cache_expectation="strict",
+    ),
+    LiveProvider(
+        name="gemini",
+        conf_key="gemini",
+        model_id="gemini-3.8-flash",
+        api_key_env="GEMINI_API_KEY",
+        provider_block={"params": {"temperature": 0.3, "max_tokens": 4096}},
+        # El GeminiModel de Strands no acepta CacheConfig; Gemini cachea prefijos de forma
+        # implícita y solo informa de ``cached_content_token_count`` cuando le conviene.
+        cache_expectation="none",
+        cache_configurable=False,
     ),
 )
 

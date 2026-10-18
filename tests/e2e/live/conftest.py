@@ -82,6 +82,7 @@ def live_conf(e2e_env: SimpleNamespace, live_provider: LiveProvider) -> SimpleNa
         timeout_seconds=30,
         max_output_chars=5000,
         cache_key=live_provider.cache_key,
+        cache_enabled=live_provider.cache_configurable,
     )
     return e2e_env
 
@@ -103,6 +104,7 @@ def bad_key_conf(
         timeout_seconds=30,
         max_output_chars=5000,
         cache_key=live_provider.cache_key,
+        cache_enabled=live_provider.cache_configurable,
     )
     return e2e_env
 

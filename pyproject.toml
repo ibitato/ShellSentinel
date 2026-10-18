@@ -11,7 +11,7 @@ authors = [
 dependencies = [
   "textual==8.2.8",
   "paramiko==5.0.0",
-  "strands-agents[mistral,openai,ollama]==1.61.1",
+  "strands-agents[gemini,mistral,openai,ollama]==1.61.1",
   "strands-agents-tools==0.8.9",
   "PyJWT>=2.15.0",
   "requests>=2.34.0",

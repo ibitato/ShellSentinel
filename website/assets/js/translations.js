@@ -54,7 +54,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Extensible providers & plugins",
           body:
-            "Swap LLM backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI keeps Chat Completions for compatibility and adds Responses for function tools with active reasoning; plugins extend commands, dashboards and MCP bridges without core changes.",
+            "Swap LLM backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama). OpenAI keeps Chat Completions for compatibility and adds Responses for function tools with active reasoning; plugins extend commands, dashboards and MCP bridges without core changes.",
         },
         {
           icon: "🛡️",
@@ -344,7 +344,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Proveedores y plugins extensibles",
           body:
-            "Cambia de backend LLM (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI mantiene Chat Completions por compatibilidad e incorpora Responses para function tools con razonamiento activo; los plugins amplían comandos, paneles y puentes MCP sin tocar el núcleo.",
+            "Cambia de backend LLM (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama). OpenAI mantiene Chat Completions por compatibilidad e incorpora Responses para function tools con razonamiento activo; los plugins amplían comandos, paneles y puentes MCP sin tocar el núcleo.",
         },
         {
           icon: "🛡️",
@@ -634,7 +634,7 @@ window.TRANSLATIONS = {
           icon: "🔄",
           title: "Erweiterbare Provider & Plugins",
           body:
-            "Wechsle LLM-Backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Ollama). OpenAI behält Chat Completions zur Kompatibilität und ergänzt Responses für Function Tools mit aktivem Reasoning; Plugins erweitern Befehle, Dashboards und MCP-Brücken ohne Core-Änderungen.",
+            "Wechsle LLM-Backends (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama). OpenAI behält Chat Completions zur Kompatibilität und ergänzt Responses für Function Tools mit aktivem Reasoning; Plugins erweitern Befehle, Dashboards und MCP-Brücken ohne Core-Änderungen.",
         },
         {
           icon: "🛡️",

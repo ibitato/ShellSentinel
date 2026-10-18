@@ -29,7 +29,10 @@ async def test_status_reports_prompt_cache_hits(connected_live_app: LiveSession,
     session.assert_clean_reply(second)
 
     status = await session.driver.submit("/status")
-    assert f"- {_('ui.commands.status.cache')}: {_('common.yes')}" in status
+    # Los proveedores que ignoran el bloque ``cache`` (Gemini) muestran "no" en /status,
+    # aunque el último turno siga informando de los tokens cacheados que reporte el servidor.
+    cache_flag = _("common.yes") if session.provider.cache_configurable else _("common.no")
+    assert f"- {_('ui.commands.status.cache')}: {cache_flag}" in status, status
 
     usage = session.driver.runtime.last_cache_usage
     assert usage is not None, status
