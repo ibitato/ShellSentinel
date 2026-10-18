@@ -47,6 +47,7 @@ def write_agent_conf(
     max_output_chars: int = 500,
     window_size: int = 40,
     streaming: bool = True,
+    max_turns: int | None = 25,
     cache_key: str | None = None,
     show_thinking: bool = False,
 ) -> Path:
@@ -103,6 +104,7 @@ def write_agent_conf(
         dict(payload.get("agent") or {}),
         {
             "streaming": streaming,
+            "max_turns": max_turns,
             "conversation": {
                 "strategy": "sliding_window",
                 "window_size": window_size,

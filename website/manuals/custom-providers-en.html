@@ -119,6 +119,12 @@
           <li>LM Studio is disabled by default; Ollama and Cerebras ignore the block with a logged warning. <code>/status</code> reports cached vs total input tokens of the last turn.</li>
         </ul>
 
+        <h2>Turn limit per instruction</h2>
+        <ul>
+          <li><code>agent.max_turns</code> (default <code>25</code>, <code>null</code>/<code>0</code> disables) is validated as a positive integer and passed by <code>AgentRuntime.invoke</code> as <code>limits={"turns": N}</code> to the Strands agent.</li>
+          <li>When the cap fires Strands returns <code>stop_reason == "limit_turns"</code> instead of recursing; the runtime appends the localized <code>agent.invoke.turn_limit</code> warning to the model text and logs a WARNING. No provider-specific work is needed.</li>
+        </ul>
+
         <h2>Practical case: Cerebras</h2>
         <ul>
           <li>Integrate <code>cerebras_cloud_sdk</code> with SSE streaming.</li>

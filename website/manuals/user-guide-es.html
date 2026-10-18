@@ -147,6 +147,13 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
             Cerebras ignoran el bloque con un aviso en el log. <code>/status</code> indica si la caché está
             activa y los tokens de entrada cacheados frente al total del último turno.
           </li>
+          <li>
+            <strong>Límite de turnos</strong>: <code>agent.max_turns</code> (por defecto <code>25</code>) acota
+            los turnos, cada uno una llamada al modelo más las herramientas que solicite, que el agente puede
+            dedicar a una instrucción. Al alcanzarlo el agente se detiene de forma limpia, el panel añade un aviso
+            sugiriendo una instrucción más acotada y se registra un WARNING; <code>null</code> o <code>0</code>
+            desactiva el límite y <code>/status</code> muestra el valor activo.
+          </li>
         </ul>
 
         <h2>Solución de problemas</h2>
@@ -156,6 +163,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><strong>Mensaje "No hay una conexión SSH activa"</strong>: ejecuta <code>/connect</code> antes de pedir acciones remotas.</li>
           <li><strong>Fallo SFTP tras un <code>/connect</code> correcto</strong>: el shell remoto puede imprimir banners en sesiones no interactivas (p. ej. <code>pyfiglet</code> en <code>~/.bashrc</code>). Envuelve la salida decorativa en una comprobación interactiva o usa <code>Subsystem sftp internal-sftp</code> en el servidor.</li>
           <li><strong>Credenciales en logs</strong>: las contraseñas de <code>/connect</code> se enmascaran como <code>***</code> en <code>logs/app.log</code>.</li>
+          <li><strong>El agente se detuvo con un aviso de límite de turnos</strong>: la instrucción necesitaba más de <code>agent.max_turns</code> turnos o el modelo entró en bucle pidiendo herramientas (por ejemplo con argumentos vacíos). Divide la petición en instrucciones más pequeñas; si la tarea realmente necesita más pasos, sube <code>agent.max_turns</code> en <code>conf/agent.conf</code>.</li>
           <li><strong>Un servidor MCP no arrancó</strong>: el panel de conversación muestra un aviso al iniciar y <code>/status</code> lista cada servidor MCP configurado con su estado. El mensaje indica la causa (comando no encontrado, proceso terminado antes de tiempo, HTTP 401/403/404, sin conexión, sin respuesta en <code>timeout_seconds</code>, variables de entorno sin definir) y qué corregir en <code>conf/agent.conf</code>. El agente arranca igualmente sin las herramientas de ese servidor; <code>logs/app.log</code> conserva la traza completa.</li>
         </ul>
 

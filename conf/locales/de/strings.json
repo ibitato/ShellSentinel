@@ -73,7 +73,9 @@
         "error": "Fehler",
         "mcp": "MCP-Server",
         "cache": "Prompt-Caching",
-        "cache_usage": "Letzter Turn: {cached} von {total} Eingabe-Tokens aus dem Cache gelesen ({percent} %), {written} geschrieben"
+        "cache_usage": "Letzter Turn: {cached} von {total} Eingabe-Tokens aus dem Cache gelesen ({percent} %), {written} geschrieben",
+        "max_turns": "Turn-Limit pro Anweisung",
+        "max_turns_disabled": "deaktiviert"
       },
       "overview": "**Verfügbare Befehle**\n- `{connect_usage}` öffnet die entfernte SSH- und SFTP-Sitzung.\n- `{disconnect_usage}` beendet die aktiven Sitzungen.\n- `{help_usage}` listet alle verfügbaren Befehle auf.\n- `{status_usage}` zeigt den Status von Agent und Verbindung an.\n- `{exit_command}` öffnet einen Bestätigungsdialog zum Beenden der Anwendung.",
       "help": {
@@ -162,7 +164,8 @@
       "success": "✅ Strands-Agent initialisiert (Konfiguration: `{path}`)"
     },
     "invoke": {
-      "failure": "❌ Der Agent konnte die Anweisung nicht verarbeiten: {error}"
+      "failure": "❌ Der Agent konnte die Anweisung nicht verarbeiten: {error}",
+      "turn_limit": "⚠️ Der Agent hat das Limit von {limit} Turns für diese Anweisung erreicht und wurde gestoppt. Formuliere eine engere Anweisung (eine Aufgabe pro Anweisung) oder erhöhe `agent.max_turns` in `conf/agent.conf`."
     },
     "language_instruction": "Antworte ausschließlich auf Deutsch. Richte alle Ausgaben am aktiven Locale `{locale}` aus und wechsle nur auf Wunsch der Bedienperson die Sprache.",
     "tools": {
