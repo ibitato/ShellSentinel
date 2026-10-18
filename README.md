@@ -30,6 +30,7 @@ Official site: <https://www.shellsentinel.net>.
    make lint
    make test
    ```
+   `make test` includes the offline end-to-end suite of the TUI. Live end-to-end tests against real providers run with `make test-e2e-live` (`RUN_E2E=1` plus API keys; see `CONTRIBUTING.md`).
 
 ## CLI usage
 - Launch the TUI with:

@@ -44,8 +44,8 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 
 - **Formatting:** `black`
 - **Linting:** `ruff`
-- **Tests:** `pytest` (suite in `tests/`, CI on Python 3.12)
-- **Makefile targets:** `install`, `install-prod`, `lock`, `lock-upgrade`, `sync-deps`, `format`, `lint`, `test`, `test-mistral`, `run`, `clean`
+- **Tests:** `pytest` (suite in `tests/`, CI on Python 3.12). `tests/e2e/offline` drives the real TUI against an in-process SSH server with a scripted model (marker `e2e_offline`, runs in `make test`); `tests/e2e/live` does the same against real providers (marker `e2e`, `RUN_E2E=1` + API keys, never in CI).
+- **Makefile targets:** `install`, `install-prod`, `lock`, `lock-upgrade`, `sync-deps`, `format`, `lint`, `test`, `test-mistral`, `test-e2e`, `test-e2e-live`, `run`, `clean`
 - **MCP tools:** [Firecrawl](https://www.firecrawl.dev/) for web search, scraping and structured extraction when debugging third-party libraries or validating external docs
 
 ## Configuration and content

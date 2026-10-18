@@ -5,14 +5,20 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-from mistralai.client.models import PromptTokensDetails, UsageInfo
+from mistralai.client.models import PromptTokensDetails
 
-from smart_ai_sys_admin.agent.providers import mistral as mistral_provider
 from smart_ai_sys_admin.agent.providers.mistral import (
     DEFAULT_REASONING_EFFORT,
     ShellMistralModel,
 )
 from smart_ai_sys_admin.agent.runtime import summarize_cache_usage
+from tests.e2e.fake_mistral_sdk import (
+    FakeChat,
+    completion_response,
+    install_fake_mistral,
+    stream_chunk,
+    usage_info,
+)
 
 
 def test_format_request_injects_reasoning_effort_high():
@@ -54,73 +60,13 @@ def test_invalid_reasoning_effort_raises():
 # --- Prompt cache: cacheReadInputTokens en los metadatos de usage -------------------
 
 
-class _FakeStream:
-    """Simula el iterador asíncrono que devuelve ``chat.stream_async``."""
-
-    def __init__(self, chunks):
-        self._chunks = list(chunks)
-
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self):
-        if not self._chunks:
-            raise StopAsyncIteration
-        return self._chunks.pop(0)
-
-
-class _FakeChat:
-    def __init__(self, *, stream_chunks=None, response=None):
-        self._stream_chunks = stream_chunks or []
-        self._response = response
-        self.requests: list[dict] = []
-
-    async def stream_async(self, **request):
-        self.requests.append(request)
-        return _FakeStream(self._stream_chunks)
-
-    async def complete_async(self, **request):
-        self.requests.append(request)
-        return self._response
-
-
-class _FakeMistralClient:
-    """Sustituye a ``mistralai.client.Mistral`` como context manager asíncrono."""
-
-    chat: _FakeChat | None = None
-
-    def __init__(self, **_client_args):
-        pass
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, *exc_info):
-        return False
-
-
-def _usage(prompt=120, completion=8, total=128, **extra):
-    """Construye un ``UsageInfo`` real del SDK; los extras van a los campos adicionales."""
-    return UsageInfo.model_validate(
-        {
-            "prompt_tokens": prompt,
-            "completion_tokens": completion,
-            "total_tokens": total,
-            **extra,
-        }
-    )
+_FakeChat = FakeChat
+_usage = usage_info
+_completion_response = completion_response
 
 
 def _stream_chunk(*, content=None, finish_reason=None, usage=None):
-    delta = SimpleNamespace(content=content, tool_calls=None)
-    choice = SimpleNamespace(delta=delta, finish_reason=finish_reason)
-    return SimpleNamespace(data=SimpleNamespace(choices=[choice], usage=usage))
-
-
-def _completion_response(*, usage):
-    message = SimpleNamespace(content="hola", tool_calls=None)
-    choice = SimpleNamespace(message=message, finish_reason="stop")
-    return SimpleNamespace(choices=[choice], usage=usage)
+    return stream_chunk(content=content, finish_reason=finish_reason, usage=usage)
 
 
 def _metadata_usage(events):
@@ -130,8 +76,7 @@ def _metadata_usage(events):
 
 
 def _install_fake_client(monkeypatch, chat: _FakeChat):
-    monkeypatch.setattr(_FakeMistralClient, "chat", chat, raising=False)
-    monkeypatch.setattr(mistral_provider, "Mistral", _FakeMistralClient)
+    install_fake_mistral(monkeypatch, chat)
 
 
 async def _collect(model: ShellMistralModel):

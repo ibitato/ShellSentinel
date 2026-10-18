@@ -69,7 +69,8 @@ addopts = "-q --cov=smart_ai_sys_admin --cov-report=term-missing -m 'not e2e'"
 markers = [
   "integration: pruebas lentas o que requieren servicios externos",
   "mistral: PoC Mistral cloud (requiere MISTRAL_API_KEY)",
-  "e2e: pruebas que realizan llamadas reales a servicios externos",
+  "e2e: pruebas que realizan llamadas reales a servicios externos (RUN_E2E=1, nunca en CI)",
+  "e2e_offline: e2e del TUI con servidor SSH embebido y modelo con guion (corre en CI)",
 ]
 
 [tool.coverage.run]

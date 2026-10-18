@@ -35,6 +35,7 @@ from tests.integration.mistral.conftest import (
 pytestmark = [
     pytest.mark.integration,
     pytest.mark.mistral,
+    pytest.mark.e2e,
     requires_mistral_api_key,
 ]
 
