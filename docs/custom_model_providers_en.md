@@ -84,6 +84,11 @@ Optional `stateful` mode can retain `previous_response_id`, but it does not remo
 - **LM Studio** reuses `OpenAIModel` but defaults to `enabled: false` because it caches locally; enabling it sends the same routing key. **Ollama, Cerebras and Gemini** have no cache handling: an enabled block is ignored with a warning from `smart_ai_sys_admin.agent.factory`.
 - Strands records `cacheReadInputTokens`/`cacheWriteInputTokens` in the agent metrics. `AgentRuntime` summarises the last invocation (`summarize_cache_usage`), logs it at INFO and exposes it to `/status`. Strands' `MistralModel` does not populate those fields, so `ShellMistralModel` overrides the `metadata` chunk and copies `prompt_tokens_details.cached_tokens` (streaming `data.usage` and non-streaming `response.usage`) into `cacheReadInputTokens`, keeping `inputTokens` equal to `prompt_tokens` as OpenAI does. When the field is absent the usage is emitted unchanged.
 
+## Turn limit per instruction
+
+- `agent.max_turns` in `conf/agent.conf` (default `25`, `null`/`0` disables) is parsed into `AgentOptions.max_turns` and validated as a positive integer. `AgentRuntime.invoke` passes it to Strands as `agent(prompt, limits={"turns": N})`; the event loop checks the cap at the top of every cycle, so the tools requested by the last turn always finish and `agent.messages` stays reinvokable.
+- When the cap fires Strands returns an `AgentResult` with `stop_reason == "limit_turns"` instead of recursing. The runtime appends the localized `agent.invoke.turn_limit` message to whatever text the model produced and logs a WARNING. A custom provider needs no extra work: the cap lives in the Strands event loop, independent of the model implementation. It is the production safety net for providers that mis-group streamed tool-call deltas and keep handing empty input to the tool.
+
 ## Practical case: Cerebras
 
 - Integrate the official SDK (`cerebras_cloud_sdk`) inside a custom `Model` for SSE streaming and tool support. In `providers.cerebras` define `model_id`, `params`, `client_args` and a key reference (`api_key_env` or `CEREBRAS_API_KEY`).

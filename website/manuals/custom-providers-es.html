@@ -153,6 +153,12 @@
           <li>LM Studio queda desactivado por defecto; Ollama, Cerebras y Gemini ignoran el bloque con un aviso en el log. <code>/status</code> muestra los tokens de entrada cacheados frente al total del último turno.</li>
         </ul>
 
+        <h2>Límite de turnos por instrucción</h2>
+        <ul>
+          <li><code>agent.max_turns</code> (por defecto <code>25</code>, <code>null</code>/<code>0</code> lo desactiva) se valida como entero positivo y <code>AgentRuntime.invoke</code> lo pasa al agente Strands como <code>limits={"turns": N}</code>.</li>
+          <li>Al alcanzar el límite, Strands devuelve <code>stop_reason == "limit_turns"</code> en lugar de seguir recurriendo; el runtime añade el aviso localizado <code>agent.invoke.turn_limit</code> al texto del modelo y registra un WARNING. No requiere trabajo específico por proveedor.</li>
+        </ul>
+
         <h2>Caso práctico: Cerebras</h2>
         <ul>
           <li>Integra <code>cerebras_cloud_sdk</code> dentro de un modelo personalizado con streaming SSE.</li>

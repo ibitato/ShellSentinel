@@ -84,6 +84,11 @@ Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber ei
 - **LM Studio** nutzt `OpenAIModel`, startet aber mit `enabled: false`, weil es lokal cacht; beim Aktivieren wird derselbe Routing-Schlüssel gesendet. **Ollama, Cerebras und Gemini** haben keine Cache-Behandlung: ein aktivierter Block wird mit einer Warnung des Loggers `smart_ai_sys_admin.agent.factory` ignoriert.
 - Strands erfasst `cacheReadInputTokens`/`cacheWriteInputTokens` in den Agent-Metriken. `AgentRuntime` fasst die letzte Invocation zusammen (`summarize_cache_usage`), protokolliert sie auf INFO und stellt sie `/status` bereit. Strands' `MistralModel` füllt diese Felder nicht, daher überschreibt `ShellMistralModel` den `metadata`-Chunk und kopiert `prompt_tokens_details.cached_tokens` (`data.usage` beim Streaming, `response.usage` ohne Streaming) nach `cacheReadInputTokens`; `inputTokens` bleibt wie bei OpenAI gleich `prompt_tokens`. Fehlt das Feld, wird das Usage unverändert weitergegeben.
 
+## Turn-Limit pro Anweisung
+
+- `agent.max_turns` in `conf/agent.conf` (Standard `25`, `null`/`0` deaktiviert) wird in `AgentOptions.max_turns` geladen und als positive Ganzzahl validiert. `AgentRuntime.invoke` übergibt es an Strands als `agent(prompt, limits={"turns": N})`; der Event-Loop prüft das Limit zu Beginn jedes Zyklus, sodass die im letzten Turn angeforderten Tools immer abschließen und `agent.messages` erneut aufrufbar bleibt.
+- Beim Erreichen des Limits liefert Strands ein `AgentResult` mit `stop_reason == "limit_turns"`, statt weiter zu rekursieren. Die Runtime hängt die lokalisierte Meldung `agent.invoke.turn_limit` an den vom Modell erzeugten Text an und protokolliert ein WARNING. Ein eigener Provider braucht nichts Zusätzliches: Das Limit lebt im Event-Loop von Strands, unabhängig von der Modellimplementierung. Es ist das Sicherheitsnetz in Produktion gegen Provider, die gestreamte Tool-Call-Deltas falsch gruppieren und dem Tool immer wieder eine leere Eingabe übergeben.
+
 ## Praxisbeispiel: Cerebras
 
 - Offizielles SDK (`cerebras_cloud_sdk`) in ein benutzerdefiniertes `Model` für SSE-Streaming und Tool-Support integrieren. In `providers.cerebras` `model_id`, `params`, `client_args` und Schlüsselreferenz (`api_key_env` oder `CEREBRAS_API_KEY`) definieren.

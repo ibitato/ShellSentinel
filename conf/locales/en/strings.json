@@ -73,7 +73,9 @@
         "error": "Error",
         "mcp": "MCP servers",
         "cache": "Prompt caching",
-        "cache_usage": "Last turn: {cached} of {total} input tokens read from cache ({percent}%), {written} written"
+        "cache_usage": "Last turn: {cached} of {total} input tokens read from cache ({percent}%), {written} written",
+        "max_turns": "Turn limit per instruction",
+        "max_turns_disabled": "disabled"
       },
       "overview": "**Available commands**\n- `{connect_usage}` opens the remote SSH and SFTP session.\n- `{disconnect_usage}` closes the active sessions.\n- `{help_usage}` lists all supported commands.\n- `{status_usage}` shows the agent and connection status.\n- `{exit_command}` opens a confirmation dialog to quit the app.",
       "help": {
@@ -162,7 +164,8 @@
       "success": "✅ Strands agent initialized (configuration: `{path}`)"
     },
     "invoke": {
-      "failure": "❌ The agent failed to process the instruction: {error}"
+      "failure": "❌ The agent failed to process the instruction: {error}",
+      "turn_limit": "⚠️ The agent reached the limit of {limit} turns for this instruction and was stopped. Try a narrower instruction (one task at a time), or raise `agent.max_turns` in `conf/agent.conf`."
     },
     "language_instruction": "Always respond in English. Match the active application locale `{locale}` and keep every user-facing message in English unless the operator explicitly asks for another language.",
     "tools": {

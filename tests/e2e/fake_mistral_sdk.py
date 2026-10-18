@@ -107,12 +107,13 @@ def tool_call_delta(
     name: str | None,
     arguments: str,
     *,
-    index: int = 0,
+    index: int | None = 0,
 ) -> SimpleNamespace:
     """Fragmento de ``tool_calls`` tal y como lo emite el SDK en streaming.
 
     En el SDK 2.x un fragmento sin ``id`` llega con la cadena ``"null"`` (valor por
     defecto del modelo pydantic), no con ``None``; se respeta ese comportamiento.
+    ``index=None`` simula un cliente que no rellena el índice por defecto.
     """
 
     return SimpleNamespace(

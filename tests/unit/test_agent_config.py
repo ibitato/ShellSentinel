@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from smart_ai_sys_admin.agent.config import (
+    DEFAULT_MAX_TURNS,
     MISTRAL_DEFAULT_REASONING_EFFORT,
     AgentConfigError,
     BedrockProviderConfig,
@@ -187,3 +188,43 @@ def test_tools_default_absent_means_all(minimal_agent_conf: Path):
     minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
     config = load_agent_config(minimal_agent_conf)
     assert config.tools.default_tools is None
+
+
+def _write_max_turns(conf: Path, value: object, *, present: bool = True) -> None:
+    payload = json.loads(conf.read_text(encoding="utf-8"))
+    if present:
+        payload["agent"]["max_turns"] = value
+    else:
+        payload["agent"].pop("max_turns", None)
+    conf.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def test_max_turns_parsed_from_fixture(minimal_agent_conf: Path):
+    config = load_agent_config(minimal_agent_conf)
+    assert config.options.max_turns == 25
+
+
+def test_max_turns_defaults_when_absent(minimal_agent_conf: Path):
+    _write_max_turns(minimal_agent_conf, None, present=False)
+    config = load_agent_config(minimal_agent_conf)
+    assert config.options.max_turns == DEFAULT_MAX_TURNS
+
+
+def test_max_turns_custom_value(minimal_agent_conf: Path):
+    _write_max_turns(minimal_agent_conf, 7)
+    config = load_agent_config(minimal_agent_conf)
+    assert config.options.max_turns == 7
+
+
+@pytest.mark.parametrize("value", [None, 0])
+def test_max_turns_null_or_zero_disables_limit(minimal_agent_conf: Path, value):
+    _write_max_turns(minimal_agent_conf, value)
+    config = load_agent_config(minimal_agent_conf)
+    assert config.options.max_turns is None
+
+
+@pytest.mark.parametrize("value", [-1, "25", 2.5, True])
+def test_max_turns_rejects_invalid_values(minimal_agent_conf: Path, value):
+    _write_max_turns(minimal_agent_conf, value)
+    with pytest.raises(AgentConfigError, match="agent.max_turns debe ser un entero positivo"):
+        load_agent_config(minimal_agent_conf)

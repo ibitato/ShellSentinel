@@ -73,7 +73,9 @@
         "error": "Error",
         "mcp": "Servidores MCP",
         "cache": "Prompt caching",
-        "cache_usage": "Último turno: {cached} de {total} tokens de entrada leídos de caché ({percent} %), {written} escritos"
+        "cache_usage": "Último turno: {cached} de {total} tokens de entrada leídos de caché ({percent} %), {written} escritos",
+        "max_turns": "Límite de turnos por instrucción",
+        "max_turns_disabled": "desactivado"
       },
       "overview": "**Comandos disponibles**\n- `{connect_usage}` abre la sesión SSH y SFTP remota.\n- `{disconnect_usage}` cierra las sesiones activas.\n- `{help_usage}` resume los comandos disponibles.\n- `{status_usage}` muestra el estado del agente y la conexión.\n- `{exit_command}` abre un diálogo de confirmación para cerrar la aplicación.",
       "help": {
@@ -162,7 +164,8 @@
       "success": "✅ Agente Strands inicializado (configuración: `{path}`)"
     },
     "invoke": {
-      "failure": "❌ El agente falló al procesar la instrucción: {error}"
+      "failure": "❌ El agente falló al procesar la instrucción: {error}",
+      "turn_limit": "⚠️ El agente alcanzó el límite de {limit} turnos para esta instrucción y se detuvo. Prueba con una instrucción más acotada (una tarea cada vez) o sube `agent.max_turns` en `conf/agent.conf`."
     },
     "language_instruction": "Responde siempre en español. Ajusta todos los mensajes al locale activo `{locale}` y solo cambia de idioma si la persona operadora lo solicita explícitamente.",
     "tools": {

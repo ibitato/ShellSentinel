@@ -156,6 +156,13 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
             gecachte Tokens erscheinen trotzdem in <code>/status</code>). <code>/status</code> zeigt, ob
             Caching aktiv ist, sowie die gecachten gegenüber den gesamten Eingabe-Tokens des letzten Turns.
           </li>
+          <li>
+            <strong>Turn-Limit</strong>: <code>agent.max_turns</code> (Standard <code>25</code>) begrenzt die
+            Turns, jeweils ein Modellaufruf plus die angeforderten Tools, die der Agent für eine Anweisung
+            verwenden darf. Beim Erreichen stoppt der Agent sauber, das Fenster ergänzt eine Warnung mit dem
+            Hinweis auf eine engere Anweisung, und ein WARNING wird protokolliert; <code>null</code> oder
+            <code>0</code> deaktiviert das Limit, <code>/status</code> zeigt den aktiven Wert.
+          </li>
         </ul>
 
         <h2>Fehlerbehebung</h2>
@@ -165,6 +172,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
           <li><strong>"Keine aktive SSH-Verbindung"</strong>: Vor Remote-Aktionen <code>/connect</code> ausführen.</li>
           <li><strong>SFTP-Fehler nach erfolgreichem <code>/connect</code></strong>: Die Remote-Shell kann Banner in nicht-interaktiven Sitzungen ausgeben (z. B. <code>pyfiglet</code> in <code>~/.bashrc</code>). Dekorative Ausgabe nur interaktiv erlauben oder <code>Subsystem sftp internal-sftp</code> auf dem Server setzen.</li>
           <li><strong>Zugangsdaten in Logs</strong>: <code>/connect</code>-Passwörter werden in <code>logs/app.log</code> als <code>***</code> maskiert.</li>
+          <li><strong>Der Agent hat mit einer Turn-Limit-Warnung gestoppt</strong>: Die Anweisung brauchte mehr als <code>agent.max_turns</code> Turns, oder das Modell forderte in einer Schleife Tools an (z. B. mit leeren Argumenten). Teile die Anfrage in kleinere Anweisungen auf; braucht die Aufgabe wirklich mehr Schritte, erhöhe <code>agent.max_turns</code> in <code>conf/agent.conf</code>.</li>
           <li><strong>Ein MCP-Server ist nicht gestartet</strong>: Das Konversationsfenster zeigt beim Start eine Warnung, und <code>/status</code> listet jeden konfigurierten MCP-Server mit seinem Zustand. Die Meldung nennt die Ursache (Befehl nicht gefunden, Prozess vorzeitig beendet, HTTP 401/403/404, keine Verbindung, keine Antwort innerhalb von <code>timeout_seconds</code>, nicht gesetzte Umgebungsvariablen) und was in <code>conf/agent.conf</code> zu korrigieren ist. Der Agent startet trotzdem ohne die Werkzeuge dieses Servers; <code>logs/app.log</code> enthält die vollständige Ablaufverfolgung.</li>
         </ul>
 

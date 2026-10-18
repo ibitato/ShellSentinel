@@ -159,6 +159,13 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
             and its reported cached tokens still appear in <code>/status</code>). <code>/status</code> shows
             whether caching is active and the cached vs total input tokens of the last turn.
           </li>
+          <li>
+            <strong>Turn limit</strong>: <code>agent.max_turns</code> (default <code>25</code>) caps the
+            turns, each a model call plus the tools it requests, that the agent may spend on one
+            instruction. When it is reached the agent stops cleanly, the panel appends a warning
+            suggesting a narrower instruction and a WARNING is logged; <code>null</code> or
+            <code>0</code> disables the cap and <code>/status</code> shows the active value.
+          </li>
         </ul>
 
         <h2>Troubleshooting</h2>
@@ -180,6 +187,12 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           </li>
           <li>
             <strong>Credentials in logs</strong>: <code>/connect</code> passwords are masked as <code>***</code> in <code>logs/app.log</code> and echoed input.
+          </li>
+          <li>
+            <strong>The agent stopped with a turn-limit warning</strong>: the instruction needed more than
+            <code>agent.max_turns</code> turns, or the model looped requesting tools (for example with empty
+            arguments). Split the request into smaller instructions; if the task legitimately needs more steps,
+            raise <code>agent.max_turns</code> in <code>conf/agent.conf</code>.
           </li>
           <li>
             <strong>An MCP server did not start</strong>: the conversation panel shows a warning at startup and
