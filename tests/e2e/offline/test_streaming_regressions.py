@@ -44,10 +44,6 @@ async def test_tool_input_split_across_deltas_executes_once(
         assert len(scripted_model.calls) == 2
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="ShellMistralModel agrupa los deltas por tool_call.id y pierde los fragmentos sin id",
-)
 async def test_mistral_provider_reassembles_tool_call_fragments(
     tui, e2e_env, ssh: ScriptedSSHServer, connect_line: str, monkeypatch, caplog
 ):

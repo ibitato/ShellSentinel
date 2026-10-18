@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `ShellMistralModel` no longer splits a streamed tool call into broken `toolUse` blocks when its JSON arguments arrive over several deltas. Models served by Mistral such as `zai-glm-5-3` send the tool-call `id` and name only in the first fragment; the following fragments carry the SDK default id `"null"`, so grouping by id produced one block with unparseable JSON and one without id or name, `remote_ssh_command` ran with an empty input and the agent retried until Strands raised `RecursionError`. Fragments are now grouped by `index` (or real `id`) and appended to the last open call when neither is usable, parallel tool calls stay separate, dict arguments are serialized to JSON, and a warning naming the tool is logged if the reassembled call still has no id, no name or invalid JSON arguments.
 - The Mistral provider now reports prompt-cache hits: `ShellMistralModel` copies `prompt_tokens_details.cached_tokens` from the Mistral SDK usage (streaming and non-streaming) into `cacheReadInputTokens`, so `/status` and the INFO log show real cached-token counts instead of always zero.
 - Security: PyJWT raised to `>=2.15.0` and lockfiles bumped to Pillow 12.3.0 and soupsieve 3.0.3 to address published advisories.
 - The TUI no longer freezes while the agent or `/connect` is running; work runs in a background worker and new submissions are rejected until it finishes.
