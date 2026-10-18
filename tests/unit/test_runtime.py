@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
+import json
+import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
+from strands.agent.agent_result import AgentResult
+from strands.telemetry.metrics import EventLoopMetrics
 
 from smart_ai_sys_admin.agent.config import MCPConfig, MCPTransportConfig
 from smart_ai_sys_admin.agent.mcp_manager import MCPServerStatus
 from smart_ai_sys_admin.agent.runtime import AgentRuntime, MCPManager
+from smart_ai_sys_admin.localization import _
 
 
 def test_agent_summary_before_initialize(agent_runtime: AgentRuntime):
@@ -202,3 +207,104 @@ def test_agent_summary_describes_mcp_servers(agent_runtime: AgentRuntime):
         "✅ `docs` (stdio): 4 tools — env missing",
         "⚠️ `remote` (sse): HTTP 401",
     ]
+
+
+# ---------------------------------------------------------------- límite de turnos
+def _agent_result(text: str, stop_reason: str) -> AgentResult:
+    return AgentResult(
+        stop_reason=stop_reason,  # type: ignore[arg-type]
+        message={"role": "assistant", "content": [{"text": text}]},
+        metrics=EventLoopMetrics(),
+        state={},
+    )
+
+
+def _initialize_with_agent(
+    agent_runtime: AgentRuntime,
+    minimal_agent_conf,
+    monkeypatch: pytest.MonkeyPatch,
+    agent: MagicMock,
+    *,
+    max_turns: object = 25,
+    present: bool = True,
+) -> None:
+    from smart_ai_sys_admin.agent.config import load_agent_config
+    from smart_ai_sys_admin.agent.factory import AgentBuildResult
+
+    payload = json.loads(minimal_agent_conf.read_text(encoding="utf-8"))
+    if present:
+        payload["agent"]["max_turns"] = max_turns
+    else:
+        payload["agent"].pop("max_turns", None)
+    minimal_agent_conf.write_text(json.dumps(payload), encoding="utf-8")
+    monkeypatch.setenv("SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE", str(minimal_agent_conf))
+    config = load_agent_config()
+    with (
+        patch("smart_ai_sys_admin.agent.runtime.load_agent_config", return_value=config),
+        patch("smart_ai_sys_admin.agent.runtime.MCPManager.activate", return_value=[]),
+        patch(
+            "smart_ai_sys_admin.agent.runtime.AgentFactory.build_agent",
+            return_value=AgentBuildResult(agent=agent, mcp_config=config.mcp),
+        ),
+    ):
+        agent_runtime.initialize()
+    assert agent_runtime.ready is True
+
+
+def test_invoke_passes_turn_limit_to_strands(
+    agent_runtime: AgentRuntime, minimal_agent_conf, monkeypatch: pytest.MonkeyPatch
+):
+    agent = MagicMock(return_value=_agent_result("done", "end_turn"))
+    _initialize_with_agent(agent_runtime, minimal_agent_conf, monkeypatch, agent, max_turns=7)
+
+    assert agent_runtime.max_turns == 7
+    assert agent_runtime.invoke("prompt") == "done"
+    agent.assert_called_once_with("prompt", limits={"turns": 7})
+    assert agent_runtime.agent_summary()["max_turns"] == 7
+
+
+def test_invoke_without_turn_limit_passes_no_limits(
+    agent_runtime: AgentRuntime, minimal_agent_conf, monkeypatch: pytest.MonkeyPatch
+):
+    agent = MagicMock(return_value=_agent_result("done", "end_turn"))
+    _initialize_with_agent(agent_runtime, minimal_agent_conf, monkeypatch, agent, max_turns=None)
+
+    assert agent_runtime.max_turns is None
+    agent_runtime.invoke("prompt")
+    agent.assert_called_once_with("prompt")
+    assert agent_runtime.agent_summary()["max_turns"] is None
+
+
+def test_invoke_renders_turn_limit_notice(
+    agent_runtime: AgentRuntime,
+    minimal_agent_conf,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+):
+    agent = MagicMock(return_value=_agent_result("partial answer", "limit_turns"))
+    _initialize_with_agent(agent_runtime, minimal_agent_conf, monkeypatch, agent, max_turns=3)
+
+    with caplog.at_level(logging.WARNING, logger="test.agent.runtime"):
+        rendered = agent_runtime.invoke("prompt")
+
+    notice = _("agent.invoke.turn_limit", limit=3)
+    assert rendered == f"partial answer\n\n{notice}"
+    assert "3 turns" in notice
+    assert any(
+        record.levelno == logging.WARNING and "limit_turns" in record.getMessage()
+        for record in caplog.records
+    )
+
+
+def test_invoke_turn_limit_notice_without_text(
+    agent_runtime: AgentRuntime, minimal_agent_conf, monkeypatch: pytest.MonkeyPatch
+):
+    agent = MagicMock(return_value=_agent_result("", "limit_turns"))
+    _initialize_with_agent(agent_runtime, minimal_agent_conf, monkeypatch, agent, max_turns=3)
+
+    assert agent_runtime.invoke("prompt") == _("agent.invoke.turn_limit", limit=3)
+
+
+def test_agent_summary_has_no_turn_limit_before_initialize(agent_runtime: AgentRuntime):
+    assert "max_turns" not in agent_runtime.agent_summary()
+    assert agent_runtime.max_turns is None

@@ -3,6 +3,7 @@
   "provider": "bedrock",
   "agent": {
     "streaming": true,
+    "max_turns": 25,
     "conversation": {
       "strategy": "sliding_window",
       "window_size": 40,

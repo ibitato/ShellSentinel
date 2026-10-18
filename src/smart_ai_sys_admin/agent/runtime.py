@@ -79,6 +79,7 @@ class AgentRuntime:
             return summary
 
         summary["streaming"] = self._config.options.streaming
+        summary["max_turns"] = self._config.options.max_turns
         summary["config_path"] = str(self._config.config_path)
         try:
             provider_cfg = self._config.provider_config()
@@ -232,20 +233,47 @@ class AgentRuntime:
         config_path = config.config_path
         self._status_message = f"✅ Agente Strands inicializado (configuración: `{config_path}`)"
 
+    @property
+    def max_turns(self) -> int | None:
+        """Límite de turnos por instrucción (``agent.max_turns``); ``None`` si está desactivado."""
+
+        if not self._config:
+            return None
+        return self._config.options.max_turns
+
     def invoke(self, prompt: str) -> str:
         if not self.ready:
             raise RuntimeError("El agente no está disponible.")
         assert self._agent is not None
+        # ``limits`` acota la invocación en Strands: al alcanzar ``turns`` el event loop
+        # termina con ``stop_reason="limit_turns"`` en vez de seguir recurriendo.
+        call_kwargs: dict[str, Any] = {}
+        max_turns = self.max_turns
+        if max_turns is not None:
+            call_kwargs["limits"] = {"turns": max_turns}
         try:
-            result = self._agent(prompt)
+            result = self._agent(prompt, **call_kwargs)
         except Exception as exc:  # pragma: no cover - depende del proveedor
             self._logger.exception("Error ejecutando el agente")
             return f"❌ El agente falló al procesar la instrucción: {exc}"
         if isinstance(result, AgentResult):
             self._record_cache_usage(result)
             text = self._render_agent_result(result)
+            if getattr(result, "stop_reason", None) == "limit_turns":
+                return self._append_turn_limit_notice(text, max_turns)
             return text or "(sin respuesta)"
         return str(result)
+
+    def _append_turn_limit_notice(self, text: str, max_turns: int | None) -> str:
+        """Añade al texto del agente el aviso localizado de límite de turnos alcanzado."""
+
+        self._logger.warning(
+            "El agente alcanzó el límite de %s turnos por instrucción (agent.max_turns); "
+            "invocación detenida por Strands con stop_reason='limit_turns'",
+            max_turns,
+        )
+        notice = _("agent.invoke.turn_limit", limit=max_turns)
+        return f"{text}\n\n{notice}" if text else notice
 
     def _render_agent_result(self, result: AgentResult) -> str:
         text = str(result)

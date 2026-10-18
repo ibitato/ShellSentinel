@@ -146,3 +146,25 @@ def test_status_omits_mcp_section_without_servers(slash_processor: SlashCommandP
     result = slash_processor.process("/status")
     assert result is not None
     assert "MCP servers" not in result
+
+
+def test_status_shows_turn_limit(slash_processor: SlashCommandProcessor, fake_agent_runtime):
+    fake_agent_runtime._summary["max_turns"] = 25
+    result = slash_processor.process("/status")
+    assert result is not None
+    assert "- Turn limit per instruction: 25" in result
+
+
+def test_status_shows_turn_limit_disabled(
+    slash_processor: SlashCommandProcessor, fake_agent_runtime
+):
+    fake_agent_runtime._summary["max_turns"] = None
+    result = slash_processor.process("/status")
+    assert result is not None
+    assert "- Turn limit per instruction: disabled" in result
+
+
+def test_status_omits_turn_limit_when_unknown(slash_processor: SlashCommandProcessor):
+    result = slash_processor.process("/status")
+    assert result is not None
+    assert "Turn limit" not in result

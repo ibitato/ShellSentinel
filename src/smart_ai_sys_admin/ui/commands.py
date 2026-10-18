@@ -496,6 +496,12 @@ class SlashCommandProcessor:
                 lines.append(f"- {_('ui.commands.status.model')}: {summary['model']}")
             lines.append(f"- {_('ui.commands.status.agent_ready')}: {ready_value}")
             lines.append(f"- {_('ui.commands.status.streaming')}: {streaming_value}")
+            if "max_turns" in summary:
+                max_turns = summary["max_turns"]
+                max_turns_value = (
+                    str(max_turns) if max_turns else _("ui.commands.status.max_turns_disabled")
+                )
+                lines.append(f"- {_('ui.commands.status.max_turns')}: {max_turns_value}")
             if summary.get("config_path"):
                 lines.append(f"- {_('ui.commands.status.config_path')}: `{summary['config_path']}`")
             if summary.get("status"):

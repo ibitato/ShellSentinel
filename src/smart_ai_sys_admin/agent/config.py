@@ -139,11 +139,17 @@ class ConversationConfig:
     options: Mapping[str, Any]
 
 
+# Límite por defecto de turnos (llamadas al modelo + tools) por instrucción del operador.
+# Evita que un agente en bucle recurra hasta agotar la pila (RecursionError).
+DEFAULT_MAX_TURNS = 25
+
+
 @dataclass(frozen=True)
 class AgentOptions:
     streaming: bool
     conversation: ConversationConfig
     trace_attributes: Mapping[str, Any]
+    max_turns: int | None = DEFAULT_MAX_TURNS
 
 
 @dataclass(frozen=True)
@@ -516,12 +522,29 @@ def _build_conversation_config(payload: Mapping[str, Any]) -> ConversationConfig
     return ConversationConfig(strategy=strategy, options=options)
 
 
+def _parse_max_turns(value: Any) -> int | None:
+    """Valida ``agent.max_turns``: entero positivo, o ``null``/``0`` para desactivar el límite."""
+
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise AgentConfigError(
+            "agent.max_turns debe ser un entero positivo (o null/0 para desactivar el límite), "
+            f"se recibió: {value!r}"
+        )
+    return value or None
+
+
 def _build_agent_options(payload: Mapping[str, Any]) -> AgentOptions:
     streaming = bool(payload.get("streaming", True))
     conversation_cfg = _build_conversation_config(payload.get("conversation", {}))
     trace_attributes = _mapping_proxy(payload.get("trace_attributes"))
+    max_turns = _parse_max_turns(payload.get("max_turns", DEFAULT_MAX_TURNS))
     return AgentOptions(
-        streaming=streaming, conversation=conversation_cfg, trace_attributes=trace_attributes
+        streaming=streaming,
+        conversation=conversation_cfg,
+        trace_attributes=trace_attributes,
+        max_turns=max_turns,
     )
 
 
@@ -639,6 +662,7 @@ __all__ = [
     "CacheStrategyLiteral",
     "ConversationConfig",
     "DEFAULT_CACHE_CONFIGS",
+    "DEFAULT_MAX_TURNS",
     "ProviderCacheConfig",
     "LocalProviderConfig",
     "CerebrasProviderConfig",
