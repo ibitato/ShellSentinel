@@ -29,7 +29,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Express goals in natural language; the assistant translates them into safe SSH/SFTP actions you can review.",
         "Embedded knowledge base surfaces internal guides, best practices and context-sensitive hints in English, Spanish and German.",
-        "Modular LLM providers—including OpenAI Chat Completions and Responses—and a plugin-ready architecture extend commands, dashboards and automations without touching the core.",
+        "Modular LLM providers (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama)—including OpenAI Chat Completions and Responses—and a plugin-ready architecture extend commands, dashboards and automations without touching the core.",
       ],
     },
     features: {
@@ -173,7 +173,7 @@ window.TRANSLATIONS = {
         {
           title: "Custom providers",
           summary:
-            "Provider checklist plus OpenAI Responses guidance for function tools, reasoning and endpoint parameters.",
+            "Provider checklist with practical cases for OpenAI Responses, LM Studio, Mistral AI, Google Gemini and Cerebras, plus prompt caching and the turn limit.",
           href: "manuals/custom-providers-en.html",
           cta: "Read online",
         },
@@ -206,7 +206,7 @@ window.TRANSLATIONS = {
           bullets: [
             "`/connect` · Establish persistent SSH/SFTP sessions with key or password auth.",
             "`/disconnect` · Close the active session safely before leaving the TUI.",
-            "`/status` · Inspect provider, model, streaming flag, config path and SSH state at any time.",
+            "`/status` · Inspect provider, model, streaming flag, config path, SSH state, prompt-cache usage, turn limit and MCP servers at any time.",
             "`/help` · List commands and plugin extensions with localized descriptions.",
           ],
         },
@@ -229,6 +229,7 @@ window.TRANSLATIONS = {
             "Export provider credentials from the environment; set `providers.openai.api` to `responses` for GPT-5.x function tools with active reasoning.",
             "Request higher `timeout_seconds` when long-running tasks are expected.",
             "Keep `agent.max_turns` (default 25) as the safety net against looping agents; raise it only for instructions that legitimately need more steps.",
+            "Give each MCP server a realistic `timeout_seconds` (default 30 s): it bounds startup as well as requests, and a server that fails to start is reported in the conversation panel and in `/status` instead of blocking the TUI.",
           ],
         },
       ],
@@ -265,8 +266,8 @@ window.TRANSLATIONS = {
       eyebrow: "Availability",
       title: "Download & onboarding",
       lead:
-        "Stable builds are published through GitHub Releases. Grab version 1.3.0 and keep the quick start guide close when setting up.",
-      primaryCta: "Download Shell Sentinel 1.3.0",
+        "Stable builds are published through GitHub Releases. Grab version 1.4.0 and keep the quick start guide close when setting up.",
+      primaryCta: "Download Shell Sentinel 1.4.0",
       secondaryCta: "Follow quick start guide",
       note:
         "Install from source by creating a virtual environment, running make install and launching make run.",
@@ -319,7 +320,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Expresa objetivos en lenguaje natural; el asistente los traduce en acciones SSH/SFTP seguras que puedes revisar.",
         "Una base de conocimiento integrada destaca guías internas, buenas prácticas y pistas contextuales en inglés, español y alemán.",
-        "Los proveedores LLM modulares —incluidos OpenAI Chat Completions y Responses— y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
+        "Los proveedores LLM modulares (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama) —incluidos OpenAI Chat Completions y Responses— y una arquitectura preparada para plugins extienden comandos, paneles y automatizaciones sin tocar el core.",
       ],
     },
     features: {
@@ -463,7 +464,7 @@ window.TRANSLATIONS = {
         {
           title: "Proveedores personalizados",
           summary:
-            "Checklist de proveedores y guía de OpenAI Responses sobre function tools, razonamiento y parámetros por endpoint.",
+            "Checklist de proveedores con casos prácticos de OpenAI Responses, LM Studio, Mistral AI, Google Gemini y Cerebras, además de prompt caching y límite de turnos.",
           href: "manuals/custom-providers-es.html",
           cta: "Leer en línea",
         },
@@ -496,7 +497,7 @@ window.TRANSLATIONS = {
           bullets: [
             "`/connect` · Abre sesiones SSH/SFTP persistentes con clave o contraseña.",
             "`/disconnect` · Cierra la sesión activa de forma segura antes de salir.",
-            "`/status` · Consulta proveedor, modelo, streaming, ruta de configuración y estado SSH.",
+            "`/status` · Consulta proveedor, modelo, streaming, ruta de configuración, estado SSH, uso de la caché de prompts, límite de turnos y servidores MCP.",
             "`/help` · Lista comandos y extensiones de plugins con descripciones localizadas.",
           ],
         },
@@ -519,6 +520,7 @@ window.TRANSLATIONS = {
             "Exporta las credenciales de proveedor desde el entorno; usa `providers.openai.api` con `responses` para function tools de GPT-5.x con razonamiento activo.",
             "Solicita un `timeout_seconds` mayor cuando preveas tareas largas.",
             "Mantén `agent.max_turns` (25 por defecto) como red de seguridad frente a agentes en bucle; súbelo solo para instrucciones que realmente necesiten más pasos.",
+            "Asigna a cada servidor MCP un `timeout_seconds` realista (30 s por defecto): acota tanto el arranque como las peticiones, y un servidor que no arranca se notifica en el panel de conversación y en `/status` en lugar de bloquear la TUI.",
           ],
         },
       ],
@@ -555,8 +557,8 @@ window.TRANSLATIONS = {
       eyebrow: "Disponibilidad",
       title: "Descarga y onboarding",
       lead:
-        "La versión estable 1.3.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
-      primaryCta: "Descargar Shell Sentinel 1.3.0",
+        "La versión estable 1.4.0 está disponible en GitHub Releases. Descárgala y ten la guía de inicio rápido a mano durante la instalación.",
+      primaryCta: "Descargar Shell Sentinel 1.4.0",
       secondaryCta: "Seguir guía de inicio rápido",
       note:
         "Instala desde el código creando un entorno virtual, ejecutando make install y arrancando con make run.",
@@ -609,7 +611,7 @@ window.TRANSLATIONS = {
       bullets: [
         "Formuliere Ziele in natürlicher Sprache; der Assistent übersetzt sie in überprüfbare, sichere SSH/SFTP-Aktionen.",
         "Eine integrierte Wissensbasis liefert interne Leitfäden, Best Practices und kontextbezogene Hinweise auf Englisch, Spanisch und Deutsch.",
-        "Modulare LLM-Provider – einschließlich OpenAI Chat Completions und Responses – sowie eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
+        "Modulare LLM-Provider (Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini, Ollama) – einschließlich OpenAI Chat Completions und Responses – sowie eine plugin-fähige Architektur erweitern Befehle, Dashboards und Automatisierungen ohne Core-Änderungen.",
       ],
     },
     features: {
@@ -753,7 +755,7 @@ window.TRANSLATIONS = {
         {
           title: "Benutzerdefinierte Provider",
           summary:
-            "Provider-Checkliste und OpenAI-Responses-Hinweise zu Function Tools, Reasoning und Endpoint-Parametern.",
+            "Provider-Checkliste mit Praxisbeispielen zu OpenAI Responses, LM Studio, Mistral AI, Google Gemini und Cerebras sowie Prompt-Caching und Turn-Limit.",
           href: "manuals/custom-providers-de.html",
           cta: "Online lesen",
         },
@@ -786,7 +788,7 @@ window.TRANSLATIONS = {
           bullets: [
             "`/connect` · Öffnet persistente SSH/SFTP-Sitzungen mit Schlüssel oder Passwort.",
             "`/disconnect` · Beendet die aktive Session sicher.",
-            "`/status` · Zeigt Provider, Modell, Streaming-Flag, Konfigurationspfad und SSH-Status.",
+            "`/status` · Zeigt Provider, Modell, Streaming-Flag, Konfigurationspfad, SSH-Status, Prompt-Cache-Nutzung, Turn-Limit und MCP-Server.",
             "`/help` · Listet alle Befehle und Plugin-Erweiterungen mit lokalisierten Beschreibungen.",
           ],
         },
@@ -809,6 +811,7 @@ window.TRANSLATIONS = {
             "Exportiere Provider-Credentials aus der Umgebung; setze `providers.openai.api` für GPT-5.x Function Tools mit aktivem Reasoning auf `responses`.",
             "Bitte bei langen Tasks um ein höheres `timeout_seconds`.",
             "Behalte `agent.max_turns` (Standard 25) als Sicherheitsnetz gegen Agenten in Schleifen; erhöhe es nur für Anweisungen, die wirklich mehr Schritte brauchen.",
+            "Gib jedem MCP-Server ein realistisches `timeout_seconds` (Standard 30 s): Es begrenzt den Start ebenso wie die Anfragen, und ein Server, der nicht startet, wird im Gesprächspanel und in `/status` gemeldet, statt die TUI zu blockieren.",
           ],
         },
       ],
@@ -845,8 +848,8 @@ window.TRANSLATIONS = {
       eyebrow: "Verfügbarkeit",
       title: "Download & Onboarding",
       lead:
-        "Der stabile Release 1.3.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
-      primaryCta: "Shell Sentinel 1.3.0 herunterladen",
+        "Der stabile Release 1.4.0 steht über GitHub Releases bereit. Lade ihn herunter und halte den Schnellstart für die Einrichtung bereit.",
+      primaryCta: "Shell Sentinel 1.4.0 herunterladen",
       secondaryCta: "Schnellstart öffnen",
       note:
         "Installation aus dem Quellcode: Virtuelle Umgebung erstellen, make install ausführen und mit make run starten.",

@@ -45,7 +45,7 @@
         <h2>General principles</h2>
         <ul>
           <li>Terminal-oriented application with persistent SSH/SFTP sessions and a conversational AI assistant.</li>
-          <li>Python 3.12 ecosystem, Textual 8.2.8 TUI, Strands Agents 1.61.1 and MCP tools such as Firecrawl.</li>
+          <li>Python 3.12 ecosystem, Textual 8.2.8 TUI, Strands Agents 1.61.1 with Strands Agents Tools 0.8.9, MCP transports on <code>mcp</code> 2.x and MCP tools such as Firecrawl.</li>
           <li>Dependencies managed via <code>pyproject.toml</code> and pip-tools lockfiles (<code>make lock</code>, <code>make install</code>).</li>
           <li>Daily work relies on <code>make install</code>, <code>make format</code>, <code>make lint</code>, <code>make test</code> and <code>make run</code>.</li>
           <li>GitHub Actions CI (lint + tests on Python 3.12) runs on every pull request via <code>.github/workflows/ci.yml</code>.</li>
@@ -73,11 +73,18 @@
           <li>Online manuals use HTML pages in <code>website/manuals/</code>; mirror relevant changes from <code>docs/</code>.</li>
         </ul>
 
+        <h2>Test suite</h2>
+        <ul>
+          <li><code>make test</code> runs the unit tests plus the offline end-to-end layer (<code>tests/e2e/offline</code>, marker <code>e2e_offline</code>): the real Textual app, <code>AgentRuntime</code> and <code>strands.Agent</code> against an in-process SSH/SFTP server with a scripted model, so it needs no keys and runs in CI. <code>make test-e2e</code> runs only that layer.</li>
+          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, marker <code>e2e</code>) runs operator scenarios against the real providers; it requires <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> and/or <code>GEMINI_API_KEY</code>, caps model calls per test and never runs in CI.</li>
+          <li><code>make test-mistral</code> keeps the Mistral PoC tests (marker <code>mistral</code>, requires <code>MISTRAL_API_KEY</code>); they are tagged <code>e2e</code> so <code>make test</code> never spends tokens.</li>
+        </ul>
+
         <h2>Recommended workflow</h2>
         <ol>
           <li>Activate virtualenv (<code>python3.12 -m venv .venv</code>, then <code>source .venv/bin/activate</code>).</li>
           <li>Install dependencies (<code>make install</code>).</li>
-          <li>After changes: <code>make format</code>, <code>make lint</code>, <code>make test</code> (required before opening a PR).</li>
+          <li>After changes: <code>make format</code>, <code>make lint</code>, <code>make test</code> (required before opening a PR); add <code>make test-e2e-live</code> when touching the TUI, the agent runtime or a provider.</li>
           <li>Validate the TUI with <code>make run</code> and the website with <code>make website-serve</code>.</li>
         </ol>
 

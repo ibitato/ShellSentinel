@@ -65,7 +65,8 @@ Optional `stateful` mode can retain `previous_response_id`, but it does not remo
 - Shell Sentinel ships a `ShellMistralModel` wrapper over Strands `MistralModel` (official `mistralai` v2 SDK). Configure `providers.mistral` with `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` and `params`.
 - **Defaults:** `mistral-medium-3.5`, `reasoning_effort: high` (mandatory for reasoning-capable models), `max_tokens: 16184`.
 - The wrapper injects `reasoning_effort` into every API request and maps thinking chunks to `reasoningContent` stream events (for `show_thinking`).
-- Validate with `make test-mistral` when `MISTRAL_API_KEY` is available.
+- **Streamed tool calls:** some models served by Mistral (for example `zai-glm-5-3`) send the tool-call `id` and name only in the first delta; later fragments carry the SDK default id `"null"` and only a slice of the JSON arguments. The wrapper groups fragments by `index` (or a real `id`), appends id-less fragments to the last open call, keeps parallel tool calls separate, serialises dict arguments to JSON and logs a warning naming the tool when the reassembled call still lacks an id, a name or valid JSON. Without this, `remote_ssh_command` received an empty input and the agent looped until `agent.max_turns` (previously `RecursionError`).
+- Validate with `make test-mistral` when `MISTRAL_API_KEY` is available (the PoC tests are marked `e2e`, so `make test` never runs them).
 
 ## Practical case: Google Gemini
 

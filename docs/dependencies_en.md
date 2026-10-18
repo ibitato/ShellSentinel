@@ -37,15 +37,18 @@ make install          # development (recommended)
    ```bash
    make sync-deps
    ```
-4. Run `make lint` and `make test`.
+4. Run `make lint` and `make test`. `make test` runs the unit, integration and offline end-to-end suites without any API key (the Mistral PoC and the live e2e tests carry the `e2e` marker and are excluded by default); `make test-e2e-live` needs `RUN_E2E=1` plus `OPENAI_API_KEY`/`MISTRAL_API_KEY`/`GEMINI_API_KEY`.
 
 ## Critical transitive packages
 
-These libraries are declared explicitly in `pyproject.toml` for auditability and stability (in addition to Strands/Paramiko):
+These libraries are declared explicitly in `pyproject.toml` for auditability and stability (in addition to Strands/Paramiko). `strands-agents` is installed with the `gemini`, `mistral`, `openai` and `ollama` extras, which pull the provider SDKs (`google-genai`, `mistralai`, `openai`, `ollama`):
 
 - `boto3` — Amazon Bedrock (via Strands)
-- `openai` — OpenAI / LM Studio-compatible provider
-- `mistralai` — Mistral La Plateforme (`strands-agents[mistral]` extra)
+- `openai` — OpenAI / LM Studio-compatible provider (major version pinned)
+- `mistralai` — Mistral La Plateforme (`strands-agents[mistral]` extra; major version pinned)
+- `cerebras_cloud_sdk` — Cerebras provider
+- `mcp` 2.x and `httpx2` — MCP transports (`stdio`, `sse`, `streamable_http`); the old `mcp<2` pin is gone
+- `PyJWT>=2.15.0` — security floor for the JWT dependency
 - `cryptography` — Paramiko, JWT, MCP
 
 The lockfile pins exact versions for the full dependency tree.

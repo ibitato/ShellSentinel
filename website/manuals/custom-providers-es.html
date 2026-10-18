@@ -143,6 +143,7 @@
           <li>Configura <code>providers.gemini</code> con <code>model_id</code> (<code>gemini-3.8-flash</code>), <code>params</code> (<code>max_tokens</code> pasa a <code>max_output_tokens</code>) y <code>client_args</code>.</li>
           <li>Clave desde <code>api_key_env</code> (<code>GEMINI_API_KEY</code>, después <code>GOOGLE_API_KEY</code>); <code>api_key</code> en JSON se rechaza. <code>client_args.vertexai: true</code> usa credenciales de Google Cloud.</li>
           <li>Los pensamientos llegan como <code>reasoningContent</code> (<code>show_thinking</code>); <code>cached_content_token_count</code> se mapea a <code>cacheReadInputTokens</code>. No admite <code>CacheConfig</code>, así que el bloque <code>cache</code> parte desactivado.</li>
+          <li>El registro de e2e en vivo incluye una fila <code>gemini</code>: <code>make test-e2e-live</code> lo cubre cuando <code>GEMINI_API_KEY</code> está definida.</li>
         </ul>
 
         <h2>Prompt caching</h2>

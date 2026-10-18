@@ -30,6 +30,7 @@ Offizielle Website: <https://www.shellsentinel.net>.
    make lint
    make test
    ```
+   `make test` enthält die Offline-End-to-End-Suite der TUI. End-to-End-Tests gegen echte Provider laufen mit `make test-e2e-live` (`RUN_E2E=1` plus API-Keys; siehe `CONTRIBUTING.md`).
 
 ## Verwendung der CLI
 - TUI starten mit:
@@ -37,7 +38,7 @@ Offizielle Website: <https://www.shellsentinel.net>.
 make run
 ```
 - Die Konsole ist in zwei Bereiche aufgeteilt: Ausgabeverlauf (oben) und Eingabefeld (unten). Die Fußzeile zeigt jederzeit den SSH-Verbindungsstatus sowie den aktiven LLM-Provider und das Modell an.
-- Anweisungen werden über das konfigurierte Tastenkürzel gesendet (Standard `Strg+S`).
+- Anweisungen werden über das konfigurierte Tastenkürzel gesendet (Standard `Strg+S`). Während der Agent oder `/connect` arbeitet, bleibt die Oberfläche bedienbar (die Fußzeile zeigt die Denk-Anzeige), neue Eingaben werden aber mit einem Hinweis abgewiesen, bis die laufende abgeschlossen ist.
 - Unterstützte Befehle (Alias auf Englisch, Spanisch und Deutsch):
 - `/connect <host> <user> <password|key_path> [Port]` (`/conectar`, `/verbinden`) öffnet eine persistente SSH-Sitzung (Port optional, Standard 22). SFTP wird bei der ersten Dateiübertragung geöffnet.
   - `/disconnect` (`/desconectar`, `/trennen`) beendet eine aktive Verbindung.
@@ -87,16 +88,17 @@ make run
 - Das OpenAI-Beispiel verwendet `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` und `max_tokens: 32768` (effektiv als `max_output_tokens`). Die reale Konfiguration nutzt **65.536**; das Bedrock-Beispiel behält `max_tokens: 8192`. Passe die Werte an deine Kontingente an.
 - Responses akzeptiert optional `temperature: 0.3` in `params`; dieser Wert gehört nicht zur Standardkonfiguration.
 - Anmeldeinformationen stammen aus der Umgebung (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY` usw.). Du kannst auch `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` oder `SMART_AI_SYS_ADMIN_CONFIG_DIR` verwenden, um Dateipfade zu überschreiben.
-- In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional).
+- In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional und begrenzt die **gesamte** Laufzeit des Befehls, nicht die Leerlaufzeit zwischen Ausgabelesungen).
 - `tools.default` legt fest, welche Strands Agents Tools registriert werden (`shell`, `file_read`, `file_write`, `sleep`). Entferne `shell` und `file_write`, damit der Agent nicht auf deiner lokalen Workstation arbeitet; fehlt der Schlüssel, sind alle aktiv. `remote_ssh_command`, `remote_sftp_transfer` und `local_datetime` sind immer verfügbar.
-- `remote_ssh_command` verwendet standardmäßig **900 Sekunden (15 Minuten)** laut `conf/agent.conf`. Falls längere Befehle erwartet werden, den Agenten bitten, `timeout_seconds` entsprechend zu setzen.
+- `remote_ssh_command` verwendet standardmäßig **900 Sekunden (15 Minuten)** Gesamtlaufzeit laut `conf/agent.conf`; beim Überschreiten wird der Kanal geschlossen und der Agent erhält einen Timeout-Fehler. Falls längere Befehle erwartet werden, den Agenten bitten, `timeout_seconds` entsprechend zu setzen.
 - Um übermäßige Ausgaben zu vermeiden, begrenzt `remote_command.max_output_chars`, wie viele Zeichen an den Agenten weitergegeben werden; das Beispiel verwendet **120.000**. Erhöhe den Wert für Audit-Anwendungsfälle oder senke ihn bei gemeinsam genutzten Terminals.
 - `agent.max_turns` begrenzt, wie viele Turns (ein Modellaufruf plus die angeforderten Tools) der Agent für eine einzelne Anweisung verwenden darf; der Standard ist **25**. Beim Erreichen des Limits beendet Strands die Invocation sauber, das Konversationsfenster ergänzt eine Warnung mit dem Hinweis auf eine engere Anweisung, und ein WARNING wird protokolliert. `null` oder `0` deaktiviert das Limit. `/status` zeigt den aktiven Wert. Das ist das Sicherheitsnetz gegen ein Modell, das in einer Schleife Tools anfordert, was zuvor in einem `RecursionError` endete.
 - Für Model Context Protocol (MCP) Server deklarierst du jeden Transport (`stdio`, `sse`, `streamable_http`) im Abschnitt `mcp`. Die Agentenverbindung bleibt während der Sitzung aktiv und stellt die Tools bereit.
   - Beispiel: Transport `firecrawl-stdio` startet `npx -y firecrawl-mcp`. Über `env_passthrough` erbt der Agent Variablen wie `FIRECRAWL_API_KEY`. Werte vor dem Start der TUI exportieren.
-  - Die Server starten parallel; ein Server, der fehlschlägt oder nicht innerhalb seines `timeout_seconds` (Standard 30 s) antwortet, wird mit einer Warnung im Konversationsfenster übersprungen, die Ursache und Abhilfe nennt; `/status` listet jeden MCP-Server mit seinem Zustand.
+  - Die Server starten parallel; ein Server, der fehlschlägt oder nicht innerhalb seines `timeout_seconds` (Standard 30 s) antwortet, wird mit einer Warnung im Konversationsfenster übersprungen, die Ursache und Abhilfe nennt; `/status` listet jeden MCP-Server mit Zustand und Anzahl der Tools. Der Agent startet trotzdem, nur ohne die Tools dieses Servers.
+  - Die Transporte nutzen das `mcp`-2.x-SDK. Bei `sse` und `streamable_http` legt `timeout_seconds` auch das HTTP-Timeout für Verbindung/Schreiben fest (Lesen behält ein SSE-Fenster von 300 s) und `headers` werden an den HTTP-Client weitergereicht; ohne Wert gelten 30 s.
 - Beim Start erscheint ein retro-inspirierter Begrüßungsbildschirm (Orange), der sich nach 5 Sekunden oder einem Tastendruck schließt.
-- `/connect` hält die SSH-Sitzung aktiv; SFTP wird bei Bedarf geöffnet, wenn der Agent Dateien überträgt. Der Agent stellt `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` bereit, um Dateien hoch- (`upload`/`put`) oder herunterzuladen (`download`/`get`). `/connect`-Passwörter werden in Logs und angezeigter Eingabe als `***` maskiert. Der Name lässt sich bei Bedarf über `tools.sftp_transfer.name` anpassen.
+- `/connect` hält die SSH-Sitzung aktiv; SFTP wird bei Bedarf geöffnet, wenn der Agent Dateien überträgt. Der Agent stellt `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` bereit, um Dateien hoch- (`upload`/`put`) oder herunterzuladen (`download`/`get`). Relative Remote-Pfade werden unterhalb des SFTP-Home-Verzeichnisses des verbundenen Benutzers aufgelöst, fehlende Zwischenverzeichnisse werden dort angelegt. `/connect`-Passwörter (auch in Anführungszeichen mit Leerzeichen) werden in Logs und angezeigter Eingabe als `***` maskiert. Der Name lässt sich bei Bedarf über `tools.sftp_transfer.name` anpassen.
 - Admin-Aufgaben sind sowohl auf GNU/Linux- als auch auf Windows-Systemen möglich, sofern SSH/SFTP verfügbar ist. Befehle für das Zielsystem (PowerShell/cmd auf Windows) anpassen und Pfade vor Dateiübertragungen prüfen.
 
 ### Plugin-System
@@ -154,8 +156,8 @@ def register(registry: PluginRegistry) -> None:
 - `docs/dependencies_de.md` (sowie `docs/dependencies_en.md`, `docs/dependencies_es.md`): Abhängigkeitsverwaltung, Lockfiles und CI.
 - `CHANGELOG.md`: Versionshistorie des Projekts.
 - `src/smart_ai_sys_admin/`: Hauptquellcode der Anwendung (TUI und Utilities).
-- `tests/`: automatisierte Testsuite (Unit- und Integrationstests).
-- `Makefile`: Aufgaben zum Installieren, Locken (`lock`, `lock-upgrade`), Sync (`sync-deps`), Formatieren, Linten, Testen (`test`, `test-mistral`), Ausführen und Bereinigen.
+- `tests/`: automatisierte Testsuite (Unit-, Integrations- und End-to-End-Tests unter `tests/e2e`).
+- `Makefile`: Aufgaben zum Installieren (`install`, `install-prod`), Locken (`lock`, `lock-upgrade`), Sync (`sync-deps`), Formatieren, Linten (`lint`, `lint-fix`), Testen (`test`, `test-mistral`, `test-e2e`, `test-e2e-live`), Ausführen (`run`, `website-serve`) und Bereinigen.
 - `AGENTS.md`: Leitfaden für menschliche Mitwirkende und KI-Agenten.
 
 ## Lizenz

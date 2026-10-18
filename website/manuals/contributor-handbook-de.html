@@ -45,7 +45,7 @@
         <h2>Allgemeine Prinzipien</h2>
         <ul>
           <li>Terminalorientierte Anwendung mit persistenten SSH/SFTP-Sitzungen und einem konversationellen KI-Assistenten.</li>
-          <li>Python-3.12-Ökosystem, Textual-8.2.8-TUI, Strands Agents 1.61.1 und MCP-Tools wie Firecrawl.</li>
+          <li>Python-3.12-Ökosystem, Textual-8.2.8-TUI, Strands Agents 1.61.1 mit Strands Agents Tools 0.8.9, MCP-Transporte auf Basis von <code>mcp</code> 2.x und MCP-Tools wie Firecrawl.</li>
           <li>Abhängigkeiten über <code>pyproject.toml</code> und pip-tools-Lockfiles (<code>make lock</code>, <code>make install</code>).</li>
           <li>Tägliche Arbeit mit <code>make install</code>, <code>make format</code>, <code>make lint</code>, <code>make test</code> und <code>make run</code>.</li>
           <li>GitHub-Actions-CI (Lint + Tests auf Python 3.12) bei jedem Pull Request über <code>.github/workflows/ci.yml</code>.</li>
@@ -73,11 +73,18 @@
           <li>Online-Handbücher nutzen HTML-Seiten in <code>website/manuals/</code>; relevante Änderungen aus <code>docs/</code> spiegeln.</li>
         </ul>
 
+        <h2>Testsuite</h2>
+        <ul>
+          <li><code>make test</code> führt die Unit-Tests plus die Offline-End-to-End-Schicht aus (<code>tests/e2e/offline</code>, Marker <code>e2e_offline</code>): die echte Textual-App, <code>AgentRuntime</code> und <code>strands.Agent</code> gegen einen In-Process-SSH/SFTP-Server mit einem geskripteten Modell; sie braucht keine Schlüssel und läuft in CI. <code>make test-e2e</code> führt nur diese Schicht aus.</li>
+          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, Marker <code>e2e</code>) fährt Operator-Szenarien gegen die echten Provider; es erfordert <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> und/oder <code>GEMINI_API_KEY</code>, deckelt die Modellaufrufe pro Test und läuft nie in CI.</li>
+          <li><code>make test-mistral</code> behält die Mistral-PoC-Tests (Marker <code>mistral</code>, benötigt <code>MISTRAL_API_KEY</code>); sie sind als <code>e2e</code> markiert, damit <code>make test</code> nie Tokens verbraucht.</li>
+        </ul>
+
         <h2>Empfohlener Workflow</h2>
         <ol>
           <li>Virtualenv aktivieren (<code>python3.12 -m venv .venv</code>, dann <code>source .venv/bin/activate</code>).</li>
           <li>Abhängigkeiten installieren (<code>make install</code>).</li>
-          <li>Nach Änderungen: <code>make format</code>, <code>make lint</code>, <code>make test</code> (Pflicht vor dem Öffnen eines PR).</li>
+          <li>Nach Änderungen: <code>make format</code>, <code>make lint</code>, <code>make test</code> (Pflicht vor dem Öffnen eines PR); bei Änderungen an TUI, Agent-Runtime oder einem Provider zusätzlich <code>make test-e2e-live</code>.</li>
           <li>TUI mit <code>make run</code> und Website mit <code>make website-serve</code> validieren.</li>
         </ol>
 

@@ -51,7 +51,7 @@ If a change is user-visible in the TUI or on the website, update all three produ
 
 - `make format`, `make lint`, and `make test` pass locally
 - Lockfiles updated if `pyproject.toml` dependencies changed (`make lock` or `make lock-upgrade`)
-- Optional integration check: `make test-mistral` when validating Mistral (requires `MISTRAL_API_KEY`; not run in CI)
+- Optional integration check: `make test-mistral` when validating Mistral (requires `MISTRAL_API_KEY`; the PoC tests are marked `e2e`, so `make test` and CI never run them)
 - Optional live end-to-end check: `make test-e2e-live` when touching the TUI, the agent runtime or a provider (see below; not run in CI)
 - Docs match the new behaviour in the correct language tier
 
@@ -60,7 +60,7 @@ If a change is user-visible in the TUI or on the website, update all three produ
 `tests/e2e` drives the real Textual app, `AgentRuntime` and `strands.Agent` against an in-process paramiko SSH/SFTP server (`tests/e2e/ssh_server.py`). There are two layers:
 
 - **Offline** (`tests/e2e/offline`, marker `e2e_offline`): a scripted Strands model (`tests/e2e/fake_model.py`) replaces the provider, so the suite is deterministic, needs no keys and runs inside `make test` and CI. `make test-e2e` runs only this layer.
-- **Live** (`tests/e2e/live`, marker `e2e`): the real provider answers operator prompts such as "dame las características hardware de este servidor". It is excluded by default and only runs with `RUN_E2E=1` plus the provider keys in the environment (`OPENAI_API_KEY`, `MISTRAL_API_KEY`). A Strands hook caps model calls per test (`SHELL_SENTINEL_E2E_MAX_MODEL_CALLS`, default 12) and each turn has a wall-clock timeout (`SHELL_SENTINEL_E2E_TURN_TIMEOUT`, default 180 s), so a looping agent fails fast instead of spending tokens. Select providers with `SHELL_SENTINEL_E2E_PROVIDERS=openai,mistral,mistral-zai` (default: all with a key); `SHELL_SENTINEL_E2E_SFTP=1` enables the optional SFTP scenario.
+- **Live** (`tests/e2e/live`, marker `e2e`): the real provider answers operator prompts such as "dame las características hardware de este servidor". It is excluded by default and only runs with `RUN_E2E=1` plus the provider keys in the environment (`OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY`); providers without a key are skipped. A Strands hook caps model calls per test (`SHELL_SENTINEL_E2E_MAX_MODEL_CALLS`, default 12) and each turn has a wall-clock timeout (`SHELL_SENTINEL_E2E_TURN_TIMEOUT`, default 180 s), so a looping agent fails fast instead of spending tokens. Select providers with `SHELL_SENTINEL_E2E_PROVIDERS=openai,mistral,mistral-zai,gemini` (the registry lives in `tests/e2e/providers.py`; default: all with a key); `SHELL_SENTINEL_E2E_SFTP=1` enables the optional SFTP scenario.
 
 Keys are read from the environment only; never put them in configuration files or test fixtures. Typical invocations:
 

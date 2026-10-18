@@ -39,7 +39,7 @@ A welcome screen appears on startup and closes automatically after 5 seconds or 
 ## Interface layout
 - **Conversation panel**: renders Markdown responses from the assistant.
 - **Input area**: multi-line editor; press `Ctrl+S` (default) to submit.
-- **Footer**: shows the current SSH status and whether the agent is thinking.
+- **Footer**: shows the current SSH status, the active LLM provider and model (for example "Google Gemini · gemini-3.8-flash") and whether the agent is thinking.
 
 ## Core commands
 Commands are available in English, Spanish and German.
@@ -57,7 +57,9 @@ Type any natural-language instruction. If it is not a slash command, the Strands
 - "List the top CPU processes".
 - "Upload `/tmp/script.sh` to `/home/ubuntu/bin/script.sh`".
 
-The agent reuses the active SSH session to run remote commands. File transfers open SFTP on demand through the same connection.
+The agent reuses the active SSH session to run remote commands. File transfers open SFTP on demand through the same connection; relative remote paths are resolved under the SFTP home directory of the connected user and missing parent directories are created there.
+
+While the agent (or `/connect`) is working, the interface stays responsive and the footer shows the thinking indicator, but any new submission is rejected with a notice until the current one finishes. Remote commands are capped by `remote_command.timeout_seconds` (default 900 s of **total** runtime, not idle time); for longer tasks ask the agent to pass a larger `timeout_seconds`.
 
 ## Configuration reference
 - `conf/app_config.json` stores styling, prompts and shortcuts using placeholders such as `{{ui.output_panel.title}}`, automatically resolved for the active locale.
@@ -68,6 +70,8 @@ The agent reuses the active SSH session to run remote commands. File transfers o
 - For `lmstudio`, run `lms server start` and adjust `base_url`/`api_key`. For `cerebras`, export `CEREBRAS_API_KEY` (or set `api_key_env`) and configure `client_args`/`params`; the official SDK streams SSE events. For Mistral (`provider: "mistral"`), export `MISTRAL_API_KEY` and use defaults `reasoning_effort: high` and `max_tokens: 16184` with `mistral-medium-3.5`. For Google Gemini (`provider: "gemini"`), export `GEMINI_API_KEY` (or `GOOGLE_API_KEY`, or set `api_key_env`) and review `providers.gemini`: the example uses `gemini-3.8-flash` with `temperature: 0.3` and `max_tokens: 16384` (sent as `max_output_tokens`); extra `params` go to `GenerateContentConfig` and `client_args` to the `google-genai` client (`vertexai: true` with `project`/`location` for Vertex AI).
 - Prompt caching: each provider block accepts an optional `cache` object (`enabled`, `strategy`, `ttl`, `system_prompt_ttl`, `tools_ttl`, `cache_key`) mapped to Strands' `CacheConfig`. Bedrock defaults to `enabled: true` with `strategy: "auto"` (cache points are injected only for Claude model ids). OpenAI and Mistral default to `enabled: true` and only send a stable `prompt_cache_key` derived from the configuration path and `model_id`; pin `cache_key` or set it to `false` to opt out. LM Studio is disabled unless enabled explicitly; Ollama, Cerebras and Gemini ignore the block with a logged warning (Gemini caches prefixes implicitly and its reported cached tokens still appear in `/status`). `/status` reports whether caching is active and the cached vs total input tokens of the last turn.
 - Turn limit: `agent.max_turns` (default `25`) caps the turns, each one a model call plus the tools it requests, that the agent may spend on one instruction. When it is reached the agent stops cleanly, the panel appends a warning suggesting a narrower instruction and a WARNING is logged; `null` or `0` disables the cap and `/status` shows the active value.
+- Local tools: `tools.default` lists which Strands Agents Tools are registered (`shell`, `file_read`, `file_write`, `sleep` in the example); only those are enabled, and omitting the key enables all of them. `remote_ssh_command`, `remote_sftp_transfer` and `local_datetime` are always available.
+- MCP servers: each transport under `mcp.transports` accepts `timeout_seconds` (default `30`), which bounds the server startup and, for `sse`/`streamable_http`, the HTTP connect timeout. Servers start in parallel; `/status` lists each one with its state and tool count.
 
 ## Troubleshooting
 - **Colors look wrong / warning about terminal**: check `TERM` and switch to `xterm-256color` if needed.

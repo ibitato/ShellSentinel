@@ -38,7 +38,7 @@ Official site: <https://www.shellsentinel.net>.
 make run
 ```
 - The console has two main sections: an output history (top) and an input area (bottom), with a footer that always displays the SSH connection status plus the active LLM provider/model.
-- Submit instructions with the configured shortcut (default `Ctrl+S`).
+- Submit instructions with the configured shortcut (default `Ctrl+S`). While the agent or `/connect` is working, the interface stays responsive (the footer shows the thinking indicator) but new submissions are rejected with a notice until the current one finishes.
 - Supported commands (aliases available in English, Spanish and German):
 - `/connect <host> <user> <password|key_path> [port]` (`/conectar`, `/verbinden`) opens a persistent SSH session (optional port, defaults to 22). SFTP opens on the first file transfer.
   - `/disconnect` (`/desconectar`, `/trennen`) closes the active connection if any.
@@ -88,16 +88,17 @@ make run
 - The OpenAI example uses `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` and `max_tokens: 32768` (sent as `max_output_tokens`). The real configuration uses **65,536**; the Bedrock example remains at `max_tokens: 8192`. Adjust these values to your quotas.
 - Responses also accepts optional `temperature: 0.3` in `params`; it is not part of the default configuration.
 - Credentials are read from your environment (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY`, etc.). You can also point to a different file via `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` or reuse `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
-- The `tools` section enables Strands Agents Tools and the custom `remote_ssh_command`, which reuses the TUI SSH session (the `timeout_seconds` parameter is optional).
+- The `tools` section enables Strands Agents Tools and the custom `remote_ssh_command`, which reuses the TUI SSH session (the `timeout_seconds` parameter is optional and caps the **total** runtime of the command, not the idle time between output reads).
 - `tools.default` selects which Strands Agents Tools are registered (`shell`, `file_read`, `file_write`, `sleep`). Remove `shell` and `file_write` to keep the agent off your local workstation; omitting the key enables all of them. `remote_ssh_command`, `remote_sftp_transfer` and `local_datetime` are always available.
-- `remote_ssh_command` defaults to **900 seconds (15 minutes)** as defined in `conf/agent.conf`. If you expect longer operations, ask the agent to include the desired `timeout_seconds`.
+- `remote_ssh_command` defaults to **900 seconds (15 minutes)** of total runtime as defined in `conf/agent.conf`; when the limit is hit the channel is closed and the agent receives a timeout error. If you expect longer operations, ask the agent to include the desired `timeout_seconds`.
 - To prevent overwhelming responses, set `remote_command.max_output_chars` to cap how many characters are forwarded to the agent. Increase it for audit-heavy workflows or reduce it for shared terminals.
 - `agent.max_turns` caps how many turns (one model call plus the tools it requests) the agent may spend on a single instruction; the default is **25**. When the cap is reached Strands stops the invocation cleanly, the conversation panel appends a warning suggesting a narrower instruction, and a WARNING is logged. Set it to `null` or `0` to disable the cap. `/status` shows the active value. This is the safety net against a model that keeps requesting tools in a loop, which previously ended in a `RecursionError`.
 - To work with Model Context Protocol (MCP) servers, declare each transport (`stdio`, `sse`, `streamable_http`) under `mcp`. The agent keeps those connections alive during the session and exposes their tools automatically.
   - Example: transport `firecrawl-stdio` runs `npx -y firecrawl-mcp`. Use `env_passthrough` so the agent inherits `FIRECRAWL_API_KEY` (or other secrets) and export them before launching the TUI.
-  - Servers start in parallel; one that fails or does not answer within its `timeout_seconds` (default 30 s) is skipped with a warning in the conversation panel that names the cause and the fix, and `/status` lists every MCP server with its state.
+  - Servers start in parallel; one that fails or does not answer within its `timeout_seconds` (default 30 s) is skipped with a warning in the conversation panel that names the cause and the fix, and `/status` lists every MCP server with its state and tool count. The agent still starts without that server's tools.
+  - Transports use the `mcp` 2.x SDK. For `sse` and `streamable_http`, `timeout_seconds` also sets the HTTP connect/write timeout (reads keep a 300 s SSE window) and `headers` are forwarded to the HTTP client; without a value the transport falls back to 30 s.
 - When the app starts you will see a retro welcome screen (orange theme) that closes after 5 seconds or any key press.
-- `/connect` keeps the SSH session alive; SFTP opens on demand when the agent transfers files. The agent exposes `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` to upload (`upload`/`put`) or download (`download`/`get`) files through the same connection. Passwords supplied to `/connect` are redacted as `***` in logs and echoed input. Rename the tool via `tools.sftp_transfer.name` if needed.
+- `/connect` keeps the SSH session alive; SFTP opens on demand when the agent transfers files. The agent exposes `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` to upload (`upload`/`put`) or download (`download`/`get`) files through the same connection. Relative remote paths are resolved under the SFTP home directory of the connected user, and missing parent directories are created there. Passwords supplied to `/connect` (including quoted passwords with spaces) are redacted as `***` in logs and echoed input. Rename the tool via `tools.sftp_transfer.name` if needed.
 - You can manage GNU/Linux or Windows servers as long as they provide SSH/SFTP. Adjust commands to the target platform (PowerShell/cmd on Windows) and double-check paths when transferring files.
 
 ### Plugin system
@@ -155,8 +156,8 @@ def register(registry: PluginRegistry) -> None:
 - `docs/dependencies_en.md`, `docs/dependencies_es.md`, and `docs/dependencies_de.md`: dependency management, lockfiles and CI.
 - `CHANGELOG.md`: project version history.
 - `src/smart_ai_sys_admin/`: main application source code (TUI and utilities).
-- `tests/`: automated test suite (unit and integration).
-- `Makefile`: helper tasks for install, lock, lock-upgrade, sync-deps, format, lint, test, test-mistral, run and clean.
+- `tests/`: automated test suite (unit, integration and end-to-end under `tests/e2e`).
+- `Makefile`: helper tasks for install, install-prod, lock, lock-upgrade, sync-deps, format, lint, lint-fix, test, test-mistral, test-e2e, test-e2e-live, run, website-serve and clean.
 - `AGENTS.md`: contribution guide for human collaborators and AI agents.
 
 ## Licence

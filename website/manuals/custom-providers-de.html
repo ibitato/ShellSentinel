@@ -117,6 +117,7 @@
           <li><code>providers.gemini</code> mit <code>model_id</code> (<code>gemini-3.8-flash</code>), <code>params</code> (<code>max_tokens</code> wird zu <code>max_output_tokens</code>) und <code>client_args</code> konfigurieren.</li>
           <li>Schlüssel aus <code>api_key_env</code> (<code>GEMINI_API_KEY</code>, dann <code>GOOGLE_API_KEY</code>); <code>api_key</code> im JSON wird abgelehnt. <code>client_args.vertexai: true</code> nutzt Google-Cloud-Anmeldedaten.</li>
           <li>Thoughts kommen als <code>reasoningContent</code> (<code>show_thinking</code>); <code>cached_content_token_count</code> wird auf <code>cacheReadInputTokens</code> abgebildet. Kein <code>CacheConfig</code>, daher startet der Block <code>cache</code> deaktiviert.</li>
+          <li>Die Live-e2e-Registry enthält eine Zeile <code>gemini</code>: <code>make test-e2e-live</code> deckt sie ab, sobald <code>GEMINI_API_KEY</code> gesetzt ist.</li>
         </ul>
 
         <h2>Prompt-Caching</h2>
@@ -138,6 +139,7 @@
           <li><code>cerebras_cloud_sdk</code> mit SSE-Streaming integrieren.</li>
           <li><code>providers.cerebras</code> mit <code>model_id</code>, <code>params</code>, <code>client_args</code>, <code>api_key_env</code>.</li>
           <li><code>ChatChunkResponse</code> in native Events mit <code>metadata</code> für Nutzung und Zeiten.</li>
+          <li>Für strukturierte Ausgaben eine <code>ToolSpec</code> erzeugen und <code>tool_call.function.arguments</code> parsen.</li>
         </ul>
 
         <h2>Externe Referenzen</h2>

@@ -60,7 +60,8 @@ El request efectivo usa `reasoning: {"effort": "medium"}` y `max_output_tokens: 
 - Shell Sentinel incluye `ShellMistralModel`, un wrapper sobre `MistralModel` de Strands (SDK oficial `mistralai` v2). Configura `providers.mistral` con `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` y `params`.
 - **Valores por defecto:** `mistral-medium-3.5`, `reasoning_effort: high` (obligatorio en modelos con reasoning), `max_tokens: 16184`.
 - El wrapper inyecta `reasoning_effort` en cada petición y mapea chunks de thinking a eventos `reasoningContent` (para `show_thinking`).
-- Valida con `make test-mistral` cuando `MISTRAL_API_KEY` esté disponible.
+- **Tool calls en streaming:** algunos modelos servidos por Mistral (por ejemplo `zai-glm-5-3`) envían el `id` y el nombre de la tool call solo en el primer delta; los fragmentos siguientes llevan el id por defecto del SDK `"null"` y solo un trozo de los argumentos JSON. El wrapper agrupa los fragmentos por `index` (o por un `id` real), añade los fragmentos sin id a la última llamada abierta, mantiene separadas las tool calls paralelas, serializa a JSON los argumentos que llegan como dict y registra un aviso con el nombre de la herramienta si la llamada reensamblada sigue sin id, sin nombre o con JSON inválido. Sin esto, `remote_ssh_command` recibía una entrada vacía y el agente entraba en bucle hasta `agent.max_turns` (antes, `RecursionError`).
+- Valida con `make test-mistral` cuando `MISTRAL_API_KEY` esté disponible (las pruebas de la PoC están marcadas `e2e`, así que `make test` nunca las ejecuta).
 
 ## Caso práctico: Google Gemini
 

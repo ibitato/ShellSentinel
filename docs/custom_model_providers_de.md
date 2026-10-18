@@ -65,7 +65,8 @@ Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber ei
 - Shell Sentinel liefert `ShellMistralModel`, einen Wrapper über Strands `MistralModel` (offizielles `mistralai` v2 SDK). Konfiguriere `providers.mistral` mit `model_id`, `api_key_env`/`MISTRAL_API_KEY`, `reasoning_effort` und `params`.
 - **Standardwerte:** `mistral-medium-3.5`, `reasoning_effort: high` (Pflicht bei Reasoning-Modellen), `max_tokens: 16184`.
 - Der Wrapper injiziert `reasoning_effort` in jede API-Anfrage und mappt Thinking-Chunks auf `reasoningContent`-Stream-Events (`show_thinking`).
-- Validierung mit `make test-mistral`, wenn `MISTRAL_API_KEY` gesetzt ist.
+- **Gestreamte Tool-Calls:** Einige von Mistral bereitgestellte Modelle (z. B. `zai-glm-5-3`) senden `id` und Namen des Tool-Calls nur im ersten Delta; spätere Fragmente tragen die SDK-Standard-ID `"null"` und nur einen Teil der JSON-Argumente. Der Wrapper gruppiert Fragmente nach `index` (oder einer echten `id`), hängt Fragmente ohne ID an den letzten offenen Call an, hält parallele Tool-Calls getrennt, serialisiert dict-Argumente zu JSON und protokolliert eine Warnung mit dem Tool-Namen, wenn dem zusammengesetzten Call weiterhin ID, Name oder gültiges JSON fehlen. Ohne das erhielt `remote_ssh_command` eine leere Eingabe und der Agent lief bis `agent.max_turns` in einer Schleife (früher `RecursionError`).
+- Validierung mit `make test-mistral`, wenn `MISTRAL_API_KEY` gesetzt ist (die PoC-Tests sind mit `e2e` markiert, `make test` führt sie also nie aus).
 
 ## Praxisbeispiel: Google Gemini
 

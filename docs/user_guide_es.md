@@ -39,7 +39,7 @@ Al arrancar verás una pantalla de bienvenida que se cierra sola en 5 segundos o
 ## Interfaz
 - **Panel principal**: muestra la conversación en Markdown.
 - **Área de entrada**: admite varias líneas; presiona `Ctrl+S` para enviar (por defecto).
-- **Footer**: indica el estado de la conexión SSH y si el agente está procesando tu instrucción.
+- **Footer**: indica el estado de la conexión SSH, el proveedor LLM y el modelo activos (por ejemplo "Google Gemini · gemini-3.8-flash") y si el agente está procesando tu instrucción.
 
 ## Comandos básicos
 Puedes usar los comandos en inglés, español o alemán.
@@ -57,7 +57,9 @@ Escribe instrucciones libres; si no coinciden con un comando slash, se enviarán
 - "Listar los procesos que consumen más CPU".
 - "Subir el archivo `/tmp/script.sh` a `/home/ubuntu/bin/script.sh`".
 
-El agente reutiliza la sesión SSH activa para ejecutar comandos. Las transferencias de archivos abren SFTP bajo demanda en la misma conexión.
+El agente reutiliza la sesión SSH activa para ejecutar comandos. Las transferencias de archivos abren SFTP bajo demanda en la misma conexión; las rutas remotas relativas se resuelven bajo el directorio home SFTP del usuario conectado y los directorios intermedios que falten se crean ahí.
+
+Mientras el agente (o `/connect`) está trabajando, la interfaz sigue respondiendo y el footer muestra el indicador de "pensando", pero cualquier nuevo envío se rechaza con un aviso hasta que termine el actual. Los comandos remotos están limitados por `remote_command.timeout_seconds` (por defecto 900 s de ejecución **total**, no de inactividad); para tareas más largas pide al agente que pase un `timeout_seconds` mayor.
 
 ## Configuración adicional
 - `conf/app_config.json` define estilos, textos y atajos mediante claves como `{{ui.output_panel.title}}`, resueltas según el locale.
@@ -68,6 +70,8 @@ El agente reutiliza la sesión SSH activa para ejecutar comandos. Las transferen
 - Para `lmstudio`, ejecuta `lms server start` y ajusta `base_url`/`api_key`. Para `cerebras`, exporta `CEREBRAS_API_KEY` (o define `api_key_env`) y configura `client_args`/`params`; el SDK oficial procesa streams SSE. Para Mistral (`provider: "mistral"`), exporta `MISTRAL_API_KEY` y usa por defecto `reasoning_effort: high` y `max_tokens: 16184` con `mistral-medium-3.5`. Para Google Gemini (`provider: "gemini"`), exporta `GEMINI_API_KEY` (o `GOOGLE_API_KEY`, o define `api_key_env`) y revisa `providers.gemini`: el ejemplo usa `gemini-3.8-flash` con `temperature: 0.3` y `max_tokens: 16384` (enviado como `max_output_tokens`); el resto de `params` va a `GenerateContentConfig` y `client_args` al cliente de `google-genai` (`vertexai: true` con `project`/`location` para Vertex AI).
 - Prompt caching: cada bloque de proveedor admite un objeto opcional `cache` (`enabled`, `strategy`, `ttl`, `system_prompt_ttl`, `tools_ttl`, `cache_key`) que se traduce al `CacheConfig` de Strands. Bedrock usa por defecto `enabled: true` con `strategy: "auto"` (los cache points solo se insertan en modelos Claude). OpenAI y Mistral usan por defecto `enabled: true` y solo envían un `prompt_cache_key` estable derivado de la ruta de configuración y de `model_id`; fija `cache_key` o ponlo a `false` para desactivarlo. LM Studio queda desactivado salvo que lo actives; Ollama, Cerebras y Gemini ignoran el bloque con un aviso en el log (Gemini cachea prefijos de forma implícita y los tokens cacheados que informa siguen apareciendo en `/status`). `/status` indica si la caché está activa y los tokens de entrada cacheados frente al total del último turno.
 - Límite de turnos: `agent.max_turns` (por defecto `25`) acota los turnos, cada uno una llamada al modelo más las herramientas que solicite, que el agente puede dedicar a una instrucción. Al alcanzarlo el agente se detiene de forma limpia, el panel añade un aviso sugiriendo una instrucción más acotada y se registra un WARNING; `null` o `0` desactiva el límite y `/status` muestra el valor activo.
+- Herramientas locales: `tools.default` enumera qué herramientas de Strands Agents Tools se registran (`shell`, `file_read`, `file_write`, `sleep` en el ejemplo); solo se habilitan esas y, si omites la clave, se habilitan todas. `remote_ssh_command`, `remote_sftp_transfer` y `local_datetime` están siempre disponibles.
+- Servidores MCP: cada transporte de `mcp.transports` admite `timeout_seconds` (por defecto `30`), que acota el arranque del servidor y, en `sse`/`streamable_http`, el timeout HTTP de conexión. Los servidores arrancan en paralelo; `/status` lista cada uno con su estado y su número de herramientas.
 
 ## Solución de problemas
 - **No hay colores o la interfaz se ve mal**: revisa la variable `TERM` y la advertencia mostrada al inicio.

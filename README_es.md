@@ -29,6 +29,7 @@ Sitio oficial: <https://www.shellsentinel.net>.
    make lint
    make test
    ```
+   `make test` incluye la suite end-to-end offline de la TUI. Las pruebas end-to-end contra proveedores reales se ejecutan con `make test-e2e-live` (`RUN_E2E=1` más las claves API; consulta `CONTRIBUTING.md`).
 
 ## Uso de la CLI
 - Lanza la interfaz TUI con:
@@ -36,7 +37,7 @@ Sitio oficial: <https://www.shellsentinel.net>.
 make run
 ```
 - La consola se divide en dos zonas principales: historial de salida (superior) y área de entrada (inferior), rematada con un **footer** que muestra en todo momento el estado de la conexión SSH y el proveedor/modelo LLM activo.
-- Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`).
+- Envía las instrucciones usando el atajo configurado (por defecto `Ctrl+S`). Mientras el agente o `/connect` están trabajando, la interfaz sigue respondiendo (el footer muestra el indicador de "pensando"), pero los nuevos envíos se rechazan con un aviso hasta que termine el actual.
 - Comandos disponibles (puedes usar los alias en inglés, español o alemán):
   - `/connect <host> <user> <password|key_path> [puerto]` (`/conectar`, `/verbinden`) abre una sesión SSH persistente (el puerto es opcional, por defecto 22). SFTP se abre en la primera transferencia de archivos.
   - `/disconnect` (`/desconectar`, `/trennen`) cierra la conexión activa si existe.
@@ -89,16 +90,17 @@ make run
 - El ejemplo de OpenAI usa `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` y `max_tokens: 32768` (enviado como `max_output_tokens`). La configuración real usa **65.536**; el ejemplo de Bedrock mantiene `max_tokens: 8192`. Ajusta estos valores a tus cuotas.
 - Responses también admite `temperature: 0.3` opcional en `params`; no forma parte de la configuración predeterminada.
 - Las credenciales se obtienen de tu entorno (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY`, etc.). También puedes redefinir la ubicación del fichero con `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` o reutilizar `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
-- La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional).
+- La sección `tools` permite habilitar herramientas Strands Agents Tools y la tool personalizada `remote_ssh_command`, que reutiliza la sesión SSH abierta por la TUI (el parámetro `timeout_seconds` es opcional y limita el tiempo **total** de ejecución del comando, no la inactividad entre lecturas de salida).
 - `tools.default` define qué herramientas de Strands Agents Tools se registran (`shell`, `file_read`, `file_write`, `sleep`). Quita `shell` y `file_write` para que el agente no actúe sobre tu equipo local; si omites la clave se habilitan todas. `remote_ssh_command`, `remote_sftp_transfer` y `local_datetime` están siempre disponibles.
-- `remote_ssh_command` emplea por defecto un timeout de **900 segundos (15 minutos)** definido en `conf/agent.conf`. Si el comando puede tardar más, indícalo en tu instrucción para que el agente añada `timeout_seconds` con el valor deseado.
+- `remote_ssh_command` emplea por defecto un timeout de **900 segundos (15 minutos)** de ejecución total definido en `conf/agent.conf`; al superarlo se cierra el canal y el agente recibe un error de timeout. Si el comando puede tardar más, indícalo en tu instrucción para que el agente añada `timeout_seconds` con el valor deseado.
 - Para evitar respuestas inmanejables, `remote_command.max_output_chars` limita el número de caracteres que se entregan al agente. Aumenta o reduce este valor según la política de tu entorno (por ejemplo, más alto para auditorías, más bajo para sesiones compartidas).
 - `agent.max_turns` limita cuántos turnos (una llamada al modelo más las herramientas que solicite) puede dedicar el agente a una sola instrucción; el valor por defecto es **25**. Al alcanzarlo, Strands detiene la invocación de forma limpia, el panel de conversación añade un aviso sugiriendo una instrucción más acotada y se registra un WARNING. Usa `null` o `0` para desactivar el límite. `/status` muestra el valor activo. Es la red de seguridad frente a un modelo que pide herramientas en bucle, algo que antes terminaba en un `RecursionError`.
 - Si necesitas servidores externos Model Context Protocol (MCP), declara cada transporte (`stdio`, `sse`, `streamable_http`) en la sección `mcp`. El agente mantendrá las conexiones activas durante la sesión y añadirá sus herramientas automáticamente.
   - Ejemplo: el transporte `firecrawl-stdio` lanza `npx -y firecrawl-mcp`. Configura `env_passthrough` para que el agente herede `FIRECRAWL_API_KEY` (u otras variables sensibles) y, antes de iniciar la TUI, expórtalas en tu entorno (`export FIRECRAWL_API_KEY="..."`).
-  - Los servidores arrancan en paralelo; el que falla o no responde dentro de su `timeout_seconds` (30 s por defecto) se omite con un aviso en el panel de conversación que indica la causa y la solución, y `/status` lista cada servidor MCP con su estado.
+  - Los servidores arrancan en paralelo; el que falla o no responde dentro de su `timeout_seconds` (30 s por defecto) se omite con un aviso en el panel de conversación que indica la causa y la solución, y `/status` lista cada servidor MCP con su estado y su número de herramientas. El agente arranca igualmente, sin las herramientas de ese servidor.
+  - Los transportes usan el SDK `mcp` 2.x. En `sse` y `streamable_http`, `timeout_seconds` fija también el timeout HTTP de conexión/escritura (la lectura conserva una ventana SSE de 300 s) y `headers` se reenvía al cliente HTTP; sin valor, el transporte usa 30 s.
 - Al iniciar la aplicación verás una pantalla de bienvenida retro en tonos naranja; se cierra sola tras 5 s o cuando presionas cualquier tecla.
-- Las sesiones `/conectar` mantienen viva la sesión SSH; SFTP se abre bajo demanda cuando el agente transfiere archivos. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Las contraseñas de `/connect` se enmascaran como `***` en logs y en la entrada mostrada. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
+- Las sesiones `/conectar` mantienen viva la sesión SSH; SFTP se abre bajo demanda cuando el agente transfiere archivos. El agente dispone de `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` para subir (`upload`/`put`) o descargar (`download`/`get`) archivos reutilizando esa conexión. Las rutas remotas relativas se resuelven bajo el directorio home SFTP del usuario conectado, y los directorios intermedios que falten se crean ahí. Las contraseñas de `/connect` (también las entrecomilladas con espacios) se enmascaran como `***` en logs y en la entrada mostrada. Puedes renombrar la herramienta desde `tools.sftp_transfer.name` si necesitas otro identificador.
 - Puedes administrar servidores GNU/Linux o Windows siempre que expongan SSH/SFTP. Ajusta los comandos remotos a la plataforma (por ejemplo, usa PowerShell/cmd para Windows) y valida rutas antes de transferir o modificar contenidos.
 
 ### Sistema de plugins
@@ -153,8 +155,8 @@ def register(registry: PluginRegistry) -> None:
 - `docs/dependencies_es.md` (y `docs/dependencies_en.md`, `docs/dependencies_de.md`): gestión de dependencias, lockfiles y CI.
 - `CHANGELOG.md`: historial de versiones del proyecto.
 - `src/smart_ai_sys_admin/`: código fuente principal de la aplicación (TUI y utilidades).
-- `tests/`: suite de pruebas automatizadas (unitarias e integración).
-- `Makefile`: tareas para instalación, lock, lock-upgrade, sync-deps, formateo, lint, test, test-mistral y ejecución.
+- `tests/`: suite de pruebas automatizadas (unitarias, de integración y end-to-end en `tests/e2e`).
+- `Makefile`: tareas para instalación (`install`, `install-prod`), lock, lock-upgrade, sync-deps, formateo, lint, lint-fix, test, test-mistral, test-e2e, test-e2e-live, ejecución, website-serve y limpieza.
 - `AGENTS.md`: guía para agentes IA colaborando en este repositorio.
 
 ## Licencia

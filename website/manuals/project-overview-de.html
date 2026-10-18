@@ -44,9 +44,10 @@
 
         <h2>Technischer Stack</h2>
         <ul>
-          <li>Python 3.12, Textual 8.2.8 für die TUI, Strands Agents SDK 1.61.1 für konversationelles Reasoning.</li>
+          <li>Python 3.12, Textual 8.2.8 für die TUI, Strands Agents SDK 1.61.1 und Strands Agents Tools 0.8.9 für konversationelles Reasoning, MCP-Transporte auf Basis von <code>mcp</code> 2.x.</li>
           <li>Reproduzierbare Installation mit <code>pyproject.toml</code> und pip-tools-Lockfiles (<code>make lock</code>, <code>make install</code>).</li>
-          <li>OpenAI unterstützt Chat Completions und Responses; Token- und Reasoning-Parameter werden je Endpoint normalisiert, Responses erlaubt Function Tools mit aktivem Reasoning und Mistral AI nutzt sein offizielles SDK.</li>
+          <li>Provider: Bedrock, OpenAI, LM Studio, Cerebras, Mistral AI, Google Gemini und Ollama. OpenAI unterstützt Chat Completions und Responses; Token- und Reasoning-Parameter werden je Endpoint normalisiert, Responses erlaubt Function Tools mit aktivem Reasoning, Mistral AI nutzt sein offizielles SDK und Google Gemini läuft über Strands' <code>GeminiModel</code> mit dem <code>google-genai</code>-SDK.</li>
+          <li>Prompt-Caching pro Provider (Block <code>cache</code>) und ein Turn-Limit pro Anweisung (<code>agent.max_turns</code>, Standard 25) halten Kosten und Endlosschleifen unter Kontrolle.</li>
           <li>Eigene Tools: <code>remote_ssh_command</code>, <code>remote_sftp_transfer</code>, <code>local_datetime</code>.</li>
           <li>Firecrawl-MCP-Tools für Recherche, Scraping und strukturierte Extraktion.</li>
         </ul>
@@ -63,7 +64,8 @@
         <ol>
           <li>Virtualenv mit <code>python3.12 -m venv .venv</code> erstellen und aktivieren.</li>
           <li>Abhängigkeiten mit <code>make install</code> installieren.</li>
-          <li>Vor PRs: <code>make format</code>, <code>make lint</code>, <code>make test</code>.</li>
+          <li>Vor PRs: <code>make format</code>, <code>make lint</code>, <code>make test</code> (Unit-Tests plus die Offline-End-to-End-Schicht in <code>tests/e2e</code>, die die echte TUI gegen einen In-Process-SSH-Server fährt).</li>
+          <li>Bei Änderungen an TUI, Agent-Runtime oder einem Provider optional <code>make test-e2e-live</code> ausführen (<code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> oder <code>GEMINI_API_KEY</code>); es verbraucht Tokens und läuft nie in CI.</li>
           <li>TUI mit <code>make run</code> und Website mit <code>make website-serve</code> validieren.</li>
         </ol>
 

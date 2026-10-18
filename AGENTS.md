@@ -35,7 +35,7 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - **Language:** Python 3.12
 - **Application type:** interactive CLI
 - **TUI framework:** [Textual 8.2.8](https://textual.textualize.io)
-- **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) + [`strands-agents-tools`](https://github.com/strands-agents/tools)
+- **Agentic stack:** [Strands Agents SDK](https://github.com/strands-agents/sdk-python) 1.61.1 (extras `gemini`, `mistral`, `openai`, `ollama`) + [`strands-agents-tools`](https://github.com/strands-agents/tools) 0.8.9; MCP via the `mcp` 2.x SDK (`httpx2`)
 - **Local run:** `python -m smart_ai_sys_admin` or `make run`
 - **Dependencies:** `pyproject.toml` (source of truth), `requirements*.txt` lockfiles via `pip-tools` (`make lock`). Reproducible install with `make install` / `pip-sync`. See `docs/dependencies_en.md`, `docs/dependencies_es.md`, and `docs/dependencies_de.md`.
 - **Code layout:** `src/`-based distribution
@@ -58,10 +58,12 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - Override config path with `SMART_AI_SYS_ADMIN_CONFIG_FILE` or `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - Strands agent config: `conf/agent.conf` from `conf/agent.conf.example`; respect `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE`. In `providers.openai`, `api` accepts `chat_completions` (default) and `responses`; `max_tokens` and `reasoning_effort`/`reasoning.effort` are normalized for the selected endpoint. Use Responses when GPT-5.x function tools need reasoning; Chat Completions may reject that combination or report zero reasoning tokens. The example uses `gpt-5.6-sol`, Responses, `medium` reasoning and `max_tokens` 32,768 (effective `max_output_tokens`); the real configuration uses 65,536. Optional `stateful` mode can reuse `previous_response_id`, but reconstructed multi-turn `reasoningContent` does not yet retain full reasoning continuity. Keep `OPENAI_API_KEY` in the environment. The example keeps Bedrock `max_tokens` at 8,192, `remote_command.timeout_seconds` at 900 and `remote_command.max_output_chars` at 120,000.
 - `agent.max_turns` (default 25; `null`/`0` disables) caps the turns per operator instruction and is passed to Strands as `limits={"turns": N}`; a `limit_turns` stop renders the localized `agent.invoke.turn_limit` notice. Keep this safety net when touching `AgentRuntime.invoke`.
+- Prompt caching: each provider block accepts an optional `cache` object (`enabled`, `strategy`, `ttl`, `system_prompt_ttl`, `tools_ttl`, `cache_key`) mapped to Strands' `CacheConfig` by `AgentFactory`. Defaults live in `DEFAULT_CACHE_CONFIGS` (`agent/config.py`): Bedrock/OpenAI/Mistral enabled, LM Studio disabled, Ollama/Cerebras/Gemini ignored with a warning. `/status` shows the cache state and the cached vs total input tokens of the last turn.
+- `tools.default` is honored: only the listed Strands Agents Tools are registered (all when omitted). `remote_ssh_command`, `remote_sftp_transfer` and `local_datetime` are always registered.
 - Plugins load from `plugins/` (`SMART_AI_SYS_ADMIN_PLUGINS_DIR`). Each plugin exposes `register(registry)`, registers translations and `PluginSlashCommand` handlers returning Markdown.
 - New plugins: document install/usage **inside the plugin directory** only; do not add plugin-specific docs to general manuals.
 - Source-available licence: no modifying or redistributing altered versions without permission.
-- Long-running remote work: instruct the model to pass `timeout_seconds` to `remote_ssh_command` when expected runtime exceeds 15 minutes. Tune `remote_command.max_output_chars` for large log dumps.
+- Long-running remote work: instruct the model to pass `timeout_seconds` to `remote_ssh_command` when expected runtime exceeds 15 minutes; the timeout caps the total runtime of the command (not idle time between reads). Tune `remote_command.max_output_chars` for large log dumps.
 - File transfer: `remote_sftp_transfer(action, local_path, remote_path, overwrite=False)` on the active connection. `/connect` opens SSH immediately; SFTP is opened on demand when a transfer runs.
 - `/connect` passwords are redacted in logs and echoed TUI input via `smart_ai_sys_admin.security.redaction`.
 - Use `local_datetime()` at the start of each turn when local time context helps (show to the operator only if they ask).
@@ -72,8 +74,9 @@ Terminal application that keeps a persistent SSH/SFTP session against a remote s
 - LM Studio: OpenAI-compatible mode; run `lms server start`, configure `providers.lmstudio` in `conf/agent.conf`.
 - Example model `openai/gpt-oss-20b`: `max_context_length = 131072`; `max_completion_tokens` set accordingly in config.
 - Cerebras: official SDK; configure `providers.cerebras`, set `CEREBRAS_API_KEY` or `api_key_env`.
-- Mistral AI: official `mistralai` SDK via `ShellMistralModel`; configure `providers.mistral`, set `MISTRAL_API_KEY` or `api_key_env`, defaults `reasoning_effort=high` and `max_tokens=16184`.
-- Enable `mcp` only when declared servers are available; startup fails otherwise.
+- Mistral AI: official `mistralai` SDK via `ShellMistralModel`; configure `providers.mistral`, set `MISTRAL_API_KEY` or `api_key_env`, defaults `reasoning_effort=high` and `max_tokens=16184`. The wrapper regroups streamed tool-call deltas by `index` and reports `prompt_tokens_details.cached_tokens` as `cacheReadInputTokens`.
+- Google Gemini: Strands' `GeminiModel` over the official `google-genai` SDK (no custom wrapper); configure `providers.gemini` (`model_id`, `params`, `client_args`), set `GEMINI_API_KEY` (fallback `GOOGLE_API_KEY`) or `api_key_env`; `api_key` in JSON is rejected; `client_args.vertexai: true` with `project`/`location` needs no key. `max_tokens` is normalized to `max_output_tokens`; the `cache` block is ignored with a warning. System prompt: `system_prompts/gemini.md`.
+- MCP: servers declared under `mcp.transports` start in parallel; `timeout_seconds` (default 30 s) bounds each startup and, for `sse`/`streamable_http`, the HTTP connect timeout. A server that fails is skipped with a localized diagnostic (`agent/mcp_diagnostics.py`) in the conversation panel and `/status` lists every server with its state and tool count; the agent still starts.
 - New dependencies: edit `pyproject.toml`, run `make lock` (or `make lock-upgrade` when resolving version conflicts), validate with `make test`. Do not hand-edit `requirements*.txt`.
 - Custom model providers: read `docs/custom_model_providers_en.md` (and `docs/custom_model_providers_es.md`, `docs/custom_model_providers_de.md`) before changing `smart_ai_sys_admin.agent`.
 - Static site `website/`: sync every product-facing change across EN/ES/DE.

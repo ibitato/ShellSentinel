@@ -90,7 +90,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [puerto]</code> — abre la sesión SSH (puerto 22 por defecto). SFTP se abre en la primera transferencia.</li>
           <li><code>/disconnect</code> — cierra la conexión activa.</li>
           <li><code>/help</code> — muestra el resumen de comandos.</li>
-          <li><code>/status</code> — expone el estado del agente, proveedor y modelo.</li>
+          <li><code>/status</code> — expone el estado del agente, proveedor, modelo y streaming, además del estado de la caché de prompts, el límite de turnos y cada servidor MCP configurado con su estado y número de herramientas.</li>
           <li><code>/exit</code> — abre el diálogo de confirmación antes de salir.</li>
         </ul>
 
@@ -104,7 +104,10 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><code>Subir /tmp/script.sh a /home/ubuntu/bin/script.sh</code></li>
         </ul>
         <p>
-          El asistente reutiliza la sesión SSH activa para comandos remotos. Las transferencias abren SFTP bajo demanda y dejan rastro en los logs.
+          El asistente reutiliza la sesión SSH activa para comandos remotos. Las transferencias abren SFTP bajo demanda y dejan rastro en los logs. Las rutas remotas relativas se resuelven respecto al directorio inicial de la sesión SFTP (normalmente el home del usuario) y los directorios que falten se crean ahí.
+        </p>
+        <p>
+          El agente y <code>/connect</code> se ejecutan en un worker en segundo plano, de modo que la TUI sigue respondiendo mientras trabajan; si envías otra petición antes de que termine la actual, se rechaza con un aviso en el panel de conversación.
         </p>
 
         <h2>Configuración adicional</h2>
@@ -161,6 +164,23 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
             sugiriendo una instrucción más acotada y se registra un WARNING; <code>null</code> o <code>0</code>
             desactiva el límite y <code>/status</code> muestra el valor activo.
           </li>
+          <li>
+            <strong>Herramientas</strong>: <code>tools.default</code> indica qué Strands Agents Tools se registran
+            (el ejemplo activa <code>shell</code>, <code>file_read</code>, <code>file_write</code> y
+            <code>sleep</code>; si omites la clave se activan todas). <code>remote_ssh_command</code>,
+            <code>remote_sftp_transfer</code> y <code>local_datetime</code> están siempre disponibles. El
+            <code>timeout_seconds</code> de <code>remote_ssh_command</code> (<code>900</code> por defecto) acota el
+            tiempo total de ejecución del comando, no la inactividad entre lecturas de salida; pide al agente que
+            pase un valor mayor para tareas largas.
+          </li>
+          <li>
+            <strong>Servidores MCP</strong>: el bloque <code>mcp</code> declara transportes <code>stdio</code>,
+            <code>sse</code> y <code>streamable_http</code> (MCP 2.x); los transportes HTTP respetan
+            <code>headers</code>. Los servidores arrancan en paralelo y <code>timeout_seconds</code>
+            (<code>30</code> por defecto) acota tanto el arranque de cada servidor como sus peticiones, así que un
+            servidor colgado ya no bloquea la TUI. Un servidor que no arranca se omite con un aviso en el panel de
+            conversación y <code>/status</code> lista cada servidor con su estado y número de herramientas.
+          </li>
         </ul>
 
         <h2>Solución de problemas</h2>
@@ -171,7 +191,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # Alemán</code></pre>
           <li><strong>Fallo SFTP tras un <code>/connect</code> correcto</strong>: el shell remoto puede imprimir banners en sesiones no interactivas (p. ej. <code>pyfiglet</code> en <code>~/.bashrc</code>). Envuelve la salida decorativa en una comprobación interactiva o usa <code>Subsystem sftp internal-sftp</code> en el servidor.</li>
           <li><strong>Credenciales en logs</strong>: las contraseñas de <code>/connect</code> se enmascaran como <code>***</code> en <code>logs/app.log</code>.</li>
           <li><strong>El agente se detuvo con un aviso de límite de turnos</strong>: la instrucción necesitaba más de <code>agent.max_turns</code> turnos o el modelo entró en bucle pidiendo herramientas (por ejemplo con argumentos vacíos). Divide la petición en instrucciones más pequeñas; si la tarea realmente necesita más pasos, sube <code>agent.max_turns</code> en <code>conf/agent.conf</code>.</li>
-          <li><strong>Un servidor MCP no arrancó</strong>: el panel de conversación muestra un aviso al iniciar y <code>/status</code> lista cada servidor MCP configurado con su estado. El mensaje indica la causa (comando no encontrado, proceso terminado antes de tiempo, HTTP 401/403/404, sin conexión, sin respuesta en <code>timeout_seconds</code>, variables de entorno sin definir) y qué corregir en <code>conf/agent.conf</code>. El agente arranca igualmente sin las herramientas de ese servidor; <code>logs/app.log</code> conserva la traza completa.</li>
+          <li><strong>Un servidor MCP no arrancó</strong>: el panel de conversación muestra un aviso al iniciar y <code>/status</code> lista cada servidor MCP configurado con su estado y número de herramientas. El mensaje indica la causa (comando no encontrado, proceso terminado antes de tiempo, HTTP 401/403/404, sin conexión, sin respuesta en <code>timeout_seconds</code>, variables de entorno sin definir) y qué corregir en <code>conf/agent.conf</code>. El agente arranca igualmente sin las herramientas de ese servidor; <code>logs/app.log</code> conserva la traza completa.</li>
         </ul>
 
         <h2>Recursos adicionales</h2>

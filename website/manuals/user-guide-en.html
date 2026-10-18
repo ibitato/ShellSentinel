@@ -91,7 +91,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           <li><code>/connect &lt;host&gt; &lt;user&gt; &lt;password|key_path&gt; [port]</code> — open the SSH session (default port 22). SFTP opens on the first file transfer.</li>
           <li><code>/disconnect</code> — close the active connection.</li>
           <li><code>/help</code> — show the command summary.</li>
-          <li><code>/status</code> — inspect agent, provider, model and streaming status.</li>
+          <li><code>/status</code> — inspect agent, provider, model and streaming status, plus the prompt-cache state, the turn limit and every configured MCP server with its state and tool count.</li>
           <li><code>/exit</code> — display the confirmation dialog before quitting.</li>
         </ul>
 
@@ -109,7 +109,10 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           </li>
         </ul>
         <p>
-          The agent reuses the active SSH session for remote commands. File transfers open SFTP on demand through the same connection and every action is recorded in the logs.
+          The agent reuses the active SSH session for remote commands. File transfers open SFTP on demand through the same connection and every action is recorded in the logs. Relative remote paths are resolved under the SFTP session's starting directory (normally the user's home) and missing directories are created there.
+        </p>
+        <p>
+          The agent and <code>/connect</code> run in a background worker, so the TUI stays responsive while they work; a new submission sent before the current one finishes is rejected with a notice in the conversation panel.
         </p>
 
         <h2>Configuration reference</h2>
@@ -166,6 +169,23 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
             suggesting a narrower instruction and a WARNING is logged; <code>null</code> or
             <code>0</code> disables the cap and <code>/status</code> shows the active value.
           </li>
+          <li>
+            <strong>Tools</strong>: <code>tools.default</code> lists which Strands Agents Tools are registered
+            (the example enables <code>shell</code>, <code>file_read</code>, <code>file_write</code> and
+            <code>sleep</code>; omitting the key enables all of them). <code>remote_ssh_command</code>,
+            <code>remote_sftp_transfer</code> and <code>local_datetime</code> are always available. The
+            <code>timeout_seconds</code> of <code>remote_ssh_command</code> (default <code>900</code>) caps the
+            total runtime of the command, not the idle time between output reads; ask the agent to pass a
+            higher value for long-running work.
+          </li>
+          <li>
+            <strong>MCP servers</strong>: the <code>mcp</code> block declares <code>stdio</code>, <code>sse</code>
+            and <code>streamable_http</code> transports (MCP 2.x); HTTP transports honour <code>headers</code>.
+            Servers start in parallel and <code>timeout_seconds</code> (default <code>30</code>) bounds both the
+            startup of each server and its requests, so a hung server no longer blocks the TUI. A server that
+            fails to start is skipped with a warning in the conversation panel and <code>/status</code> lists
+            every server with its state and tool count.
+          </li>
         </ul>
 
         <h2>Troubleshooting</h2>
@@ -196,7 +216,7 @@ export SMART_AI_SYS_ADMIN_LOCALE=de   # German</code></pre>
           </li>
           <li>
             <strong>An MCP server did not start</strong>: the conversation panel shows a warning at startup and
-            <code>/status</code> lists every configured MCP server with its state. The message names the cause
+            <code>/status</code> lists every configured MCP server with its state and tool count. The message names the cause
             (command not found, process exited early, HTTP 401/403/404, cannot connect, no response within
             <code>timeout_seconds</code>, environment variables not set) and what to fix in <code>conf/agent.conf</code>.
             The agent still starts without that server's tools; <code>logs/app.log</code> keeps the full trace.
