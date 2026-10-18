@@ -388,12 +388,6 @@ class AgentFactory:
         for env_name in candidates:
             value = os.getenv(env_name)
             if value:
-                if env_name != cfg.api_key_env:
-                    logger.debug(
-                        "Variable %s no definida; se usa %s para la clave de Gemini",
-                        cfg.api_key_env,
-                        env_name,
-                    )
                 return value
         return None
 
@@ -405,20 +399,25 @@ class AgentFactory:
                 f"variable '{cfg.api_key_env}'."
             )
 
-        # Con ``vertexai: true`` el SDK usa credenciales ADC/``project``/``location`` y no
-        # necesita clave de API; en el resto de casos la clave es obligatoria.
-        uses_vertex = bool(client_args.get("vertexai"))
-        api_key = self._resolve_gemini_api_key(cfg)
-        if api_key:
-            client_args["api_key"] = api_key
-        elif not uses_vertex:
-            tried = [cfg.api_key_env]
-            tried.extend(name for name in GEMINI_FALLBACK_API_KEY_ENVS if name not in tried)
-            raise AgentConfigError(
-                "No se encontró la clave de Gemini: define la variable de entorno "
-                f"'{cfg.api_key_env}' (también se prueban {', '.join(tried[1:])}) "
-                "o configura 'client_args.vertexai' con credenciales de Google Cloud."
+        # Con ``vertexai: true`` el SDK usa credenciales ADC/``project``/``location``: nunca se
+        # inyecta una clave de API, aunque GEMINI_API_KEY/GOOGLE_API_KEY estén definidas, para
+        # que una clave residual no desplace a las credenciales del proyecto. En el resto de
+        # casos la clave es obligatoria.
+        if client_args.get("vertexai"):
+            logger.debug(
+                "Gemini vía Vertex AI: se omite la clave de API y se usan credenciales ADC"
             )
+        else:
+            api_key = self._resolve_gemini_api_key(cfg)
+            if not api_key:
+                tried = [cfg.api_key_env]
+                tried.extend(name for name in GEMINI_FALLBACK_API_KEY_ENVS if name not in tried)
+                raise AgentConfigError(
+                    "No se encontró la clave de Gemini: define la variable de entorno "
+                    f"'{cfg.api_key_env}' (también se prueban {', '.join(tried[1:])}) "
+                    "o configura 'client_args.vertexai' con credenciales de Google Cloud."
+                )
+            client_args["api_key"] = api_key
 
         params = dict(cfg.params)
         # El GeminiModel de Strands no acepta CacheConfig: Gemini cachea prefijos de forma

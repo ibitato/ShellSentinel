@@ -209,8 +209,14 @@ def test_factory_rejects_api_key_inside_client_args(
         AgentFactory(config)._build_model(config.provider_config())
 
 
+@pytest.mark.parametrize("key_in_env", [False, True])
 @patch("smart_ai_sys_admin.agent.factory.GeminiModel")
-def test_factory_allows_vertex_ai_without_api_key(mock_model_cls, gemini_config: ConfigBuilder):
+def test_factory_vertex_ai_never_injects_api_key(
+    mock_model_cls, gemini_config: ConfigBuilder, monkeypatch: pytest.MonkeyPatch, key_in_env
+):
+    # Con Vertex AI se usan credenciales ADC: una GEMINI_API_KEY residual no debe colarse.
+    if key_in_env:
+        monkeypatch.setenv("GEMINI_API_KEY", "leftover-secret")
     config = gemini_config(
         {"client_args": {"vertexai": True, "project": "demo", "location": "europe-west1"}}
     )
