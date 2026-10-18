@@ -17,17 +17,20 @@ from strands.agent.conversation_manager import (
     SummarizingConversationManager,
 )
 from strands.models import BedrockModel, OpenAIResponsesModel
+from strands.models.gemini import GeminiModel
 from strands.models.model import CacheConfig
 from strands.models.ollama import OllamaModel
 from strands.models.openai import OpenAIModel
 
 from .config import (
+    GEMINI_FALLBACK_API_KEY_ENVS,
     MISTRAL_DEFAULT_MAX_TOKENS,
     AgentConfig,
     AgentConfigError,
     AgentOptions,
     BedrockProviderConfig,
     CerebrasProviderConfig,
+    GeminiProviderConfig,
     LMStudioProviderConfig,
     LocalProviderConfig,
     MCPConfig,
@@ -139,6 +142,8 @@ class AgentFactory:
             return self._build_cerebras_model(provider_cfg)
         if isinstance(provider_cfg, MistralProviderConfig):
             return self._build_mistral_model(provider_cfg)
+        if isinstance(provider_cfg, GeminiProviderConfig):
+            return self._build_gemini_model(provider_cfg)
         raise AgentConfigError("Tipo de proveedor no soportado")
 
     def _build_bedrock_model(self, cfg: BedrockProviderConfig) -> BedrockModel:
@@ -370,6 +375,66 @@ class AgentFactory:
             **params,
         )
 
+    @staticmethod
+    def _resolve_gemini_api_key(cfg: GeminiProviderConfig) -> str | None:
+        """Resuelve la clave de Gemini: ``api_key_env`` y, si está vacía, los nombres estándar.
+
+        Devuelve ``None`` cuando ninguna variable está definida; el llamador decide si es un
+        error (API de Gemini) o aceptable (Vertex AI con credenciales ADC).
+        """
+
+        candidates: list[str] = [cfg.api_key_env]
+        candidates.extend(name for name in GEMINI_FALLBACK_API_KEY_ENVS if name not in candidates)
+        for env_name in candidates:
+            value = os.getenv(env_name)
+            if value:
+                if env_name != cfg.api_key_env:
+                    logger.debug(
+                        "Variable %s no definida; se usa %s para la clave de Gemini",
+                        cfg.api_key_env,
+                        env_name,
+                    )
+                return value
+        return None
+
+    def _build_gemini_model(self, cfg: GeminiProviderConfig) -> GeminiModel:
+        client_args = dict(cfg.client_args)
+        if "api_key" in client_args:
+            raise AgentConfigError(
+                "providers.gemini.client_args no admite 'api_key'; exporta la clave en la "
+                f"variable '{cfg.api_key_env}'."
+            )
+
+        # Con ``vertexai: true`` el SDK usa credenciales ADC/``project``/``location`` y no
+        # necesita clave de API; en el resto de casos la clave es obligatoria.
+        uses_vertex = bool(client_args.get("vertexai"))
+        api_key = self._resolve_gemini_api_key(cfg)
+        if api_key:
+            client_args["api_key"] = api_key
+        elif not uses_vertex:
+            tried = [cfg.api_key_env]
+            tried.extend(name for name in GEMINI_FALLBACK_API_KEY_ENVS if name not in tried)
+            raise AgentConfigError(
+                "No se encontró la clave de Gemini: define la variable de entorno "
+                f"'{cfg.api_key_env}' (también se prueban {', '.join(tried[1:])}) "
+                "o configura 'client_args.vertexai' con credenciales de Google Cloud."
+            )
+
+        params = dict(cfg.params)
+        # El GeminiModel de Strands no acepta CacheConfig: Gemini cachea prefijos de forma
+        # implícita y reporta ``cached_content_token_count`` sin configuración adicional.
+        self._warn_cache_config_not_supported("gemini", cfg.cache)
+        logger.debug(
+            "Instanciando GeminiModel con model_id=%s, client_args=%s y parámetros: %s",
+            cfg.model_id,
+            sorted(key for key in client_args if key != "api_key"),
+            sorted(params),
+        )
+        model_kwargs: dict[str, Any] = {"model_id": cfg.model_id}
+        if params:
+            model_kwargs["params"] = params
+        return GeminiModel(client_args=client_args or None, **model_kwargs)
+
     def _build_conversation_manager(self, options: AgentOptions):
         conversation = options.conversation
         if conversation.strategy == "sliding_window":
@@ -417,7 +482,9 @@ class AgentFactory:
         """Indica si el proveedor activo envía configuración de caché a Strands."""
 
         provider_cfg = self._config.provider_config()
-        if isinstance(provider_cfg, (LocalProviderConfig, CerebrasProviderConfig)):
+        if isinstance(
+            provider_cfg, (LocalProviderConfig, CerebrasProviderConfig, GeminiProviderConfig)
+        ):
             return False
         return provider_cfg.cache.enabled
 

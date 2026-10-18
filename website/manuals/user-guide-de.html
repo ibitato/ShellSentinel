@@ -135,7 +135,12 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
             <code>CEREBRAS_API_KEY</code> exportieren. Mistral AI nutzt
             <code>MISTRAL_API_KEY</code>, <code>provider: mistral</code>, standardmäßig
             <code>reasoning_effort: high</code> und <code>max_tokens: 16184</code>
-            (<code>mistral-medium-3.5</code>).
+            (<code>mistral-medium-3.5</code>). Google Gemini nutzt <code>GEMINI_API_KEY</code>
+            (oder <code>GOOGLE_API_KEY</code>, oder <code>api_key_env</code>), <code>provider: gemini</code>
+            und <code>gemini-3.8-flash</code> mit <code>temperature: 0.3</code> und
+            <code>max_tokens: 16384</code> (gesendet als <code>max_output_tokens</code>); weitere
+            <code>params</code> gehen an <code>GenerateContentConfig</code>, <code>client_args</code> an den
+            <code>google-genai</code>-Client (<code>vertexai: true</code> für Vertex AI).
           </li>
           <li>
             <strong>Prompt-Caching</strong>: Jeder Provider-Block akzeptiert ein optionales Objekt
@@ -146,9 +151,10 @@ export SMART_AI_SYS_ADMIN_LOCALE=es   # Spanisch</code></pre>
             nutzen standardmäßig <code>enabled: true</code> und senden einen stabilen
             <code>prompt_cache_key</code>, der aus Konfigurationspfad und <code>model_id</code> abgeleitet
             wird; lege <code>cache_key</code> fest oder setze ihn auf <code>false</code>, um ihn abzuschalten.
-            LM Studio bleibt deaktiviert, bis es explizit aktiviert wird; Ollama und Cerebras ignorieren den
-            Block mit einer Warnung im Log. <code>/status</code> zeigt, ob Caching aktiv ist, sowie die
-            gecachten gegenüber den gesamten Eingabe-Tokens des letzten Turns.
+            LM Studio bleibt deaktiviert, bis es explizit aktiviert wird; Ollama, Cerebras und Gemini
+            ignorieren den Block mit einer Warnung im Log (Gemini cacht Präfixe implizit, und gemeldete
+            gecachte Tokens erscheinen trotzdem in <code>/status</code>). <code>/status</code> zeigt, ob
+            Caching aktiv ist, sowie die gecachten gegenüber den gesamten Eingabe-Tokens des letzten Turns.
           </li>
         </ul>
 

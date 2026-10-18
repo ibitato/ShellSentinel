@@ -106,7 +106,7 @@ def test_select_providers_filters_and_deduplicates():
 
 def test_select_providers_rejects_unknown_name():
     with pytest.raises(pytest.UsageError, match="desconocido"):
-        select_providers({PROVIDERS_ENV: "gemini"})
+        select_providers({PROVIDERS_ENV: "no-such-provider"})
 
 
 def test_live_params_skip_without_api_key():
@@ -247,3 +247,15 @@ def test_resolve_combines_exit_code_and_delay():
     result = server.resolve("a && b")
     assert (result.exit_code, result.stdout, result.stderr) == (2, "A", "bad")
     assert result.delay == pytest.approx(0.3)
+
+
+def test_write_agent_conf_can_disable_cache_for_gemini(tmp_path: Path):
+    conf_path = write_agent_conf(
+        tmp_path / "conf", provider="gemini", cache_key="ignored-key", cache_enabled=False
+    )
+    block = json.loads(conf_path.read_text(encoding="utf-8"))["providers"]["gemini"]
+    assert block["cache"] == {"enabled": False}
+    assert block["api_key_env"] == "GEMINI_API_KEY"
+    config = load_agent_config(conf_path)
+    assert config.provider == "gemini"
+    assert config.provider_config().cache.enabled is False

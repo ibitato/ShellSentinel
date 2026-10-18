@@ -111,12 +111,20 @@
           <li><code>make test-mistral</code> ausführen, wenn <code>MISTRAL_API_KEY</code> gesetzt ist.</li>
         </ul>
 
+        <h2>Praxisbeispiel: Google Gemini</h2>
+        <ul>
+          <li>Strands' <code>GeminiModel</code> (Extra <code>gemini</code>, offizielles <code>google-genai</code>-SDK) wird direkt genutzt; kein eigener Wrapper.</li>
+          <li><code>providers.gemini</code> mit <code>model_id</code> (<code>gemini-3.8-flash</code>), <code>params</code> (<code>max_tokens</code> wird zu <code>max_output_tokens</code>) und <code>client_args</code> konfigurieren.</li>
+          <li>Schlüssel aus <code>api_key_env</code> (<code>GEMINI_API_KEY</code>, dann <code>GOOGLE_API_KEY</code>); <code>api_key</code> im JSON wird abgelehnt. <code>client_args.vertexai: true</code> nutzt Google-Cloud-Anmeldedaten.</li>
+          <li>Thoughts kommen als <code>reasoningContent</code> (<code>show_thinking</code>); <code>cached_content_token_count</code> wird auf <code>cacheReadInputTokens</code> abgebildet. Kein <code>CacheConfig</code>, daher startet der Block <code>cache</code> deaktiviert.</li>
+        </ul>
+
         <h2>Prompt-Caching</h2>
         <ul>
           <li>Optionaler Block <code>cache</code> pro Provider (<code>enabled</code>, <code>strategy</code>, <code>ttl</code>, <code>system_prompt_ttl</code>, <code>tools_ttl</code>, <code>cache_key</code>), abgebildet auf Strands' <code>CacheConfig</code>.</li>
           <li>Bedrock: standardmäßig <code>enabled: true</code> + <code>strategy: "auto"</code>; Cache-Points nur bei Claude-Modell-IDs.</li>
           <li>OpenAI und Mistral: standardmäßig <code>enabled: true</code>; es wird nur ein stabiler <code>prompt_cache_key</code> aus Konfigurationspfad und <code>model_id</code> gesendet (<code>cache_key: false</code> deaktiviert ihn).</li>
-          <li>LM Studio ist standardmäßig deaktiviert; Ollama und Cerebras ignorieren den Block mit einer Warnung im Log. <code>/status</code> zeigt gecachte gegenüber gesamten Eingabe-Tokens des letzten Turns.</li>
+          <li>LM Studio ist standardmäßig deaktiviert; Ollama, Cerebras und Gemini ignorieren den Block mit einer Warnung im Log. <code>/status</code> zeigt gecachte gegenüber gesamten Eingabe-Tokens des letzten Turns.</li>
         </ul>
 
         <h2>Praxisbeispiel: Cerebras</h2>

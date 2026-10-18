@@ -20,7 +20,12 @@ async def test_invalid_api_key_surfaces_error_and_app_stays_responsive(
     reply = await session.ask("dime el kernel del servidor")
 
     assert reply.startswith("❌"), reply
-    assert re.search(r"401|unauthori[sz]ed|invalid.{0,40}key|authentication", reply, re.I), reply
+    # OpenAI/Mistral responden 401; Gemini devuelve 400 con "API key not valid" (API_KEY_INVALID).
+    assert re.search(
+        r"401|unauthori[sz]ed|invalid.{0,40}key|key.{0,20}not valid|api_key_invalid|authentication",
+        reply,
+        re.I,
+    ), reply
     assert session.guard.model_calls == 1, session.guard.debug_report()
     assert session.guard.tool_uses == [], session.guard.debug_report()
     assert session.driver.app._busy is False

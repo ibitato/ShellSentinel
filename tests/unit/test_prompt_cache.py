@@ -52,6 +52,7 @@ def test_cache_defaults_when_block_absent(minimal_agent_conf: Path):
     assert config.providers["local"].cache.enabled is False
     assert config.providers["lmstudio"].cache.enabled is False
     assert config.providers["cerebras"].cache.enabled is False
+    assert config.providers["gemini"].cache.enabled is False
     for provider, cfg in config.providers.items():
         assert cfg.cache == DEFAULT_CACHE_CONFIGS[provider]
 

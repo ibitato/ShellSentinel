@@ -73,7 +73,7 @@ def e2e_env(
     plugins_dir.mkdir()
     monkeypatch.setenv("SMART_AI_SYS_ADMIN_PLUGINS_DIR", str(plugins_dir))
     # Claves ficticias para que la fábrica no falle offline; las reales (live) se respetan.
-    for key_env in ("OPENAI_API_KEY", "MISTRAL_API_KEY"):
+    for key_env in ("OPENAI_API_KEY", "MISTRAL_API_KEY", "GEMINI_API_KEY"):
         monkeypatch.setenv(key_env, os.environ.get(key_env) or "e2e-dummy-key")
     for name in PERMISSION_ENV_VARS:
         monkeypatch.delenv(name, raising=False)

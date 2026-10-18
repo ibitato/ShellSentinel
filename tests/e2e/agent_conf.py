@@ -48,6 +48,7 @@ def write_agent_conf(
     window_size: int = 40,
     streaming: bool = True,
     cache_key: str | None = None,
+    cache_enabled: bool = True,
     show_thinking: bool = False,
 ) -> Path:
     """Escribe ``dest_dir/agent.conf`` y devuelve su ruta.
@@ -55,6 +56,8 @@ def write_agent_conf(
     Sin ``system_prompt`` se copia el prompt de pruebas junto a la configuración
     (``system_prompts/test.md``, ruta relativa al directorio del conf). Para las
     pruebas live se pasa la ruta absoluta del prompt real de ``system_prompts/``.
+    ``cache_enabled=False`` escribe ``cache: {"enabled": false}`` (sin ``cache_key``) para
+    proveedores que ignoran el bloque, como Gemini.
     """
 
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -84,8 +87,8 @@ def write_agent_conf(
         else:
             block["api_key_env"] = api_key_env
 
-    cache_block: dict[str, Any] = {"enabled": True}
-    if cache_key is not None:
+    cache_block: dict[str, Any] = {"enabled": cache_enabled}
+    if cache_enabled and cache_key is not None:
         cache_block["cache_key"] = cache_key
     block["cache"] = _deep_merge(dict(block.get("cache") or {}), cache_block)
 

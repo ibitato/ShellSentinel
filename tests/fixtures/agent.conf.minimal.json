@@ -67,6 +67,15 @@
       "params": {
         "max_tokens": 16184
       }
+    },
+    "gemini": {
+      "system_prompt": "system_prompts/test.md",
+      "model_id": "gemini-test",
+      "api_key_env": "GEMINI_API_KEY",
+      "params": {
+        "temperature": 0.2,
+        "max_tokens": 1024
+      }
     }
   },
   "tools": {

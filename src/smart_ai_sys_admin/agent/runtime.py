@@ -290,6 +290,7 @@ class AgentRuntime:
             "lmstudio": "LM Studio",
             "cerebras": "Cerebras",
             "mistral": "Mistral AI",
+            "gemini": "Google Gemini",
         }
 
         provider_key = self._config.provider if self._config else None
