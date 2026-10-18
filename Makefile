@@ -9,7 +9,7 @@ PIP_SYNC := .venv/bin/pip-sync
 
 export PYTHONPATH := src
 
-.PHONY: help install install-prod lock lock-upgrade sync-deps format lint lint-fix test test-mistral run clean website-serve
+.PHONY: help install install-prod lock lock-upgrade sync-deps format lint lint-fix test test-mistral test-e2e test-e2e-live run clean website-serve
 
 help:
 	@echo "Comandos disponibles:"
@@ -22,6 +22,8 @@ help:
 	@echo "  make lint          - Ejecuta linting con Ruff"
 	@echo "  make test          - Ejecuta la suite de pruebas"
 	@echo "  make test-mistral  - PoC Mistral cloud (requiere MISTRAL_API_KEY)"
+	@echo "  make test-e2e      - E2E del TUI con servidor SSH embebido y modelo con guion (sin claves)"
+	@echo "  make test-e2e-live - E2E del TUI contra proveedores reales (RUN_E2E=1 + claves en el entorno)"
 	@echo "  make run           - Ejecuta la CLI"
 	@echo "  make website-serve - Sirve la web estática en localhost:8787"
 	@echo "  make clean         - Elimina artefactos temporales"
@@ -68,6 +70,14 @@ test: .venv/bin/activate
 
 test-mistral: .venv/bin/activate
 	$(PYTEST) tests/integration/mistral -m mistral -q --no-cov
+
+test-e2e: .venv/bin/activate
+	$(PYTEST) tests/e2e/offline -m e2e_offline -q --no-cov
+
+E2E_ARGS ?= -x -ra
+
+test-e2e-live: .venv/bin/activate
+	RUN_E2E=1 $(PYTEST) tests/e2e/live -m e2e --no-cov $(E2E_ARGS)
 
 run: .venv/bin/activate
 	$(PYTHON) -m smart_ai_sys_admin
