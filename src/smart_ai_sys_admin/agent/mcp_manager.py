@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import math
 import os
 import threading
 import time
-from collections.abc import AsyncIterator, Mapping
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator, Callable, Mapping
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from dataclasses import dataclass, field
 from typing import Any
 
+import anyio
 import httpx2
 from mcp import StdioServerParameters, stdio_client
 from mcp.client.sse import sse_client
@@ -56,6 +58,66 @@ class _HTTPStatusProbe:
     async def __call__(self, response: httpx2.Response) -> None:
         if response.status_code >= 400:
             self.last_error_status = response.status_code
+
+
+class _TransportAbort:
+    """Permite cancelar desde otro hilo un transporte MCP cuyo saludo nunca termina.
+
+    ``MCPClient.stop()`` de Strands solo resuelve un futuro que el hilo de fondo espera
+    *después* de completar el saludo; si el servidor acepta la conexión pero no responde al
+    ``initialize``, ``stop()`` se queda en ``join()`` y el subproceso ``stdio`` sigue vivo.
+    El transporte se ejecuta dentro de un ``CancelScope`` de anyio que ``abort()`` cancela en
+    el bucle de eventos del cliente: ``stdio_client`` mata el árbol de procesos al cancelarse,
+    la cancelación la absorbe el propio scope y el hilo de fondo termina limpiamente.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._scope: anyio.CancelScope | None = None
+        self._requested = False
+
+    @property
+    def requested(self) -> bool:
+        return self._requested
+
+    def abort(self) -> None:
+        with self._lock:
+            self._requested = True
+            loop, scope = self._loop, self._scope
+        if loop is None or scope is None:
+            return
+        try:
+            loop.call_soon_threadsafe(scope.cancel)
+        except RuntimeError:  # pragma: no cover - el bucle ya se cerró
+            pass
+
+    @asynccontextmanager
+    async def wrap(self, transport: AbstractAsyncContextManager[Any]) -> AsyncIterator[Any]:
+        with anyio.CancelScope() as scope:
+            with self._lock:
+                self._loop, self._scope = asyncio.get_running_loop(), scope
+                if self._requested:
+                    scope.cancel()
+            try:
+                async with transport as streams:
+                    yield streams
+            finally:
+                with self._lock:
+                    self._loop = self._scope = None
+
+
+class _AbortableTransportFactory:
+    """Factoría de transporte para ``MCPClient`` que envuelve la real en ``_TransportAbort``."""
+
+    def __init__(
+        self, inner: Callable[[], AbstractAsyncContextManager[Any]], abort: _TransportAbort
+    ) -> None:
+        self.inner = inner
+        self.abort = abort
+
+    def __call__(self) -> AbstractAsyncContextManager[Any]:
+        return self.abort.wrap(self.inner())
 
 
 def _http_timeout(timeout_seconds: float | None) -> httpx2.Timeout:
@@ -120,6 +182,7 @@ class _StartAttempt:
     cfg: MCPTransportConfig
     launched_at: float
     client: MCPClient | None = None
+    abort: _TransportAbort | None = None
     tools: list[Any] = field(default_factory=list)
     error: BaseException | None = None
     started: bool = False
@@ -150,6 +213,7 @@ class MCPManager:
         self._clients: list[MCPClient] = []
         self._statuses: list[MCPServerStatus] = []
         self._probes: dict[str, _HTTPStatusProbe] = {}
+        self._abort_handles: dict[str, _TransportAbort] = {}
         self._missing_env: dict[str, tuple[str, ...]] = {}
 
     @property
@@ -179,6 +243,7 @@ class MCPManager:
         attempt = _StartAttempt(cfg=cfg, launched_at=time.monotonic())
         try:
             attempt.client = self._create_client(cfg)
+            attempt.abort = self._abort_handles.get(cfg.identifier)
         except Exception as exc:
             attempt.error = exc
             attempt.done.set()
@@ -231,6 +296,10 @@ class MCPManager:
                         name=f"mcp-stop-{cfg.identifier}",
                         daemon=True,
                     ).start()
+                elif attempt.abort is not None:
+                    # Saludo colgado: ``stop()`` de Strands no lo desbloquea, así que se cancela
+                    # el transporte (mata el subproceso stdio o cierra la sesión HTTP).
+                    attempt.abort.abort()
                 failure = MCPFailure(MCPFailureKind.TIMEOUT, "startup deadline exceeded")
                 self._record_failure(cfg, failure)
                 return []
@@ -298,7 +367,16 @@ class MCPManager:
     # ------------------------------------------------------------------
 
     def _create_client(self, cfg: MCPTransportConfig) -> MCPClient:
-        startup_timeout = _startup_timeout(cfg)
+        factory = self._create_transport_factory(cfg)
+        abort = _TransportAbort()
+        self._abort_handles[cfg.identifier] = abort
+        return MCPClient(
+            _AbortableTransportFactory(factory, abort), startup_timeout=_startup_timeout(cfg)
+        )
+
+    def _create_transport_factory(
+        self, cfg: MCPTransportConfig
+    ) -> Callable[[], AbstractAsyncContextManager[Any]]:
         if cfg.transport_type == "stdio":
             if not cfg.command:
                 raise ValueError("El transporte MCP 'stdio' requiere el campo 'command'.")
@@ -322,7 +400,7 @@ class MCPManager:
                 env=env,
                 cwd=cfg.cwd,
             )
-            return MCPClient(lambda: stdio_client(params), startup_timeout=startup_timeout)
+            return lambda: stdio_client(params)
         if cfg.transport_type == "sse":
             if not cfg.url:
                 raise ValueError("El transporte MCP 'sse' requiere el campo 'url'.")
@@ -330,24 +408,18 @@ class MCPManager:
             general = (
                 DEFAULT_HTTP_TIMEOUT_SECONDS if cfg.timeout_seconds is None else cfg.timeout_seconds
             )
-            return MCPClient(
-                lambda: sse_client(
-                    cfg.url,
-                    headers=dict(cfg.headers),
-                    timeout=general,
-                    sse_read_timeout=SSE_READ_TIMEOUT_SECONDS,
-                    httpx_client_factory=_http_client_factory(probe),
-                ),
-                startup_timeout=startup_timeout,
+            return lambda: sse_client(
+                cfg.url,
+                headers=dict(cfg.headers),
+                timeout=general,
+                sse_read_timeout=SSE_READ_TIMEOUT_SECONDS,
+                httpx_client_factory=_http_client_factory(probe),
             )
         if cfg.transport_type == "streamable_http":
             if not cfg.url:
                 raise ValueError("El transporte MCP 'streamable_http' requiere el campo 'url'.")
             probe = self._probes.setdefault(cfg.identifier, _HTTPStatusProbe())
-            return MCPClient(
-                lambda: _streamable_http_transport(
-                    cfg.url, cfg.headers, cfg.timeout_seconds, probe
-                ),
-                startup_timeout=startup_timeout,
+            return lambda: _streamable_http_transport(
+                cfg.url, cfg.headers, cfg.timeout_seconds, probe
             )
         raise ValueError(f"Tipo de transporte MCP no soportado: {cfg.transport_type}")

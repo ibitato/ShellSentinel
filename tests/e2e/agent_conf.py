@@ -51,6 +51,7 @@ def write_agent_conf(
     cache_key: str | None = None,
     cache_enabled: bool = True,
     show_thinking: bool = False,
+    mcp: Mapping[str, Any] | None = None,
 ) -> Path:
     """Escribe ``dest_dir/agent.conf`` y devuelve su ruta.
 
@@ -58,7 +59,9 @@ def write_agent_conf(
     (``system_prompts/test.md``, ruta relativa al directorio del conf). Para las
     pruebas live se pasa la ruta absoluta del prompt real de ``system_prompts/``.
     ``cache_enabled=False`` escribe ``cache: {"enabled": false}`` (sin ``cache_key``) para
-    proveedores que ignoran el bloque, como Gemini.
+    proveedores que ignoran el bloque, como Gemini. ``mcp`` activa el bloque MCP con los
+    ``transports`` indicados (``tests/e2e/mcp_support.py`` los construye); sin él, MCP queda
+    desactivado.
     """
 
     dest_dir.mkdir(parents=True, exist_ok=True)
@@ -125,7 +128,10 @@ def write_agent_conf(
         "load_directory": False,
         "consent": {"bypass": True},
     }
-    payload["mcp"] = {"enabled": False, "load_server_tools": True, "transports": []}
+    mcp_block: dict[str, Any] = {"enabled": False, "load_server_tools": True, "transports": []}
+    if mcp is not None:
+        mcp_block = {**mcp_block, "enabled": True, **dict(mcp)}
+    payload["mcp"] = mcp_block
 
     conf_path = dest_dir / "agent.conf"
     conf_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")

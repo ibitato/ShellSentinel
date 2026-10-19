@@ -37,7 +37,7 @@ make install          # desarrollo (recomendado)
    ```bash
    make sync-deps
    ```
-4. Ejecuta `make lint` y `make test`. `make test` ejecuta las suites unitaria, de integración y end-to-end offline sin ninguna clave API (la PoC de Mistral y las pruebas e2e live llevan el marcador `e2e` y quedan excluidas por defecto); `make test-e2e-live` necesita `RUN_E2E=1` más `OPENAI_API_KEY`/`MISTRAL_API_KEY`/`GEMINI_API_KEY`.
+4. Ejecuta `make lint` y `make test`. `make test` ejecuta las suites unitaria, de integración y end-to-end offline sin ninguna clave API (la PoC de Mistral y las pruebas e2e live llevan el marcador `e2e` y quedan excluidas por defecto); `make test-e2e-live` necesita `RUN_E2E=1` más `OPENAI_API_KEY`/`MISTRAL_API_KEY`/`GEMINI_API_KEY`; los escenarios MCP requieren además `FIRECRAWL_API_KEY` y Node.js (`npx`).
 
 ## Transitivas críticas
 

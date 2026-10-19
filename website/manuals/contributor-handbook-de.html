@@ -75,8 +75,8 @@
 
         <h2>Testsuite</h2>
         <ul>
-          <li><code>make test</code> führt die Unit-Tests plus die Offline-End-to-End-Schicht aus (<code>tests/e2e/offline</code>, Marker <code>e2e_offline</code>): die echte Textual-App, <code>AgentRuntime</code> und <code>strands.Agent</code> gegen einen In-Process-SSH/SFTP-Server mit einem geskripteten Modell; sie braucht keine Schlüssel und läuft in CI. <code>make test-e2e</code> führt nur diese Schicht aus.</li>
-          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, Marker <code>e2e</code>) fährt Operator-Szenarien gegen die echten Provider; es erfordert <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> und/oder <code>GEMINI_API_KEY</code>, deckelt die Modellaufrufe pro Test und läuft nie in CI.</li>
+          <li><code>make test</code> führt die Unit-Tests plus die Offline-End-to-End-Schicht aus (<code>tests/e2e/offline</code>, Marker <code>e2e_offline</code>): die echte Textual-App, <code>AgentRuntime</code> und <code>strands.Agent</code> gegen einen In-Process-SSH/SFTP-Server mit einem geskripteten Modell; sie braucht keine Schlüssel und läuft in CI. Sie startet außerdem echte MCP-Server (einen geskripteten <code>stdio</code>-Server und lokale HTTP-Endpunkte), um Tool-Aufrufe, Startdiagnosen und das Aufräumen der Prozesse zu prüfen. <code>make test-e2e</code> führt nur diese Schicht aus.</li>
+          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, Marker <code>e2e</code>) fährt Operator-Szenarien gegen die echten Provider; es erfordert <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> und/oder <code>GEMINI_API_KEY</code>, deckelt die Modellaufrufe pro Test und läuft nie in CI. Die MCP-Szenarien starten den echten Firecrawl-Server und brauchen <code>FIRECRAWL_API_KEY</code> und Node.js (<code>npx</code>).</li>
           <li><code>make test-mistral</code> behält die Mistral-PoC-Tests (Marker <code>mistral</code>, benötigt <code>MISTRAL_API_KEY</code>); sie sind als <code>e2e</code> markiert, damit <code>make test</code> nie Tokens verbraucht.</li>
         </ul>
 

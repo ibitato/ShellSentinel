@@ -29,6 +29,8 @@ dependencies = [
   # strands-agents acota el máximo soportado de mcp.
   "mcp>=2.0.0,<3",
   "httpx2>=2.5.0,<3",
+  # mcp_manager.py cancela transportes MCP colgados con anyio.CancelScope.
+  "anyio>=4.0",
 ]
 
 [project.optional-dependencies]

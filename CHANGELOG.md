@@ -5,6 +5,16 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- End-to-end coverage for MCP in both e2e layers. Offline (`tests/e2e/offline/test_mcp_flow.py`, part of `make test`): the real TUI launches a scripted `stdio` server built on the `mcp` 2.x SDK (`tests/e2e/mcp_server.py`) plus local HTTP endpoints, and verifies tool registration and calls from the Strands agent, `env_passthrough` (including the warning for missing variables), declared and unexpected tool errors, `/status` output, the startup diagnostics for every failure kind (command not found, process exited, HTTP 401/404, unreachable host, hung handshake) and that server processes are stopped on shutdown. Live (`tests/e2e/live/test_live_mcp_firecrawl.py`, `make test-e2e-live`): the real Firecrawl MCP server (`npx -y firecrawl-mcp`, `FIRECRAWL_API_KEY`, Node.js) is started by the TUI, `firecrawl_scrape` runs through the agent with the scripted model, and each selected provider must pick a Firecrawl tool to read a page. `write_agent_conf` accepts an `mcp` block and `tests/e2e/mcp_support.py` builds the transports.
+
+### Fixed
+
+- An MCP server that accepts the connection but never answers the `initialize` handshake no longer leaves its process running after Shell Sentinel gives up on it. Strands' `MCPClient.stop()` only resolves a future that the client thread awaits once the handshake has completed, so for a hung handshake it blocked forever and the `stdio` subprocess (or HTTP session) outlived the TUI. Every transport now runs inside an anyio `CancelScope` that `MCPManager` cancels when the startup deadline expires: `stdio_client` kills the process tree, the client thread ends cleanly and the server is reported as `timeout` as before. Found by the new offline MCP e2e scenario.
+
 ## [1.4.0] - 2026-10-18
 
 ### Changed

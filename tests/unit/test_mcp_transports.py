@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+import threading
 from contextlib import asynccontextmanager
 from unittest.mock import MagicMock, patch
 
@@ -12,7 +14,9 @@ from smart_ai_sys_admin.agent.config import MCPConfig, MCPTransportConfig
 from smart_ai_sys_admin.agent.mcp_manager import (
     DEFAULT_STARTUP_TIMEOUT_SECONDS,
     MCPManager,
+    _AbortableTransportFactory,
     _HTTPStatusProbe,
+    _TransportAbort,
 )
 
 MODULE = "smart_ai_sys_admin.agent.mcp_manager"
@@ -23,12 +27,17 @@ def _manager() -> MCPManager:
 
 
 def _transport_callable(cfg: MCPTransportConfig, expected_startup_timeout: int):
-    """Devuelve la factoría de transporte que MCPManager entrega a MCPClient."""
+    """Devuelve la factoría de transporte real que MCPManager envuelve para MCPClient."""
+    manager = _manager()
     with patch(f"{MODULE}.MCPClient") as client_cls:
-        client = _manager()._create_client(cfg)
+        client = manager._create_client(cfg)
     assert client is client_cls.return_value
     assert client_cls.call_args.kwargs["startup_timeout"] == expected_startup_timeout
-    return client_cls.call_args.args[0]
+    factory = client_cls.call_args.args[0]
+    # MCPClient recibe la factoría cancelable; el manager guarda su asa por identificador.
+    assert isinstance(factory, _AbortableTransportFactory)
+    assert manager._abort_handles[cfg.identifier] is factory.abort
+    return factory.inner
 
 
 def test_stdio_transport_builds_server_parameters(monkeypatch):
@@ -159,3 +168,91 @@ def test_unsupported_transport_type_raises():
     cfg = MCPTransportConfig(identifier="x", transport_type="websocket")  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="websocket"):
         _manager()._create_client(cfg)
+
+
+# ---------------------------------------------------------------------- aborto del saludo
+class _HangingTransport:
+    """Transporte que se abre bien pero cuyo "saludo" (el cuerpo del cliente) nunca termina."""
+
+    def __init__(self) -> None:
+        self.entered = threading.Event()
+        self.exited = threading.Event()
+
+    @asynccontextmanager
+    async def __call__(self):
+        self.entered.set()
+        try:
+            yield ("read", "write")
+        finally:
+            self.exited.set()
+
+
+def _run_hung_client(abort: _TransportAbort, transport: _HangingTransport) -> dict:
+    """Simula el hilo de fondo de MCPClient: entra en el transporte y espera para siempre."""
+
+    outcome: dict = {}
+
+    async def body() -> None:
+        async with abort.wrap(transport()) as streams:
+            outcome["streams"] = streams
+            await asyncio.Event().wait()
+        outcome["after_transport"] = True
+
+    def run() -> None:
+        try:
+            asyncio.run(body())
+            outcome["finished"] = "clean"
+        except BaseException as exc:  # pragma: no cover - documenta un fallo del aborto
+            outcome["finished"] = repr(exc)
+
+    thread = threading.Thread(target=run, name="fake-mcp-background", daemon=True)
+    thread.start()
+    outcome["thread"] = thread
+    return outcome
+
+
+def test_transport_abort_unblocks_a_handshake_that_never_completes():
+    abort = _TransportAbort()
+    transport = _HangingTransport()
+    outcome = _run_hung_client(abort, transport)
+    assert transport.entered.wait(5)
+    assert not transport.exited.is_set()
+
+    abort.abort()
+
+    outcome["thread"].join(5)
+    assert not outcome["thread"].is_alive(), "el hilo de fondo sigue bloqueado tras abort()"
+    assert transport.exited.is_set()
+    # La cancelación la absorbe el scope: el cliente continúa tras el transporte sin excepción.
+    assert outcome["after_transport"] is True
+    assert outcome["finished"] == "clean"
+    assert abort.requested
+
+
+def test_transport_abort_requested_before_entering_cancels_at_once():
+    abort = _TransportAbort()
+    abort.abort()
+    transport = _HangingTransport()
+    outcome = _run_hung_client(abort, transport)
+    outcome["thread"].join(5)
+    assert not outcome["thread"].is_alive()
+    assert transport.exited.is_set()
+    assert outcome["finished"] == "clean"
+
+
+async def test_transport_abort_is_transparent_when_not_requested():
+    abort = _TransportAbort()
+    transport = _HangingTransport()
+    async with abort.wrap(transport()) as streams:
+        assert streams == ("read", "write")
+    assert transport.exited.is_set()
+    # Tras salir, un abort tardío no tiene en qué actuar y no falla.
+    abort.abort()
+
+
+def test_abortable_factory_wraps_inner_transport():
+    inner = MagicMock(name="inner")
+    abort = MagicMock(spec=_TransportAbort)
+    factory = _AbortableTransportFactory(inner, abort)
+    assert factory() is abort.wrap.return_value
+    abort.wrap.assert_called_once_with(inner.return_value)

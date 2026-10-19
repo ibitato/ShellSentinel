@@ -75,8 +75,8 @@
 
         <h2>Test suite</h2>
         <ul>
-          <li><code>make test</code> runs the unit tests plus the offline end-to-end layer (<code>tests/e2e/offline</code>, marker <code>e2e_offline</code>): the real Textual app, <code>AgentRuntime</code> and <code>strands.Agent</code> against an in-process SSH/SFTP server with a scripted model, so it needs no keys and runs in CI. <code>make test-e2e</code> runs only that layer.</li>
-          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, marker <code>e2e</code>) runs operator scenarios against the real providers; it requires <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> and/or <code>GEMINI_API_KEY</code>, caps model calls per test and never runs in CI.</li>
+          <li><code>make test</code> runs the unit tests plus the offline end-to-end layer (<code>tests/e2e/offline</code>, marker <code>e2e_offline</code>): the real Textual app, <code>AgentRuntime</code> and <code>strands.Agent</code> against an in-process SSH/SFTP server with a scripted model, so it needs no keys and runs in CI. It also starts real MCP servers (a scripted <code>stdio</code> server and local HTTP endpoints) to check tool calls, startup diagnostics and process cleanup. <code>make test-e2e</code> runs only that layer.</li>
+          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, marker <code>e2e</code>) runs operator scenarios against the real providers; it requires <code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> and/or <code>GEMINI_API_KEY</code>, caps model calls per test and never runs in CI. Its MCP scenarios run the real Firecrawl server and need <code>FIRECRAWL_API_KEY</code> and Node.js (<code>npx</code>).</li>
           <li><code>make test-mistral</code> keeps the Mistral PoC tests (marker <code>mistral</code>, requires <code>MISTRAL_API_KEY</code>); they are tagged <code>e2e</code> so <code>make test</code> never spends tokens.</li>
         </ul>
 

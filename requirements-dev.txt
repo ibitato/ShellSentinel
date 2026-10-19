@@ -20,6 +20,7 @@ anyio==4.15.1
     #   httpx2
     #   mcp
     #   openai
+    #   smart-ai-sys-admin (pyproject.toml)
     #   sse-starlette
     #   starlette
 attrs==26.1.0

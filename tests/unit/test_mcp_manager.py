@@ -126,6 +126,25 @@ def test_hung_server_is_abandoned_after_deadline_and_closed_when_it_finishes():
     assert slow.stop_calls == 1
 
 
+def test_server_hung_on_handshake_gets_its_transport_aborted():
+    # start() de Strands se queda bloqueado (su stop() no desbloquea un saludo sin respuesta):
+    # al vencer el plazo el manager debe cancelar el transporte en vez de esperar.
+    stuck = FakeClient(tools=["never"], start_delay=30)
+    manager = _manager((_transport("stuck", timeout_seconds=1),), {"stuck": stuck})
+    abort = MagicMock()
+    manager._abort_handles["stuck"] = abort
+
+    started_at = time.monotonic()
+    assert manager.activate() == []
+    assert time.monotonic() - started_at < 1.5
+
+    abort.abort.assert_called_once_with()
+    assert stuck.stop_calls == 0  # nunca llegó a arrancar: no hay sesión que cerrar
+    (status,) = manager.statuses
+    assert status.ready is False
+    assert "timeout_seconds" in status.message
+
+
 def test_server_hung_on_tool_listing_is_stopped_at_once_and_only_once():
     stuck = FakeClient(tools=["late"], tools_delay=1.5)
     manager = _manager((_transport("stuck", timeout_seconds=1),), {"stuck": stuck})
