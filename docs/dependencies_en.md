@@ -37,7 +37,7 @@ make install          # development (recommended)
    ```bash
    make sync-deps
    ```
-4. Run `make lint` and `make test`. `make test` runs the unit, integration and offline end-to-end suites without any API key (the Mistral PoC and the live e2e tests carry the `e2e` marker and are excluded by default); `make test-e2e-live` needs `RUN_E2E=1` plus `OPENAI_API_KEY`/`MISTRAL_API_KEY`/`GEMINI_API_KEY`.
+4. Run `make lint` and `make test`. `make test` runs the unit, integration and offline end-to-end suites without any API key (the Mistral PoC and the live e2e tests carry the `e2e` marker and are excluded by default); `make test-e2e-live` needs `RUN_E2E=1` plus `OPENAI_API_KEY`/`MISTRAL_API_KEY`/`GEMINI_API_KEY`; the MCP scenarios also need `FIRECRAWL_API_KEY` and Node.js (`npx`).
 
 ## Critical transitive packages
 

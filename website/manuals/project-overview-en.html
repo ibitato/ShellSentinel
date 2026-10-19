@@ -65,7 +65,7 @@
           <li>Create virtualenv with <code>python3.12 -m venv .venv</code> and activate it.</li>
           <li>Install dependencies via <code>make install</code>.</li>
           <li>Before PRs, run <code>make format</code>, <code>make lint</code>, <code>make test</code> (unit tests plus the offline end-to-end layer in <code>tests/e2e</code>, which drives the real TUI against an in-process SSH server).</li>
-          <li>When touching the TUI, the agent runtime or a provider, optionally run <code>make test-e2e-live</code> (<code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> or <code>GEMINI_API_KEY</code>); it spends tokens and never runs in CI.</li>
+          <li>When touching the TUI, the agent runtime or a provider, optionally run <code>make test-e2e-live</code> (<code>RUN_E2E=1</code> plus <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> or <code>GEMINI_API_KEY</code>; the MCP scenarios also need <code>FIRECRAWL_API_KEY</code> and <code>npx</code>); it spends tokens and never runs in CI.</li>
           <li>Validate the TUI with <code>make run</code> and the website with <code>make website-serve</code>.</li>
         </ol>
 

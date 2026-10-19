@@ -75,8 +75,8 @@
 
         <h2>Suite de pruebas</h2>
         <ul>
-          <li><code>make test</code> ejecuta las pruebas unitarias más la capa end-to-end offline (<code>tests/e2e/offline</code>, marcador <code>e2e_offline</code>): la app Textual real, <code>AgentRuntime</code> y <code>strands.Agent</code> contra un servidor SSH/SFTP en proceso con un modelo con guion, así que no necesita claves y corre en CI. <code>make test-e2e</code> ejecuta solo esa capa.</li>
-          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, marcador <code>e2e</code>) ejecuta escenarios de operador contra los proveedores reales; requiere <code>RUN_E2E=1</code> más <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> y/o <code>GEMINI_API_KEY</code>, limita las llamadas al modelo por prueba y nunca corre en CI.</li>
+          <li><code>make test</code> ejecuta las pruebas unitarias más la capa end-to-end offline (<code>tests/e2e/offline</code>, marcador <code>e2e_offline</code>): la app Textual real, <code>AgentRuntime</code> y <code>strands.Agent</code> contra un servidor SSH/SFTP en proceso con un modelo con guion, así que no necesita claves y corre en CI. También arranca servidores MCP reales (un servidor <code>stdio</code> con guion y endpoints HTTP locales) para comprobar las llamadas a tools, los diagnósticos de arranque y la limpieza de procesos. <code>make test-e2e</code> ejecuta solo esa capa.</li>
+          <li><code>make test-e2e-live</code> (<code>tests/e2e/live</code>, marcador <code>e2e</code>) ejecuta escenarios de operador contra los proveedores reales; requiere <code>RUN_E2E=1</code> más <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> y/o <code>GEMINI_API_KEY</code>, limita las llamadas al modelo por prueba y nunca corre en CI. Sus escenarios MCP ejecutan el servidor real de Firecrawl y necesitan <code>FIRECRAWL_API_KEY</code> y Node.js (<code>npx</code>).</li>
           <li><code>make test-mistral</code> conserva las pruebas PoC de Mistral (marcador <code>mistral</code>, requiere <code>MISTRAL_API_KEY</code>); están marcadas como <code>e2e</code> para que <code>make test</code> nunca consuma tokens.</li>
         </ul>
 

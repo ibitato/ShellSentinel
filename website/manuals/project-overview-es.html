@@ -65,7 +65,7 @@
           <li>Crear entorno virtual con <code>python3.12 -m venv .venv</code> y activarlo.</li>
           <li>Instalar dependencias con <code>make install</code>.</li>
           <li>Antes de un PR: <code>make format</code>, <code>make lint</code>, <code>make test</code> (pruebas unitarias más la capa end-to-end offline de <code>tests/e2e</code>, que ejecuta la TUI real contra un servidor SSH en proceso).</li>
-          <li>Si tocas la TUI, el runtime del agente o un proveedor, ejecuta opcionalmente <code>make test-e2e-live</code> (<code>RUN_E2E=1</code> más <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> o <code>GEMINI_API_KEY</code>); consume tokens y nunca corre en CI.</li>
+          <li>Si tocas la TUI, el runtime del agente o un proveedor, ejecuta opcionalmente <code>make test-e2e-live</code> (<code>RUN_E2E=1</code> más <code>OPENAI_API_KEY</code>, <code>MISTRAL_API_KEY</code> o <code>GEMINI_API_KEY</code>; los escenarios MCP necesitan además <code>FIRECRAWL_API_KEY</code> y <code>npx</code>); consume tokens y nunca corre en CI.</li>
           <li>Validar la TUI con <code>make run</code> y la web con <code>make website-serve</code>.</li>
         </ol>
 
