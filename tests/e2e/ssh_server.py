@@ -87,14 +87,30 @@ HARDWARE_PROFILE: list[tuple[str, Responder]] = [
             f"Linux {SENTINEL_HOSTNAME} {SENTINEL_KERNEL} #1 SMP x86_64 GNU/Linux\n",
         ),
     ),
+    (r"^hostname\s+-[Ii]\b", CommandResult(0, "192.0.2.10\n")),
     (r"^hostname\b|^hostnamectl\b", CommandResult(0, f"{SENTINEL_HOSTNAME}\n")),
     (
-        r"^lscpu\b|/proc/cpuinfo",
+        r"^\(?ip\s+(?:(?:-brief|-br|-4|-o)\s+)*(?:addr|address|a)\b",
+        CommandResult(0, "eth0 UP 192.0.2.10/24\n"),
+    ),
+    (
+        r"/proc/cpuinfo",
+        CommandResult(
+            0,
+            "processor\t: 0\n"
+            f"model name\t: {SENTINEL_CPU_MODEL}\n"
+            "cpu MHz\t\t: 2400.000\n"
+            "cpu cores\t: 2\n",
+        ),
+    ),
+    (
+        r"^lscpu\b",
         CommandResult(
             0,
             "Architecture:        x86_64\n"
             "CPU(s):              4\n"
             f"Model name:          {SENTINEL_CPU_MODEL}\n"
+            "CPU MHz:             2400.000\n"
             "Thread(s) per core:  2\n"
             "Core(s) per socket:  2\n",
         ),

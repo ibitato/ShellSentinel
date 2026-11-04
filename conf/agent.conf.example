@@ -39,7 +39,7 @@
     },
     "openai": {
       "system_prompt": "system_prompts/openai.md",
-      "model_id": "gpt-5.6-sol",
+      "model_id": "gpt-6.1-sol",
       "api": "responses",
       "stateful": false,
       "show_thinking": false,

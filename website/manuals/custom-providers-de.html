@@ -82,15 +82,20 @@
           nur durch deaktiviertes Reasoning (<code>reasoning_tokens=0</code>). Responses unterstützt
           Function Tools mit Reasoning <code>medium</code> ohne diese Einschränkung.
         </p>
+        <p>
+          Das aktuelle Beispiel verwendet <a
+          href="https://developers.openai.com/api/docs/models/gpt-6.1-sol">GPT-6.1 Sol</a>. Dieses Modell
+          benötigt Responses für Function Tools und unterstützt Reasoning <code>medium</code>;
+          <code>none</code> wird nicht unterstützt. Der obige GPT-5.6-Workaround gilt nicht für GPT-6.1 Sol.
+        </p>
         <pre><code>{
-  "model_id": "gpt-5.6-sol",
+  "model_id": "gpt-6.1-sol",
   "api": "responses",
   "params": {"reasoning_effort": "medium", "max_tokens": 32768}
 }</code></pre>
         <p>
           Die effektive Anfrage nutzt <code>reasoning.effort</code> und <code>max_output_tokens</code>; die
-          reale Konfiguration nutzt <code>65536</code>. Optionales <code>temperature: 0.3</code> wird
-          unterstützt, ist aber kein Standardwert. <code>OPENAI_API_KEY</code> kommt aus der Umgebung.
+          reale Konfiguration nutzt <code>65536</code>. <code>OPENAI_API_KEY</code> kommt aus der Umgebung.
         </p>
         <p>
           Optionales <code>stateful</code> kann <code>previous_response_id</code> nutzen, aber rekonstruiertes
@@ -110,6 +115,14 @@
           <li><code>providers.mistral</code> mit Standard <code>reasoning_effort: high</code> und <code>max_tokens: 16184</code>.</li>
           <li><code>make test-mistral</code> ausführen, wenn <code>MISTRAL_API_KEY</code> gesetzt ist.</li>
         </ul>
+        <p>
+          Für Mistral Large 4 setze <code>provider: "mistral"</code>, <code>providers.mistral.model_id:
+          "mistral-large-4"</code> und <code>reasoning_effort: "high"</code>; behalte <code>max_tokens:
+          16184</code> bei und hinterlege <code>MISTRAL_API_KEY</code> in der Umgebung. <a
+          href="https://docs.mistral.ai/studio/conversations/reasoning">Mistral Large 4 Reasoning</a>
+          unterstützt <code>none</code> nicht. Starte die Live-TUI-Tests mit <code>RUN_E2E=1
+          SHELL_SENTINEL_E2E_PROVIDERS=mistral-large-4 make test-e2e-live</code>.
+        </p>
 
         <h2>Praxisbeispiel: Google Gemini</h2>
         <ul>

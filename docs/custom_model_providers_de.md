@@ -36,11 +36,13 @@ Shell Sentinel wählt den Endpoint über `providers.openai.api`: `chat_completio
 
 Auslöser der Migration war ein HTTP 400 von `gpt-5.6-sol`: Chat Completions unterstützt Function Tools nicht zusammen mit aktivem `reasoning_effort`. Shell Sentinel hängt Tools an administrative Turns an, daher kann das Weglassen des Parameters oder `medium` fehlschlagen; andere GPT-5.x-Modelle können still auf null Reasoning-Tokens zurückfallen. `reasoning_effort: "none"` verhindert den Fehler, weil Reasoning deaktiviert wird (`reasoning_tokens=0`), nicht weil beide Funktionen kompatibel werden. Responses unterstützt Function Tools mit `reasoning.effort: "medium"`.
 
+Das aktuelle Beispiel verwendet [GPT-6.1 Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol). Dieses Modell benötigt Responses für Function Tools und unterstützt Reasoning `medium`; `none` wird nicht unterstützt. Der obige GPT-5.6-Workaround gilt nicht für GPT-6.1 Sol.
+
 Referenzkonfiguration ohne Secrets:
 
 ```json
 {
-  "model_id": "gpt-5.6-sol",
+  "model_id": "gpt-6.1-sol",
   "api": "responses",
   "params": {
     "reasoning_effort": "medium",
@@ -49,7 +51,7 @@ Referenzkonfiguration ohne Secrets:
 }
 ```
 
-Die effektive Anfrage nutzt `reasoning: {"effort": "medium"}` und `max_output_tokens: 32768`; die reale Repository-Konfiguration nutzt `max_tokens: 65536`. Responses akzeptiert optional auch `temperature: 0.3`, dies ist jedoch kein Standardwert. `OPENAI_API_KEY` wird aus der Umgebung gelesen.
+Die effektive Anfrage nutzt `reasoning: {"effort": "medium"}` und `max_output_tokens: 32768`; die reale Repository-Konfiguration nutzt `max_tokens: 65536`. `OPENAI_API_KEY` wird aus der Umgebung gelesen.
 
 Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber eine bekannte Einschränkung nicht: `reasoningContent` wird beim Rekonstruieren von Multi-Turn-Gesprächen noch nicht vollständig unterstützt. Der Provider filtert diese Verlaufsblöcke; das Modell denkt in jedem Turn nach, verliert zwischen Turns jedoch einen Teil der Reasoning-Kontinuität.
 
@@ -67,6 +69,8 @@ Optionales `stateful` kann `previous_response_id` beibehalten, beseitigt aber ei
 - Der Wrapper injiziert `reasoning_effort` in jede API-Anfrage und mappt Thinking-Chunks auf `reasoningContent`-Stream-Events (`show_thinking`).
 - **Gestreamte Tool-Calls:** Einige von Mistral bereitgestellte Modelle (z. B. `zai-glm-5-3`) senden `id` und Namen des Tool-Calls nur im ersten Delta; spätere Fragmente tragen die SDK-Standard-ID `"null"` und nur einen Teil der JSON-Argumente. Der Wrapper gruppiert Fragmente nach `index` (oder einer echten `id`), hängt Fragmente ohne ID an den letzten offenen Call an, hält parallele Tool-Calls getrennt, serialisiert dict-Argumente zu JSON und protokolliert eine Warnung mit dem Tool-Namen, wenn dem zusammengesetzten Call weiterhin ID, Name oder gültiges JSON fehlen. Ohne das erhielt `remote_ssh_command` eine leere Eingabe und der Agent lief bis `agent.max_turns` in einer Schleife (früher `RecursionError`).
 - Validierung mit `make test-mistral`, wenn `MISTRAL_API_KEY` gesetzt ist (die PoC-Tests sind mit `e2e` markiert, `make test` führt sie also nie aus).
+
+Für Mistral Large 4 setze `provider: "mistral"`, `providers.mistral.model_id: "mistral-large-4"` und `reasoning_effort: "high"`; behalte `max_tokens: 16184` bei und hinterlege `MISTRAL_API_KEY` in der Umgebung. [Mistral Large 4 Reasoning](https://docs.mistral.ai/studio/conversations/reasoning) unterstützt `none` nicht. Starte die Live-TUI-Tests mit `RUN_E2E=1 SHELL_SENTINEL_E2E_PROVIDERS=mistral-large-4 make test-e2e-live`.
 
 ## Praxisbeispiel: Google Gemini
 

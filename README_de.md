@@ -85,7 +85,7 @@ make run
   export OPENAI_API_KEY
   export FIRECRAWL_API_KEY
   ```
-- Das OpenAI-Beispiel verwendet `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` und `max_tokens: 32768` (effektiv als `max_output_tokens`). Die reale Konfiguration nutzt **65.536**; das Bedrock-Beispiel behält `max_tokens: 8192`. Passe die Werte an deine Kontingente an.
+- Das OpenAI-Beispiel verwendet `gpt-6.1-sol`, `api: "responses"`, `reasoning_effort: "medium"` und `max_tokens: 32768` (effektiv als `max_output_tokens`). Die reale Konfiguration nutzt **65.536**; das Bedrock-Beispiel behält `max_tokens: 8192`. Passe die Werte an deine Kontingente an.
 - Responses akzeptiert optional `temperature: 0.3` in `params`; dieser Wert gehört nicht zur Standardkonfiguration.
 - Anmeldeinformationen stammen aus der Umgebung (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY` usw.). Du kannst auch `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` oder `SMART_AI_SYS_ADMIN_CONFIG_DIR` verwenden, um Dateipfade zu überschreiben.
 - In `tools` aktivierst du Strands Agents Tools sowie das benutzerdefinierte `remote_ssh_command`, das die TUI-SSH-Sitzung nutzt (`timeout_seconds` ist optional und begrenzt die **gesamte** Laufzeit des Befehls, nicht die Leerlaufzeit zwischen Ausgabelesungen).

@@ -82,15 +82,20 @@
           only by disabling reasoning (<code>reasoning_tokens=0</code>). Responses supports function tools
           with <code>medium</code> reasoning without that degradation.
         </p>
+        <p>
+          The current example uses <a href="https://developers.openai.com/api/docs/models/gpt-6.1-sol">GPT-6.1
+          Sol</a>. This model requires Responses for function tools and supports <code>medium</code>
+          reasoning; <code>none</code> is not supported. The GPT-5.6 workaround above does not apply to
+          GPT-6.1 Sol.
+        </p>
         <pre><code>{
-  "model_id": "gpt-5.6-sol",
+  "model_id": "gpt-6.1-sol",
   "api": "responses",
   "params": {"reasoning_effort": "medium", "max_tokens": 32768}
 }</code></pre>
         <p>
           The effective request uses <code>reasoning.effort</code> and <code>max_output_tokens</code>; the
-          real configuration uses <code>65536</code>. Optional <code>temperature: 0.3</code> is supported but
-          is not a default. Export <code>OPENAI_API_KEY</code> from the environment.
+          real configuration uses <code>65536</code>. Export <code>OPENAI_API_KEY</code> from the environment.
         </p>
         <p>
           Optional <code>stateful</code> mode can use <code>previous_response_id</code>, but reconstructed
@@ -110,6 +115,14 @@
           <li>Configure <code>providers.mistral</code> with <code>reasoning_effort: high</code> and <code>max_tokens: 16184</code> by default.</li>
           <li>Run <code>make test-mistral</code> when <code>MISTRAL_API_KEY</code> is available.</li>
         </ul>
+        <p>
+          For Mistral Large 4, set <code>provider: "mistral"</code>, <code>providers.mistral.model_id:
+          "mistral-large-4"</code> and <code>reasoning_effort: "high"</code>; keep <code>max_tokens:
+          16184</code> and <code>MISTRAL_API_KEY</code> in the environment. <a
+          href="https://docs.mistral.ai/studio/conversations/reasoning">Mistral Large 4 reasoning</a> does not
+          support <code>none</code>. Run the live TUI checks with <code>RUN_E2E=1
+          SHELL_SENTINEL_E2E_PROVIDERS=mistral-large-4 make test-e2e-live</code>.
+        </p>
 
         <h2>Practical case: Google Gemini</h2>
         <ul>

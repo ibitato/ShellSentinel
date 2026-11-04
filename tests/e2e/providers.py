@@ -56,7 +56,7 @@ REGISTRY: tuple[LiveProvider, ...] = (
     LiveProvider(
         name="openai",
         conf_key="openai",
-        model_id="gpt-5.6-sol",
+        model_id="gpt-6.1-sol",
         api_key_env="OPENAI_API_KEY",
         provider_block={
             "api": "responses",
@@ -78,6 +78,17 @@ REGISTRY: tuple[LiveProvider, ...] = (
             "params": {"temperature": 0.3, "max_tokens": 4096},
         },
         cache_expectation="strict",
+    ),
+    LiveProvider(
+        name="mistral-large-4",
+        conf_key="mistral",
+        model_id="mistral-large-4",
+        api_key_env="MISTRAL_API_KEY",
+        provider_block={
+            "reasoning_effort": "high",
+            "params": {"temperature": 0.3, "max_tokens": 4096},
+        },
+        cache_expectation="best_effort",
     ),
     LiveProvider(
         name="mistral-zai",

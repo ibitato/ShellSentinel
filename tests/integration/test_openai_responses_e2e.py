@@ -21,7 +21,7 @@ pytestmark = [
 def _model(**params: Any) -> OpenAIResponsesModel:
     return OpenAIResponsesModel(
         client_args={"api_key": os.environ["OPENAI_API_KEY"]},
-        model_id="gpt-5.6-sol",
+        model_id="gpt-6.1-sol",
         params={"reasoning": {"effort": "medium"}, "max_output_tokens": 1024, **params},
         stateful=False,
     )
@@ -54,7 +54,7 @@ class _ReasoningUsageModel(OpenAIResponsesModel):
     def __init__(self) -> None:
         super().__init__(
             client_args={"api_key": os.environ["OPENAI_API_KEY"]},
-            model_id="gpt-5.6-sol",
+            model_id="gpt-6.1-sol",
             params={"reasoning": {"effort": "medium"}, "max_output_tokens": 2048},
             stateful=False,
         )

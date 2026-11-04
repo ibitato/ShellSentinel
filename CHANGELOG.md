@@ -5,6 +5,21 @@ All notable changes to Shell Sentinel are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Optional `mistral-large-4` live TUI test profile and configuration guidance in English, Spanish and German, using high reasoning and the existing Mistral provider.
+
+### Changed
+
+- Updated the OpenAI example and live Responses tests to `gpt-6.1-sol`, retaining medium reasoning, stateless mode and the existing output limits (32,768 in the example; 65,536 in the active local configuration).
+- Aligned English, Spanish and German operator guides and website manuals with GPT-6.1 Sol, including its Responses requirement for function tools.
+
+### Fixed
+
+- Corrected the scripted SSH hardware profile to return IP addresses for `hostname -I` and network queries, and CPU frequency data for `/proc/cpuinfo`, avoiding misleading responses and repeated diagnostic calls in live model tests.
+
 ## [1.4.1] - 2026-10-19
 
 ### Added

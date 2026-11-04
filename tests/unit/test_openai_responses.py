@@ -167,7 +167,7 @@ def test_repository_configs_enable_reasoning_with_responses(
     provider = config.providers["openai"]
 
     assert isinstance(provider, OpenAIProviderConfig)
-    assert provider.model_id == "gpt-5.6-sol"
+    assert provider.model_id == "gpt-6.1-sol"
     assert provider.api == "responses"
     assert provider.params["reasoning"] == {"effort": "medium"}
     assert provider.params["max_output_tokens"] == expected_tokens

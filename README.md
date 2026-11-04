@@ -85,7 +85,7 @@ make run
   export OPENAI_API_KEY="..."
   export FIRECRAWL_API_KEY="..."
   ```
-- The OpenAI example uses `gpt-5.6-sol`, `api: "responses"`, `reasoning_effort: "medium"` and `max_tokens: 32768` (sent as `max_output_tokens`). The real configuration uses **65,536**; the Bedrock example remains at `max_tokens: 8192`. Adjust these values to your quotas.
+- The OpenAI example uses `gpt-6.1-sol`, `api: "responses"`, `reasoning_effort: "medium"` and `max_tokens: 32768` (sent as `max_output_tokens`). The real configuration uses **65,536**; the Bedrock example remains at `max_tokens: 8192`. Adjust these values to your quotas.
 - Responses also accepts optional `temperature: 0.3` in `params`; it is not part of the default configuration.
 - Credentials are read from your environment (`AWS_*`, `OPENAI_API_KEY`, `MISTRAL_API_KEY`, `GEMINI_API_KEY`, etc.). You can also point to a different file via `SMART_AI_SYS_ADMIN_AGENT_CONFIG_FILE` or reuse `SMART_AI_SYS_ADMIN_CONFIG_DIR`.
 - The `tools` section enables Strands Agents Tools and the custom `remote_ssh_command`, which reuses the TUI SSH session (the `timeout_seconds` parameter is optional and caps the **total** runtime of the command, not the idle time between output reads).

@@ -103,15 +103,20 @@
           <code>reasoning_tokens=0</code>. Responses permite function tools con esfuerzo
           <code>medium</code> sin esa degradación.
         </p>
+        <p>
+          El ejemplo actual usa <a href="https://developers.openai.com/api/docs/models/gpt-6.1-sol">GPT-6.1
+          Sol</a>. Este modelo requiere Responses para function tools y admite razonamiento
+          <code>medium</code>; <code>none</code> no está soportado. La solución anterior de GPT-5.6 no se
+          aplica a GPT-6.1 Sol.
+        </p>
         <pre><code>{
-  "model_id": "gpt-5.6-sol",
+  "model_id": "gpt-6.1-sol",
   "api": "responses",
   "params": {"reasoning_effort": "medium", "max_tokens": 32768}
 }</code></pre>
         <p>
           El request efectivo usa <code>reasoning.effort</code> y <code>max_output_tokens</code>; la
-          configuración real usa <code>65536</code>. <code>temperature: 0.3</code> está aceptado como
-          opción, pero no es el valor predeterminado. Exporta <code>OPENAI_API_KEY</code> desde el entorno.
+          configuración real usa <code>65536</code>. Exporta <code>OPENAI_API_KEY</code> desde el entorno.
         </p>
         <p>
           <code>stateful</code> es opcional y puede usar <code>previous_response_id</code>, pero existe una
@@ -136,6 +141,14 @@
           <li>Configura <code>providers.mistral</code> con <code>reasoning_effort: high</code> y <code>max_tokens: 16184</code> por defecto.</li>
           <li>Ejecuta <code>make test-mistral</code> con <code>MISTRAL_API_KEY</code> disponible.</li>
         </ul>
+        <p>
+          Para Mistral Large 4, configura <code>provider: "mistral"</code>, <code>providers.mistral.model_id:
+          "mistral-large-4"</code> y <code>reasoning_effort: "high"</code>; conserva <code>max_tokens:
+          16184</code> y <code>MISTRAL_API_KEY</code> en el entorno. El <a
+          href="https://docs.mistral.ai/studio/conversations/reasoning">razonamiento de Mistral Large 4</a> no
+          admite <code>none</code>. Ejecuta las pruebas reales de la TUI con <code>RUN_E2E=1
+          SHELL_SENTINEL_E2E_PROVIDERS=mistral-large-4 make test-e2e-live</code>.
+        </p>
 
         <h2>Caso práctico: Google Gemini</h2>
         <ul>

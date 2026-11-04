@@ -222,6 +222,18 @@ def test_resolve_prefers_exact_then_patterns_then_default():
     assert missing.exit_code == 127 and "command not found" in missing.stderr
 
 
+def test_hardware_profile_returns_addresses_and_cpu_frequency():
+    server = ScriptedSSHServer()
+    server.load_hardware_profile()
+
+    assert server.resolve("hostname -I").stdout == "192.0.2.10\n"
+    assert server.resolve("hostname").stdout == f"{SENTINEL_HOSTNAME}\n"
+    assert "192.0.2.10/24" in server.resolve("ip -brief addr").stdout
+    cpuinfo = server.resolve("grep -m1 'cpu MHz' /proc/cpuinfo")
+    assert cpuinfo.exit_code == 0 and "cpu MHz\t\t: 2400.000" in cpuinfo.stdout
+    assert "Architecture:" not in cpuinfo.stdout
+
+
 def test_reset_clears_sftp_root_and_script(tmp_path: Path):
     root = tmp_path / "sftp"
     root.mkdir()
